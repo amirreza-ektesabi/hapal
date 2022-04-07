@@ -18,10 +18,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 3rd party
     'rest_framework',
     'corsheaders',
     'phonenumber_field',
+    
+    'account',
+    'list',
 ]
 
 MIDDLEWARE = [
@@ -71,9 +73,9 @@ DATABASES = {
 
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },

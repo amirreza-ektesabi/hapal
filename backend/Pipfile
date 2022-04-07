@@ -10,6 +10,8 @@ psycopg2 = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 python-decouple = "*"
+django-phonenumbers = "*"
+pillow = "*"
 
 [dev-packages]
 
