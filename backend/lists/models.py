@@ -1,0 +1,32 @@
+from django.db import models
+from django.contrib.contenttypes import fields as contenttypes_fields
+from django.utils.translation import gettext_lazy as _
+
+from baseapp.models import SharedBaseModel
+
+
+class List(SharedBaseModel):
+    title = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=500, blank=True)
+    header = models.ImageField(upload_to='images/list_headers', null=True, blank=True)
+
+    class WhoAdd(models.IntegerChoices):
+        EVERY_ONE = 0
+        JUST_ME = 1
+
+    who_add = models.PositiveSmallIntegerField(
+        choices=WhoAdd.choices,
+        default=WhoAdd.EVERY_ONE
+    )
+    
+    followers = contenttypes_fields.GenericRelation(
+        'follows.Follow',
+        content_type_field='followed_type',
+        object_id_field='followed_id',
+        related_query_name='followed_list',
+    )
+    
+    class Meta:
+        verbose_name = _('list')
+        verbose_name_plural = _('lists')
+        ordering = ['-id']

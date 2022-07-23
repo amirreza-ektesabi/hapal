@@ -12,8 +12,12 @@ django-cors-headers = "*"
 python-decouple = "*"
 django-phonenumbers = "*"
 pillow = "*"
+django-debug-toolbar = "*"
+inflect = "*"
+django-autocomplete-light = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"

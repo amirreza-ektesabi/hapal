@@ -12,21 +12,31 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sessions',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.postgres',
+    'debug_toolbar',
+    'dal',
+    'dal_select2',
 
     'rest_framework',
     'corsheaders',
     'phonenumber_field',
     
-    'account',
-    'list',
+    'accounts',
+    'follows',
+    'lists',
+    'posts',
+    'comments',
+    'likes',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -35,6 +45,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 # CORS_ORIGIN_WHITELIST = ()
@@ -73,9 +87,6 @@ DATABASES = {
 
 
 AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
