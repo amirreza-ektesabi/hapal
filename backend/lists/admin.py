@@ -1,9 +1,8 @@
 from django.contrib import admin
-from django.db.models import QuerySet, Count, Q
+from django.db.models import QuerySet, Count
 from django.contrib.contenttypes.models import ContentType
 from django.forms import Textarea
 from django.http import HttpRequest
-from django.utils.translation import gettext_lazy as _
 
 from .models import List
 from baseapp.admin import SharedBaseAdmin, link_to_listpage
@@ -61,14 +60,10 @@ class ListAdmin(SharedBaseAdmin):
             list.posts_count,
             'posts_post',
             added_to_id=list.id,
-            deleted=False,
         )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         return super().get_queryset(request).annotate(
             followers_count=Count('followers', distinct=True),
-            posts_count=Count(
-                'posts', distinct=True,
-                filter=Q(posts__deleted=False, posts__user__deleted=False),
-            ),
+            posts_count=Count('posts', distinct=True),
         )

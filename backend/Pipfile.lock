@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a3664e3dc0dc118399ff73f4987ddc93cf1504a47dfa78308f27f4e53f14794d"
+            "sha256": "9def8c81ad63f5e950bb23cdcad30afdee28996bd63c8c7f0d72b36c4d174524"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -92,6 +92,13 @@
             "index": "pypi",
             "version": "==1.0.1"
         },
+        "django-softdelete": {
+            "hashes": [
+                "sha256:0264ec219371c40d32b5ec0170c07c46e8c92540b40698d20eea941d32fb2a54"
+            ],
+            "index": "pypi",
+            "version": "==0.9.4"
+        },
         "djangorestframework": {
             "hashes": [
                 "sha256:0c33407ce23acc68eca2a6e46424b008c9c02eceb8cf18581921d0092bc1f2ee",
@@ -99,14 +106,6 @@
             ],
             "index": "pypi",
             "version": "==3.13.1"
-        },
-        "inflect": {
-            "hashes": [
-                "sha256:aadc7ed73928f5e014129794bbac03058cca35d0a973a5fc4eb45c7fa26005f9",
-                "sha256:b45d91a4a28a4e617ff1821117439b06eaa86e2a4573154af0149e9be6687238"
-            ],
-            "index": "pypi",
-            "version": "==5.6.2"
         },
         "phonenumbers": {
             "hashes": [
@@ -211,6 +210,14 @@
             ],
             "version": "==2022.1"
         },
+        "setuptools": {
+            "hashes": [
+                "sha256:0d33c374d41c7863419fc8f6c10bfe25b7b498aa34164d135c622e52580c6b16",
+                "sha256:c04b44a57a6265fe34a4a444e965884716d34bae963119a76353434d6f18e450"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==63.2.0"
+        },
         "six": {
             "hashes": [
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
@@ -226,6 +233,14 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==0.4.2"
+        },
+        "wheel": {
+            "hashes": [
+                "sha256:4bdcd7d840138086126cd09254dc6195fb4fc6f01c050a1d7236f2630db1d22a",
+                "sha256:e9a504e793efbca1b8e0e9cb979a249cf4a0a7b5b8c9e8b65a5e39d49529c1c4"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "version": "==0.37.1"
         }
     },
     "develop": {

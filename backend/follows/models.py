@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 class Follow(models.Model):
     follower = models.ForeignKey(
         'accounts.Account',
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         related_name='followings',
     )
@@ -16,7 +16,7 @@ class Follow(models.Model):
                              models.Q(app_label='lists', model='List')
     followed_type = models.ForeignKey(
         ContentType, 
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         limit_choices_to=followed_limit_choices,
         related_name='followers',

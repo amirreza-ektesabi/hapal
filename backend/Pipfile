@@ -13,8 +13,8 @@ python-decouple = "*"
 django-phonenumbers = "*"
 pillow = "*"
 django-debug-toolbar = "*"
-inflect = "*"
 django-autocomplete-light = "*"
+django-softdelete = "*"
 
 [dev-packages]
 autopep8 = "*"

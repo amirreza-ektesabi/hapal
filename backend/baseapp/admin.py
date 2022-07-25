@@ -1,13 +1,11 @@
-from django import forms
-from django.db.models import QuerySet, Count, Q
+from django.forms import ModelForm, ModelChoiceField
+from django.db.models import QuerySet, Count
 from django.contrib.contenttypes.models import ContentType
-from django.contrib import admin, messages
-from django.http import HttpRequest, HttpResponseRedirect
+from django.contrib import admin
+from django.http import HttpRequest
 from django.utils.safestring import SafeString
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
-from django.utils.translation import ngettext, gettext_lazy as _
-from django.contrib.admin.utils import model_ngettext
 
 from dal import autocomplete
 
@@ -38,9 +36,9 @@ def string_to_UUID(as_string: str) -> Union[UUID, None]:
         return None
 
 
-class CreateSharedBaseForm(forms.ModelForm):
-    new_user = forms.ModelChoiceField(
-        queryset=Account.objects.filter(deleted=False),
+class CreateSharedBaseForm(ModelForm):
+    new_user = ModelChoiceField(
+        queryset=Account.objects.all(),
         required=True,
         label='User',
         widget=autocomplete.ModelSelect2(url='account-autocomplete'),
@@ -102,35 +100,6 @@ class SharedBaseAdmin(admin.ModelAdmin):
         self.form = orig_self_form
         return result
 
-    def delete_view(self, request: HttpRequest, object_id: int, extra_context=None):
-        queryset = self.model.objects.filter(pk=object_id)
-        obj_display = queryset.first()
-        queryset.update(deleted=True)
-
-        self.message_user(
-            request,
-            _("The %(name)s “%(obj)s” was deleted successfully.") % {
-                'name': self.opts.verbose_name,
-                'obj': obj_display,
-            },
-            messages.SUCCESS,
-        )
-        return HttpResponseRedirect(reverse('admin:{}_{}_changelist'.format(self.opts.app_label, self.opts.model_name)))
-
-    @admin.action(description='Delete selected items')
-    def delete_selected(self, request: HttpRequest, queryset: QuerySet):
-        deleted_count = queryset.update(deleted=True)
-
-        msg = ngettext(
-            '%(count)s %(name)s was deleted successfully.',
-            '%(count)s %(name)s were deleted successfully.',
-            deleted_count,
-        ) % {
-            'count': deleted_count,
-            'name': model_ngettext(self.opts, deleted_count),
-        }
-        self.message_user(request, msg, messages.SUCCESS)
-
     def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str) -> Tuple[QuerySet, bool]:
         queryset, may_have_duplicates = super().get_search_results(
             request, queryset, search_term)
@@ -160,7 +129,6 @@ class SharedBaseAdmin(admin.ModelAdmin):
             replied_to_id=object.id,
             replied_to_type=ContentType.objects.get_for_model(
                 self.model).id,
-            deleted=False,
         )
 
     @admin.display(ordering='likes_count', description='likes')
@@ -174,12 +142,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).filter(deleted=False, user__deleted=False).annotate(
-            comments_count=Count('comments', distinct=True,
-                                 filter=Q(comments__deleted=False,
-                                          comments__user__deleted=False),
-                                 ),
-            likes_count=Count('likes', distinct=True,
-                              filter=Q(likes__user__deleted=False),
-                              )
+        return super().get_queryset(request).annotate(
+            comments_count=Count('comments', distinct=True),
+            likes_count=Count('likes', distinct=True),
         )

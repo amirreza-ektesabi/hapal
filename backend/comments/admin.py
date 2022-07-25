@@ -1,8 +1,7 @@
-from django import forms
+from django.forms import Textarea
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
-from django.utils.translation import gettext_lazy as _
 
 from .models import Comment
 from baseapp.admin import SharedBaseAdmin, link_to_objectpage
@@ -45,7 +44,7 @@ class CommentAdmin(SharedBaseAdmin):
         return False
 
     def get_form(self, request: HttpRequest, obj=None, **kwargs):
-        kwargs['widgets'] = {'body': forms.Textarea}
+        kwargs['widgets'] = {'body': Textarea}
         return super().get_form(request, obj, **kwargs)
 
     @admin.display(description='body')

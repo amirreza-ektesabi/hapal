@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 class Like(models.Model):
     user = models.ForeignKey(
         'accounts.Account',
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         related_name='likes',
     )
@@ -17,7 +17,7 @@ class Like(models.Model):
                           models.Q(app_label='comments', model='Comment')
     liked_type = models.ForeignKey(
         ContentType,
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         limit_choices_to=liked_limit_choices,
         related_name='likes',

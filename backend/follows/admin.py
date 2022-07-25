@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from .models import Follow
@@ -46,7 +46,4 @@ class FollowAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).prefetch_related('followed').filter(
-            Q(followed_account__deleted=False) |
-            Q(followed_list__deleted=False)
-        )
+        return super().get_queryset(request).prefetch_related('followed')

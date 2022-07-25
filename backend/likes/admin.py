@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from .models import Like
@@ -48,8 +48,4 @@ class LikeAdmin(admin.ModelAdmin):
         )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        return super().get_queryset(request).prefetch_related('liked').filter(
-            Q(liked_list__deleted=False) |
-            Q(liked_post__deleted=False) |
-            Q(liked_comment__deleted=False)
-        )
+        return super().get_queryset(request).prefetch_related('liked')

@@ -11,7 +11,7 @@ class Post(SharedBaseModel):
     title = models.CharField(max_length=255, blank=True)
     added_to = models.ForeignKey(
         'lists.List',
-        models.PROTECT,
+        models.DO_NOTHING,
         editable=False,
         related_name='posts',
     )
@@ -25,7 +25,7 @@ class Post(SharedBaseModel):
 class Property(models.Model):
     post = models.ForeignKey(
         'Post',
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         related_name='properties',
     )
@@ -45,7 +45,7 @@ class Property(models.Model):
 class Pair(models.Model):
     property = models.ForeignKey(
         'Property',
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         related_name='pairs',
     )
@@ -55,7 +55,7 @@ class Pair(models.Model):
     value_limit_choices = models.Q(app_label='post', model='TextValue')
     value_type = models.ForeignKey(
         ContentType,
-        models.PROTECT,
+        models.CASCADE,
         editable=False,
         limit_choices_to=value_limit_choices,
         related_name='pairs',

@@ -4,12 +4,14 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
 
+from softdelete.models import SoftDeleteObject
+
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .username_validation import validate_username
 
 
-class Account(AbstractBaseUser):
+class Account(SoftDeleteObject, AbstractBaseUser):
     username = fields.CICharField(
         unique=True,
         max_length=32,
@@ -18,17 +20,21 @@ class Account(AbstractBaseUser):
             'unique': _("A user with this username already exists."),
         },
     )
-    # validators:
-    #   min_length=5
-    #   just contain a-z, A-Z, 0-9 and _ characters
-    #   start with a letter character
-    #   can't contain restricted words like 'admin'
+    '''
+    validators:
+        min_length=5
+        just contain a-z, A-Z, 0-9 and _ characters
+        start with a letter character
+        can't contain restricted words like 'admin'
+    '''
 
     password = models.CharField(max_length=128)
-    # validators
-    #   min_length=8
-    #   check with common passwords
-    #   can't be entirely numeric
+    '''
+    validators
+        min_length=8
+        check with common passwords
+        can't be entirely numeric
+    '''
 
     name = models.CharField(blank=True, max_length=50)
     bio = models.CharField(blank=True, max_length=140)
@@ -77,7 +83,6 @@ class Account(AbstractBaseUser):
     )
 
     joined = models.DateTimeField(auto_now_add=True)
-    deleted = models.BooleanField(default=False)
 
     followers = contenttypes_fields.GenericRelation(
         'follows.Follow',
@@ -94,8 +99,13 @@ class Account(AbstractBaseUser):
         ordering = ['-id']
 
     def __str__(self):
-        return 'Deleted' if self.deleted else '@{}'.format(self.username)
+        return 'Deleted' if self.deleted_at else '@{}'.format(self.username)
 
     @property
     def app_model_label(self) -> str:
         return '{}_{}'.format(self._meta.app_label, self._meta.model_name)
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+
+        self.followers.clear()
