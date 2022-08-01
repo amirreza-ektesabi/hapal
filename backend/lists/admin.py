@@ -1,11 +1,10 @@
+from lists.models import List
+from baseapp.admin import SharedBaseAdmin, link_to_listpage
 from django.contrib import admin
-from django.db.models import QuerySet, Count
+from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
 from django.forms import Textarea
 from django.http import HttpRequest
-
-from .models import List
-from baseapp.admin import SharedBaseAdmin, link_to_listpage
 
 
 @admin.register(List)
@@ -30,10 +29,10 @@ class ListAdmin(SharedBaseAdmin):
         'uuid',
         'title',
         'owner',
-        'followers_count',
-        'posts_count',
-        'comments_count',
-        'likes_count',
+        'followers_',
+        'posts_',
+        'comments_',
+        'likes_',
     ]
     search_fields = [
         'title__icontains',
@@ -45,7 +44,7 @@ class ListAdmin(SharedBaseAdmin):
         return super().get_form(request, obj, **kwargs)
 
     @admin.display(ordering='followers_count', description='followers')
-    def followers_count(self, list: List):
+    def followers_(self, list: List):
         return link_to_listpage(
             list.followers_count,
             'follows_follow',
@@ -55,7 +54,7 @@ class ListAdmin(SharedBaseAdmin):
         )
 
     @admin.display(ordering='posts_count', description='posts')
-    def posts_count(self, list: List):
+    def posts_(self, list: List):
         return link_to_listpage(
             list.posts_count,
             'posts_post',
@@ -65,5 +64,9 @@ class ListAdmin(SharedBaseAdmin):
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         return super().get_queryset(request).annotate(
             followers_count=Count('followers', distinct=True),
-            posts_count=Count('posts', distinct=True),
+            posts_count=Count(
+                'posts',
+                distinct=True,
+                filter=Q(posts__deleted_at__isnull=True)
+            ),
         )

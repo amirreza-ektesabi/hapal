@@ -998,3 +998,6 @@ insert into posts_post (id, uuid, title, added_to_id, user_id, who_reply, access
 insert into posts_post (id, uuid, title, added_to_id, user_id, who_reply, access_level, created, updated, deleted_at) values (998, 'a1cf7891-19a5-4a00-b230-9b22ce926c38', 'Brimstone and Treacle', 426, 117, 1, 1, '2022-03-22 10:33:59', '2022-07-01 13:00:17', null);
 insert into posts_post (id, uuid, title, added_to_id, user_id, who_reply, access_level, created, updated, deleted_at) values (999, '0d04dd87-5b38-41f2-871a-daecdd6fde9b', 'Garbage Warrior', 651, 234, 0, 0, '2022-03-23 03:04:11', '2022-06-19 19:43:14', null);
 insert into posts_post (id, uuid, title, added_to_id, user_id, who_reply, access_level, created, updated, deleted_at) values (1000, '1d4b3a79-0551-4cdf-b49c-8ac9550c58cd', 'As I Was Moving Ahead Occasionally I Saw Brief Glimpses of Beauty', 903, 127, 1, 0, '2022-04-16 17:31:38', '2022-06-21 12:02:10', null);
+
+
+SELECT setval('posts_post_id_seq', (SELECT MAX(id) FROM posts_post) + 1);

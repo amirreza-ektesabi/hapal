@@ -1,17 +1,15 @@
 from abc import ABC, abstractmethod
-
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
-
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
 
 
 @deconstructible
-class MyBaseValidator(ABC):
+class BaseValidator(ABC):
     message = _('Ensure this value is right.')
     code = 'base_validator_error'
-    
+
     def __init__(self, message=None, code=None):
         if message is not None:
             self.message = message
@@ -32,14 +30,19 @@ class MyBaseValidator(ABC):
 
     @abstractmethod
     def check(self, value):
-        pass
+        raise NotImplementedError(
+            '{cls}.check() must be implemented.'.format(
+                cls=self.__class__.__name__,
+            )
+        )
 
 
-class RestrictedWordsValidator(MyBaseValidator):
-    username_restricted_words = {'admin', 'deleted', 'hapal'}
-    
+class RestrictedWordsValidator(BaseValidator):
+    username_restricted_words = {'admin', 'deleted', 'hapal',
+                                 'lists', 'list', 'posts', 'post', 'comments', 'comment'}
+
     def check(self, value):
-        return any(word==value for word in RestrictedWordsValidator.username_restricted_words)
+        return any(word == value for word in self.username_restricted_words)
 
 
 username_validators = (
@@ -54,6 +57,7 @@ username_validators = (
     RestrictedWordsValidator(_('The username contains restricted word.'),
                              'restricted_word')
 )
+
 
 def validate_username(username):
     errors = []

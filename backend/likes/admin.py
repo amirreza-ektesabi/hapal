@@ -1,9 +1,8 @@
+from likes.models import Like
+from baseapp.admin import link_to_objectpage
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
-
-from .models import Like
-from baseapp.admin import link_to_objectpage
 
 
 @admin.register(Like)
@@ -15,7 +14,7 @@ class LikeAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'id',
-        'like_user',
+        'user_',
         'liked',
     ]
     list_per_page = 25
@@ -31,7 +30,7 @@ class LikeAdmin(admin.ModelAdmin):
         return False
 
     @admin.display(ordering='user__id', description='user')
-    def like_user(self, like: Like):
+    def user_(self, like: Like):
         opts = like.user._meta
         return link_to_objectpage(
             str(like.user),

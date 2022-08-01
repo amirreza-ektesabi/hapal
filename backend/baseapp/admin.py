@@ -1,19 +1,16 @@
+from baseapp.models import SharedBaseModel
+from accounts.models import Account
+from uuid import UUID
+from typing import Any, Union
+from dal import autocomplete
 from django.forms import ModelForm, ModelChoiceField
-from django.db.models import QuerySet, Count
+from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.http import HttpRequest
 from django.utils.safestring import SafeString
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
-
-from dal import autocomplete
-
-from uuid import UUID
-from typing import Tuple, Any, Union
-
-from baseapp.models import SharedBaseModel
-from accounts.models import Account
 
 
 def link_to_listpage(text_to_show: Any, app_model_label: str, **kwargs) -> SafeString:
@@ -37,6 +34,11 @@ def string_to_UUID(as_string: str) -> Union[UUID, None]:
 
 
 class CreateSharedBaseForm(ModelForm):
+    class Meta:
+        model = SharedBaseModel
+        fields = ['new_user']
+        exclude = ['user']
+
     new_user = ModelChoiceField(
         queryset=Account.objects.all(),
         required=True,
@@ -47,23 +49,18 @@ class CreateSharedBaseForm(ModelForm):
     def clean_new_user(self):
         return self.cleaned_data['new_user']
 
-    def save(self, commit: bool=True):
+    def save(self, commit: bool = True):
         if self.instance.pk:
             raise NotImplementedError(
-                'Editing of existing Item is not allowed!')
+                'Editing of existing Item is not allowed!'
+            )
 
         self.instance.user = self.cleaned_data['new_user']
         return super().save(commit)
 
-    class Meta:
-        model = SharedBaseModel
-        fields = ['new_user']
-        exclude = ['user']
-
 
 class SharedBaseAdmin(admin.ModelAdmin):
     create_form = CreateSharedBaseForm
-
     readonly_fields = [
         'user',
         'uuid',
@@ -100,9 +97,10 @@ class SharedBaseAdmin(admin.ModelAdmin):
         self.form = orig_self_form
         return result
 
-    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str) -> Tuple[QuerySet, bool]:
+    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str):
         queryset, may_have_duplicates = super().get_search_results(
-            request, queryset, search_term)
+            request, queryset, search_term
+        )
 
         search_term_as_uuid = string_to_UUID(search_term)
         if search_term_as_uuid is not None:
@@ -114,15 +112,15 @@ class SharedBaseAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='user__username', description='owner')
     def owner(self, object: SharedBaseModel):
-        opts = object.user._meta
+        user_opts = object.user._meta
         return link_to_objectpage(
             str(object.user),
-            '{}_{}'.format(opts.app_label, opts.model_name),
+            '{}_{}'.format(user_opts.app_label, user_opts.model_name),
             object.user.id,
         )
 
     @admin.display(ordering='comments_count', description='comments')
-    def comments_count(self, object: SharedBaseModel):
+    def comments_(self, object: SharedBaseModel):
         return link_to_listpage(
             object.comments_count,
             'comments_comment',
@@ -132,7 +130,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='likes_count', description='likes')
-    def likes_count(self, object: SharedBaseModel):
+    def likes_(self, object: SharedBaseModel):
         return link_to_listpage(
             object.likes_count,
             'likes_like',
@@ -143,6 +141,10 @@ class SharedBaseAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         return super().get_queryset(request).annotate(
-            comments_count=Count('comments', distinct=True),
             likes_count=Count('likes', distinct=True),
+            comments_count=Count(
+                'comments',
+                distinct=True,
+                filter=Q(comments__deleted_at__isnull=True),
+            ),
         )

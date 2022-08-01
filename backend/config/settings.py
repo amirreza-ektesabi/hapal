@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+from datetime import timedelta
 from decouple import config as decouple_config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +21,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django.contrib.postgres',
-    'softdelete',
-    'debug_toolbar',
-    'dal',
-    'dal_select2',
-
     'rest_framework',
+    'djoser',
     'corsheaders',
+
+    'debug_toolbar',
+
+    'dal_select2',
+    'dal',
+    'softdelete',
     'phonenumber_field',
 
     'accounts',
@@ -113,4 +117,28 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'accounts.Account'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
+}
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'accounts.serializers.UserCreateSerializer',
+    }
+}

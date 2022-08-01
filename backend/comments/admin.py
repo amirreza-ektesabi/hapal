@@ -1,10 +1,9 @@
+from comments.models import Comment
+from baseapp.admin import SharedBaseAdmin, link_to_objectpage
 from django.forms import Textarea
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
-
-from .models import Comment
-from baseapp.admin import SharedBaseAdmin, link_to_objectpage
 
 
 @admin.register(Comment)
@@ -17,11 +16,13 @@ class CommentAdmin(SharedBaseAdmin):
         'who_reply',
         'replied_to',
         'created',
+        'updated',
     ]
     readonly_fields = [
         'user',
         'uuid',
         'created',
+        'updated',
         'replied_to',
     ]
     list_display = [
@@ -29,8 +30,8 @@ class CommentAdmin(SharedBaseAdmin):
         'owner',
         'truncated_body',
         'replied_to',
-        'comments_count',
-        'likes_count',
+        'comments_',
+        'likes_',
     ]
     search_fields = [
         'body__icontains',
@@ -49,7 +50,8 @@ class CommentAdmin(SharedBaseAdmin):
 
     @admin.display(description='body')
     def truncated_body(self, comment: Comment):
-        return '{}...'.format(comment.body[:85]) if len(comment.body) > 90 else comment.body
+        return '{}...'.format(comment.body[:85]) if len(comment.body) > 90 else \
+               comment.body
 
     @admin.display(description='reply to')
     def replied_to(self, comment: Comment):

@@ -1,10 +1,8 @@
+from uuid import uuid4
+from softdelete.models import SoftDeleteObject
 from django.db import DEFAULT_DB_ALIAS, models
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
-
-from softdelete.models import SoftDeleteObject
-
-from uuid import uuid4
 
 
 class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRelation):
@@ -22,9 +20,20 @@ class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRe
 
 
 class SharedBaseModel(SoftDeleteObject, models.Model):
+    class AccessLevel(models.IntegerChoices):
+        PUBLIC = 0
+        PRIVATE = 1
+
+    class WhoReply(models.IntegerChoices):
+        EVERY_ONE = 0
+        JUST_ME = 1
+
     uuid = models.UUIDField(
-        unique=True, default=uuid4, editable=False
+        unique=True,
+        default=uuid4,
+        editable=False
     )
+
     user = models.ForeignKey(
         'accounts.Account',
         models.CASCADE,
@@ -33,18 +42,10 @@ class SharedBaseModel(SoftDeleteObject, models.Model):
         verbose_name=_("user"),
     )
 
-    class AccessLevel(models.IntegerChoices):
-        PUBLIC = 0
-        PRIVATE = 1
-
     access_level = models.PositiveSmallIntegerField(
         choices=AccessLevel.choices,
         default=AccessLevel.PUBLIC
     )
-
-    class WhoReply(models.IntegerChoices):
-        EVERY_ONE = 0
-        JUST_ME = 1
 
     who_reply = models.PositiveSmallIntegerField(
         choices=WhoReply.choices,
@@ -66,19 +67,21 @@ class SharedBaseModel(SoftDeleteObject, models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
+
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
     def __str__(self) -> str:
-        return 'Deleted' if self.deleted_at else '{} - {}'.format(self._meta.model_name.title(), self.id)
+        return 'Deleted' if self.deleted_at else \
+               '{} - {}'.format(self._meta.model_name.title(), self.id)
 
     @property
     def app_model_label(self) -> str:
         return '{}_{}'.format(self._meta.app_label, self._meta.model_name)
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs) -> None:
         super().delete(*args, **kwargs)
 
         self.likes.clear()

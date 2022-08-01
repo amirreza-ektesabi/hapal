@@ -998,3 +998,5 @@ insert into likes_like (id, liked_id, liked_type_id, user_id, created) values (9
 insert into likes_like (id, liked_id, liked_type_id, user_id, created) values (998, 438, 13, 234, '2022-04-15 02:12:56');
 insert into likes_like (id, liked_id, liked_type_id, user_id, created) values (999, 980, 8, 622, '2022-01-16 14:27:02');
 insert into likes_like (id, liked_id, liked_type_id, user_id, created) values (1000, 808, 9, 704, '2022-03-02 12:49:58');
+
+SELECT setval('likes_like_id_seq', (SELECT MAX(id) FROM likes_like) + 1);

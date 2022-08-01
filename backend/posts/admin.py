@@ -1,8 +1,7 @@
+from baseapp.admin import SharedBaseAdmin, link_to_objectpage
+from posts.models import Post
 from django.contrib import admin
 from django.http import HttpRequest
-
-from baseapp.admin import SharedBaseAdmin, link_to_objectpage
-from .models import Post
 
 
 @admin.register(Post)
@@ -27,8 +26,8 @@ class PostAdmin(SharedBaseAdmin):
         'owner',
         'list_added_to',
         'title',
-        'comments_count',
-        'likes_count',
+        'comments_',
+        'likes_',
     ]
     search_fields = [
         'title__icontains',

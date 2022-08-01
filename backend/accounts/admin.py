@@ -1,24 +1,41 @@
-from django.db.models import QuerySet, Count
-from django.contrib.contenttypes.models import ContentType
-from django.contrib import admin
-from django.http import HttpRequest
-
-from .models import Account
+from accounts.models import Account
 from baseapp.admin import link_to_listpage
+from django.contrib import admin
+from django.db.models import QuerySet, Count, Q
+from django.contrib.contenttypes.models import ContentType
+from django.http import HttpRequest
 
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    exclude = [
-        'deleted_at'
+    fields = [
+        'username',
+        'password',
+        'name',
+        'bio',
+        'email',
+        'phone_number',
+        'location',
+        'birth_date',
+        'avatar',
+        'header',
+        'access_level',
+        'birth_date_access_level',
+        'is_superuser',
+        'is_staff',
+        'date_joined',
+    ]
+    readonly_fields = [
+        'is_superuser',
+        'date_joined',
     ]
     list_display = [
         'username',
-        'followers',
-        'following',
-        'lists',
-        'posts',
-        'comments',
+        'followers_',
+        'followings_',
+        'lists_',
+        'posts_',
+        'comments_',
     ]
     actions = [
         'delete_selected'
@@ -33,25 +50,24 @@ class AccountAdmin(admin.ModelAdmin):
         self.opts = self.model._meta
 
     @admin.display(ordering='followers_count', description='followers')
-    def followers(self, account: Account):
+    def followers_(self, account: Account):
         return link_to_listpage(
             account.followers_count,
             'follows_follow',
             followed_id=account.id,
-            followed_type=ContentType.objects.get_for_model(
-                self.model).id,
+            followed_type=ContentType.objects.get_for_model(self.model).id,
         )
 
     @admin.display(ordering='followings_count', description='followings')
-    def following(self, account: Account):
+    def followings_(self, account: Account):
         return link_to_listpage(
             account.followings_count,
             'follows_follow',
-            follower__id=account.id,
+            user__id=account.id,
         )
 
     @admin.display(ordering='lists_count', description='lists')
-    def lists(self, account: Account):
+    def lists_(self, account: Account):
         return link_to_listpage(
             account.lists_count,
             'lists_list',
@@ -59,7 +75,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='posts_count', description='posts')
-    def posts(self, account: Account):
+    def posts_(self, account: Account):
         return link_to_listpage(
             account.posts_count,
             'posts_post',
@@ -67,7 +83,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='comments_count', description='comments')
-    def comments(self, account: Account):
+    def comments_(self, account: Account):
         return link_to_listpage(
             account.comments_count,
             'comments_comment',
@@ -78,7 +94,19 @@ class AccountAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(
             followers_count=Count('followers', distinct=True),
             followings_count=Count('followings', distinct=True),
-            lists_count=Count('lists', distinct=True),
-            posts_count=Count('posts', distinct=True),
-            comments_count=Count('comments', distinct=True),
+            lists_count=Count(
+                'lists',
+                distinct=True,
+                filter=Q(lists__deleted_at__isnull=True)
+            ),
+            posts_count=Count(
+                'posts',
+                distinct=True,
+                filter=Q(posts__deleted_at__isnull=True)
+            ),
+            comments_count=Count(
+                'comments',
+                distinct=True,
+                filter=Q(comments__deleted_at__isnull=True)
+            ),
         )

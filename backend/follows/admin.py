@@ -1,26 +1,25 @@
+from follows.models import Follow
+from baseapp.admin import link_to_objectpage
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
-
-from .models import Follow
-from baseapp.admin import link_to_objectpage
 
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     fields = [
-        'follower',
+        'user',
         'followed',
         'created',
     ]
     list_display = [
         'id',
-        'follower_user',
+        'follower',
         'followed',
     ]
     list_per_page = 25
     list_select_related = [
-        'follower'
+        'user'
     ]
 
     def has_add_permission(self, request: HttpRequest) -> bool:
@@ -29,12 +28,12 @@ class FollowAdmin(admin.ModelAdmin):
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
 
-    @admin.display(ordering='follower__id', description='follower')
-    def follower_user(self, follow: Follow):
+    @admin.display(ordering='user__id', description='follower')
+    def follower(self, follow: Follow):
         return link_to_objectpage(
-            str(follow.follower),
-            follow.follower.app_model_label,
-            follow.follower.id,
+            str(follow.user),
+            follow.user.app_model_label,
+            follow.user.id,
         )
 
     @admin.display(ordering='followed_id', description='followed')
