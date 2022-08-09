@@ -36,6 +36,8 @@ class Follow(models.Model):
         verbose_name = _('follow')
         verbose_name_plural = _('follows')
 
+        unique_together = ('user', 'followed_type', 'followed_id')
+
     def __str__(self) -> str:
         return '{} - {}'.format(self._meta.model_name.title(), self.id)
 

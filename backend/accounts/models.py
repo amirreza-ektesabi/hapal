@@ -1,5 +1,4 @@
 from softdelete.models import SoftDeleteObject, SoftDeleteManager
-from phonenumber_field.modelfields import PhoneNumberField
 from accounts.username_validation import validate_username
 from django.db import models
 from django.contrib.postgres import fields
@@ -25,15 +24,6 @@ class Account(SoftDeleteObject, AbstractUser):
                 self.undelete()
             else:
                 self.delete()
-
-    class AccessLevel(models.IntegerChoices):
-        PUBLIC = 0
-        PRIVATE = 1
-
-    class BirthDateAccessLevel(models.IntegerChoices):
-        JUST_USER = 0
-        PUBLIC_YEAR = 1
-        PUBLIC_ALL = 2
 
     username = fields.CICharField(
         unique=True,
@@ -69,37 +59,10 @@ class Account(SoftDeleteObject, AbstractUser):
             'unique': _("A user with this email already exists."),
         },
     )
-
-    phone_number = PhoneNumberField(
-        null=True,
-        blank=True,
-        error_messages={
-            'unique': _("A user with this phone-number already exists."),
-        },
-    )
-
-    location = models.CharField(blank=True, max_length=100)
-
-    birth_date = models.DateField(blank=True, null=True)
-
+    
     avatar = models.ImageField(
         upload_to='images/account_avatars',
         null=True, blank=True
-    )
-
-    header = models.ImageField(
-        upload_to='images/account_headers',
-        null=True, blank=True
-    )
-
-    access_level = models.PositiveSmallIntegerField(
-        choices=AccessLevel.choices,
-        default=AccessLevel.PUBLIC
-    )
-
-    birth_date_access_level = models.PositiveSmallIntegerField(
-        choices=BirthDateAccessLevel.choices,
-        default=BirthDateAccessLevel.JUST_USER
     )
 
     followers = contenttypes_fields.GenericRelation(

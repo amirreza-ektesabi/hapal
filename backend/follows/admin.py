@@ -15,7 +15,7 @@ class FollowAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'follower',
-        'followed',
+        'followed_',
     ]
     list_per_page = 25
     list_select_related = [
@@ -28,7 +28,7 @@ class FollowAdmin(admin.ModelAdmin):
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
 
-    @admin.display(ordering='user__id', description='follower')
+    @admin.display(ordering='user_id', description='follower')
     def follower(self, follow: Follow):
         return link_to_objectpage(
             str(follow.user),
@@ -37,7 +37,7 @@ class FollowAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='followed_id', description='followed')
-    def followed(self, follow: Follow):
+    def followed_(self, follow: Follow):
         return link_to_objectpage(
             str(follow.followed),
             follow.followed.app_model_label,

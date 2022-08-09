@@ -14,9 +14,6 @@ class ListAdmin(SharedBaseAdmin):
         'uuid',
         'title',
         'description',
-        'access_level',
-        'who_add',
-        'who_reply',
         'header',
         'created',
     ]

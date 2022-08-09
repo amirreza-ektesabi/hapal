@@ -73,9 +73,14 @@ class SharedBaseAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         'updated',
-        'access_level'
     ]
     list_per_page = 25
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False
+
+    def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
+        return False
 
     def __init__(self, model, admin_site):
         super().__init__(model, admin_site)

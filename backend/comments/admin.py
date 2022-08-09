@@ -12,8 +12,6 @@ class CommentAdmin(SharedBaseAdmin):
         'user',
         'uuid',
         'body',
-        'access_level',
-        'who_reply',
         'replied_to',
         'created',
         'updated',
@@ -29,7 +27,7 @@ class CommentAdmin(SharedBaseAdmin):
         'uuid',
         'owner',
         'truncated_body',
-        'replied_to',
+        'replied_to_',
         'comments_',
         'likes_',
     ]
@@ -41,9 +39,6 @@ class CommentAdmin(SharedBaseAdmin):
         'replied_to_type',
     ]
 
-    def has_add_permission(self, request: HttpRequest, obj=None):
-        return False
-
     def get_form(self, request: HttpRequest, obj=None, **kwargs):
         kwargs['widgets'] = {'body': Textarea}
         return super().get_form(request, obj, **kwargs)
@@ -54,7 +49,7 @@ class CommentAdmin(SharedBaseAdmin):
                comment.body
 
     @admin.display(description='reply to')
-    def replied_to(self, comment: Comment):
+    def replied_to_(self, comment: Comment):
         return link_to_objectpage(
             str(comment.replied_to),
             comment.replied_to.app_model_label,

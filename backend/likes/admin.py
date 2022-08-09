@@ -15,7 +15,7 @@ class LikeAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'user_',
-        'liked',
+        'liked_',
     ]
     list_per_page = 25
     list_select_related = [
@@ -29,7 +29,7 @@ class LikeAdmin(admin.ModelAdmin):
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
 
-    @admin.display(ordering='user__id', description='user')
+    @admin.display(ordering='user_id', description='user')
     def user_(self, like: Like):
         opts = like.user._meta
         return link_to_objectpage(
@@ -38,8 +38,8 @@ class LikeAdmin(admin.ModelAdmin):
             like.user.id,
         )
 
-    @admin.display(description='liked')
-    def liked(self, like: Like):
+    @admin.display(ordering='liked_id', description='liked')
+    def liked_(self, like: Like):
         return link_to_objectpage(
             str(like.liked),
             like.liked.app_model_label,

@@ -1,12 +1,12 @@
 from accounts.models import Account
+from accounts.serializers import ProfileSerializer
 from lists.models import List
 from posts.models import Post
-from .serializers import ProfileSerializer, ProfileAboutSerializer
 from lists.serializers import ListSerializer
 from posts.serializers.post import PostSerializer
 from math import ceil
 from dal import autocomplete
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,56 +14,29 @@ from django.http import HttpRequest
 from django.urls import reverse
 
 
-class AccountAutocomp(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        qs = Account.objects.all()
-        if self.q:
-            qs = qs.filter(username__istartswith=self.q)
-        return qs
-
-
-class ProfilePage(RetrieveUpdateDestroyAPIView):
+class ProfilePage(RetrieveAPIView):
     queryset = Account.objects.prefetch_related(
         'followers',
         'followings',
-        'lists',
-        'posts',
-        'comments',
-        'likes'
     )
     serializer_class = ProfileSerializer
     lookup_field = 'username'
 
-    def get_queryset(self):
-        username = self.kwargs[self.lookup_field]
-        return super().get_queryset().filter(
-            username=username
-        )
-
-
-class ProfilePageAbout(RetrieveAPIView):
-    queryset = Account.objects.all()
-    serializer_class = ProfileAboutSerializer
-    lookup_field = 'username'
-
-    def get_queryset(self):
-        username = self.kwargs[self.lookup_field]
-        return super().get_queryset().filter(
-            username=username
-        )
-
 
 @api_view(['GET'])
 def profile_page_timeline(request: HttpRequest, **kwargs):
-    def invalid_page():
-        return Response({"detail": "Invalid page."}, status.HTTP_404_NOT_FOUND)
-
     page_size = 10
-
+        
+    def invalid_page_response():
+        return Response(
+            {"detail": "Invalid page."},
+            status.HTTP_404_NOT_FOUND,
+        )
+    
     username = kwargs['username']
-    page = request.GET.get('page', 1)
+    page = request.GET.get('page', '1')
     if not page.isdecimal():
-        return invalid_page()
+        return invalid_page_response()
     page = int(page)
 
     posts_queryset = Post.objects.select_related('user', 'added_to', 'added_to__user'). \
@@ -79,7 +52,7 @@ def profile_page_timeline(request: HttpRequest, **kwargs):
     results_count = created_values.count()
     number_of_pages = ceil(results_count / page_size)
     if not 1 <= page <= number_of_pages:
-        return invalid_page()
+        return invalid_page_response()
 
     created_range = (
         created_values[min(results_count, page * page_size) - 1]['created'],
@@ -100,3 +73,11 @@ def profile_page_timeline(request: HttpRequest, **kwargs):
     data['results'].sort(key=lambda x: x['created'], reverse=True)
 
     return Response(data)
+
+
+class AccountAutocomp(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Account.objects.all()
+        if self.q:
+            qs = qs.filter(username__istartswith=self.q)
+        return qs

@@ -22,6 +22,16 @@ class SharedObjectBaseSerializer(serializers.ModelSerializer):
 
     user = AccountSerializer(read_only=True)
 
+    created = serializers.DateTimeField(
+        format='%Y-%m-%d %H:%M:%S',
+        read_only=True
+    )
+
+    updated = serializers.DateTimeField(
+        format='%Y-%m-%d %H:%M:%S',
+        read_only=True
+    )
+
     def get_type(self, obj: SharedBaseModel) -> str:
         return self.Meta.model._meta.model_name
 
@@ -63,6 +73,11 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
 
     user = AccountSerializer(read_only=True)
+
+    created = serializers.DateTimeField(
+        format='%Y-%m-%d %H:%M:%S',
+        read_only=True
+    )
 
     def get_type(self, obj):
         return self.Meta.model._meta.model_name

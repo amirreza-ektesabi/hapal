@@ -11,8 +11,6 @@ class PostAdmin(SharedBaseAdmin):
         'uuid',
         'added_to',
         'title',
-        'access_level',
-        'who_reply',
         'created',
     ]
     readonly_fields = [
@@ -36,9 +34,6 @@ class PostAdmin(SharedBaseAdmin):
         'user',
         'added_to',
     ]
-
-    def has_add_permission(self, request: HttpRequest, obj=None):
-        return False
 
     @admin.display(ordering='added_to__id', description='list')
     def list_added_to(self, post: Post):

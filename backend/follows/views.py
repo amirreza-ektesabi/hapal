@@ -1,7 +1,9 @@
 from follows.models import Follow
 from follows.serializers import FollowSerializer
 from baseapp.views import PageNumberPaginationWithSize
+from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.response import Response
 
 
 class ObjectPageFollows(ListCreateAPIView):
@@ -32,3 +34,8 @@ class ObjectPageFollows(ListCreateAPIView):
             object_type=self.kwargs['object_type'],
         ))
         return context
+
+    def delete(self, request, *args, **kwargs):
+        ''' unfollow '''
+        self.get_queryset().filter(user=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

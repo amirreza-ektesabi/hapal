@@ -47,14 +47,17 @@ class ProfileSerializer(AccountBaseSerializer):
             'name',
             'username',
             'avatar',
-            'header',
             'bio',
+            'joined',
             'followers_count',
             'following_count',
-            'lists_count',
-            'posts_count',
-            'comments_count',
         ]
+
+    joined = serializers.DateTimeField(
+        format='%Y-%m-%d',
+        source='date_joined',
+        read_only=True
+    )
 
     followers_count = serializers.IntegerField(
         source='followers.count',
@@ -65,29 +68,3 @@ class ProfileSerializer(AccountBaseSerializer):
         source='followings.count',
         read_only=True
     )
-    lists_count = serializers.IntegerField(
-        source='lists.count',
-        read_only=True
-    )
-
-    posts_count = serializers.IntegerField(
-        source='posts.count',
-        read_only=True
-    )
-
-    comments_count = serializers.IntegerField(
-        source='comments.count',
-        read_only=True
-    )
-
-
-class ProfileAboutSerializer(AccountBaseSerializer):
-    class Meta(AccountBaseSerializer.Meta):
-        fields = AccountBaseSerializer.Meta.fields + [
-            'username',
-            'email',
-            'phone_number',
-            'location',
-            'birth_date',
-            'joined'
-        ]

@@ -20,14 +20,6 @@ class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRe
 
 
 class SharedBaseModel(SoftDeleteObject, models.Model):
-    class AccessLevel(models.IntegerChoices):
-        PUBLIC = 0
-        PRIVATE = 1
-
-    class WhoReply(models.IntegerChoices):
-        EVERY_ONE = 0
-        JUST_ME = 1
-
     uuid = models.UUIDField(
         unique=True,
         default=uuid4,
@@ -40,16 +32,6 @@ class SharedBaseModel(SoftDeleteObject, models.Model):
         editable=False,
         related_name='%(class)ss',
         verbose_name=_("user"),
-    )
-
-    access_level = models.PositiveSmallIntegerField(
-        choices=AccessLevel.choices,
-        default=AccessLevel.PUBLIC
-    )
-
-    who_reply = models.PositiveSmallIntegerField(
-        choices=WhoReply.choices,
-        default=WhoReply.EVERY_ONE
     )
 
     comments = GenericRelationWithoutCommentAsRelatedObject(

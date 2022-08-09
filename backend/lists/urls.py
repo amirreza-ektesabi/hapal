@@ -1,4 +1,4 @@
-from lists.views import ListPage
+from lists.views import ListPage, CreateList
 from posts.views.post import ObjectPagePosts
 from comments.views import ObjectPageComments
 from likes.views import ObjectPageLikes
@@ -9,6 +9,7 @@ from django.urls import path
 path_kwargs = {'object_type': 'list', 'lookup_field': 'uuid'}
 
 urlpatterns = [
+    path('create/', CreateList.as_view()),
     path('<uuid:uuid>/', ListPage.as_view(), name='list_page'),
     path('<uuid:uuid>/posts/', ObjectPagePosts.as_view(), path_kwargs),
     path('<uuid:uuid>/comments/', ObjectPageComments.as_view(), path_kwargs),

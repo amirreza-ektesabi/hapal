@@ -16,14 +16,13 @@ class ListSimpleSerializer(SharedObjectBaseSerializer):
 class ListSerializer(SharedObjectSerializer):
     class Meta(SharedObjectSerializer.Meta):
         model = List
-        fields = SharedObjectSerializer.Meta.fields + \
-            [
-                'followers_count',
-                'posts_count',
-                'title',
-                'header',
-                'description',
-            ]
+        fields = SharedObjectSerializer.Meta.fields + [
+            'followers_count',
+            'posts_count',
+            'title',
+            'header',
+            'description',
+        ]
 
     followers_count = serializers.IntegerField(
         source='followers.count', read_only=True)

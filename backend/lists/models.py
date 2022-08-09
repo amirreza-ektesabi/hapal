@@ -5,10 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class List(SharedBaseModel):
-    class WhoAdd(models.IntegerChoices):
-        EVERY_ONE = 0
-        JUST_ME = 1
-    
     title = models.CharField(
         max_length=255,
         blank=True
@@ -22,11 +18,6 @@ class List(SharedBaseModel):
     header = models.ImageField(
         upload_to='images/list_headers',
         null=True, blank=True
-    )
-
-    who_add = models.PositiveSmallIntegerField(
-        choices=WhoAdd.choices,
-        default=WhoAdd.EVERY_ONE
     )
 
     followers = contenttypes_fields.GenericRelation(

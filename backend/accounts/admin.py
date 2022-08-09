@@ -10,17 +10,10 @@ from django.http import HttpRequest
 class AccountAdmin(admin.ModelAdmin):
     fields = [
         'username',
-        'password',
         'name',
         'bio',
         'email',
-        'phone_number',
-        'location',
-        'birth_date',
         'avatar',
-        'header',
-        'access_level',
-        'birth_date_access_level',
         'is_superuser',
         'is_staff',
         'date_joined',

@@ -34,6 +34,8 @@ class Like(models.Model):
         verbose_name = _('like')
         verbose_name_plural = _('likes')
 
+        unique_together = ('user', 'liked_type', 'liked_id')
+
     def __str__(self) -> str:
         return '{} - {}'.format(self._meta.model_name.title(), self.id)
 
