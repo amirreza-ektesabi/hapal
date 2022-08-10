@@ -59,10 +59,10 @@ class Account(SoftDeleteObject, AbstractUser):
             'unique': _("A user with this email already exists."),
         },
     )
-    
+
     avatar = models.ImageField(
         upload_to='images/account_avatars',
-        null=True, blank=True
+        null=True, blank=True, default=None,
     )
 
     followers = contenttypes_fields.GenericRelation(

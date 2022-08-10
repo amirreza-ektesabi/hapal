@@ -3,7 +3,7 @@ from likes.views import ObjectPageLikes
 from django.urls import path
 
 
-path_kwargs = {'object_type': 'comment', 'lookup_field': 'uuid'}
+path_kwargs = {'shared_object_type': 'comment', 'lookup_field': 'uuid'}
 
 urlpatterns = [
     path('<uuid:uuid>/', CommentPage.as_view(), name='comment_page'),

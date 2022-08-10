@@ -4,7 +4,7 @@ from follows.views import ObjectPageFollows
 from django.urls import path
 
 
-path_kwargs = {'object_type': 'account', 'lookup_field': 'username'}
+path_kwargs = {'shared_object_type': 'account', 'lookup_field': 'username'}
 
 urlpatterns = [
     path('', ProfilePage.as_view(), name='account_page'),

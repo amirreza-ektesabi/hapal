@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'dal_select2',
     'dal',
     'softdelete',
-    'phonenumber_field',
 
     'accounts',
     'follows',

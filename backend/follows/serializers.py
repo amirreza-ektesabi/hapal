@@ -1,6 +1,6 @@
-from follows.models import Follow
 from accounts.models import Account
 from lists.models import List
+from follows.models import Follow
 from baseapp.serializers import SharedObjectActionSerializer
 from accounts.serializers import AccountSerializer
 from lists.serializers import ListSimpleSerializer
@@ -18,12 +18,12 @@ class FollowSerializer(SharedObjectActionSerializer):
 
     object_name = 'followed'
 
-    object_models_switch = {
+    shared_object_models_switch = {
         'list': List,
         'account': Account,
     }
 
-    object_serializers_switch = {
+    shared_object_serializers_switch = {
         Account: AccountSerializer,
         List: ListSimpleSerializer,
     }

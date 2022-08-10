@@ -1,5 +1,6 @@
 from baseapp.views import PageNumberPaginationWithSize
 from posts.models import Property
+from posts.permissions import PropertyPermission
 from posts.serializers.property import PropertyCreateSerializer, PropertyUpdateSerializer
 from django.db.models import F
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -10,6 +11,7 @@ class PropertyView(RetrieveUpdateDestroyAPIView):
         prefetch_related('pairs')
     serializer_class = PropertyUpdateSerializer
     lookup_field = 'puuid'
+    permission_classes = [PropertyPermission]
 
     def get_queryset(self):
         post_uuid = self.kwargs['uuid']
@@ -31,6 +33,7 @@ class PostPageProperties(ListCreateAPIView):
         prefetch_related('pairs')
     serializer_class = PropertyCreateSerializer
     pagination_class = PageNumberPaginationWithSize(10)
+    permission_classes = [PropertyPermission]
 
     def get_queryset(self):
         post_uuid = self.kwargs['uuid']

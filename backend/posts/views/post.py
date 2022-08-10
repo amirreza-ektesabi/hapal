@@ -1,6 +1,8 @@
 from posts.models import Post
 from posts.serializers.post import PostSerializer
+from posts.permissions import ObjectPostsPermission
 from baseapp.views import PageNumberPaginationWithSize
+from baseapp.permissions import IsOwnerOrReadOnly
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
@@ -9,6 +11,7 @@ class PostPage(RetrieveUpdateDestroyAPIView):
         prefetch_related('comments', 'likes')
     serializer_class = PostSerializer
     lookup_field = 'uuid'
+    permission_classes = [IsOwnerOrReadOnly]
 
 
 class ObjectPagePosts(ListCreateAPIView):
@@ -16,11 +19,12 @@ class ObjectPagePosts(ListCreateAPIView):
         prefetch_related('comments', 'likes')
     serializer_class = PostSerializer
     pagination_class = PageNumberPaginationWithSize(10)
+    permission_classes = [ObjectPostsPermission]
 
     def get_queryset(self):
         lookup_field = self.kwargs['lookup_field']
-        object_type = self.kwargs['object_type']
-        field_name = 'user' if object_type == 'account' else 'added_to'
+        shared_object_type = self.kwargs['shared_object_type']
+        field_name = 'user' if shared_object_type == 'account' else 'added_to'
         value = self.kwargs[lookup_field]
 
         return super().get_queryset().filter(

@@ -85,12 +85,12 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
     def get_object(self, obj):
         object = getattr(obj, self.object_name)
         kwargs = {'instance': object}
-        object_serializer = self.object_serializers_switch[object._meta.model]
-        return object_serializer().to_representation(**kwargs)
+        shared_object_serializer = self.shared_object_serializers_switch[object._meta.model]
+        return shared_object_serializer().to_representation(**kwargs)
 
     def create(self, validated_data: dict):
-        model = self.object_models_switch[self.context['object_type']]
-        object = model.objects.get(uuid=self.context['lookup_field_value'])
+        shared_object_model = self.shared_object_models_switch[self.context['shared_object_type']]
+        object = shared_object_model.objects.get(uuid=self.context['lookup_field_value'])
         validated_data.update({
             'user_id': self.context['user_id'],
             self.object_name: object,

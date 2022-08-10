@@ -1,5 +1,6 @@
 from lists.models import List
 from lists.serializers import ListSerializer
+from baseapp.permissions import IsOwnerOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 
 
@@ -8,6 +9,7 @@ class ListPage(RetrieveUpdateDestroyAPIView):
         prefetch_related('posts', 'comments', 'followers', 'likes')
     serializer_class = ListSerializer
     lookup_field = 'uuid'
+    permission_classes = [IsOwnerOrReadOnly]
 
 
 class CreateList(CreateAPIView):

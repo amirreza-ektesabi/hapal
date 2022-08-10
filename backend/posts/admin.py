@@ -1,6 +1,7 @@
 from baseapp.admin import SharedBaseAdmin, link_to_objectpage
 from posts.models import Post
 from django.contrib import admin
+from django.db.models import QuerySet, Count
 from django.http import HttpRequest
 
 
@@ -24,6 +25,7 @@ class PostAdmin(SharedBaseAdmin):
         'owner',
         'list_added_to',
         'title',
+        'properties_',
         'comments_',
         'likes_',
     ]
@@ -41,4 +43,13 @@ class PostAdmin(SharedBaseAdmin):
             str(post.added_to),
             post.added_to.app_model_label,
             post.added_to.id,
+        )
+    
+    @admin.display(ordering='properties_count', description='properties')
+    def properties_(self, object: Post):
+        return object.properties_count
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).annotate(
+            properties_count=Count('properties', distinct=True),
         )

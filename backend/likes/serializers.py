@@ -20,13 +20,13 @@ class LikeSerializer(SharedObjectActionSerializer):
 
     object_name = 'liked'
 
-    object_models_switch = {
+    shared_object_models_switch = {
         'list': List,
         'post': Post,
         'comment': Comment,
     }
 
-    object_serializers_switch = {
+    shared_object_serializers_switch = {
         List: ListSimpleSerializer,
         Post: PostSimpleSerializer,
         Comment: CommentSimpleSerializer,

@@ -17,7 +17,7 @@ class List(SharedBaseModel):
     
     header = models.ImageField(
         upload_to='images/list_headers',
-        null=True, blank=True
+        null=True, blank=True, default=None,
     )
 
     followers = contenttypes_fields.GenericRelation(
