@@ -45,26 +45,23 @@ class RestrictedWordsValidator(BaseValidator):
         return any(word == value for word in self.username_restricted_words)
 
 
-username_validators = (
-    MinLengthValidator(5,
-                       _('The username must contain at least %(limit_value)d characters.')),
-    RegexValidator(r'^[a-zA-Z0-9\_]*$',
-                   _('The username must contain only letters, numbers and underscore.'),
-                   'invalid_character'),
-    RegexValidator(r'^[a-zA-Z].*$',
-                   _('The username can only start with a letter.'),
-                   'invalid_start_character'),
-    RestrictedWordsValidator(_('The username contains restricted word.'),
-                             'restricted_word')
-)
-
-
-def validate_username(username):
-    errors = []
-    for validator in username_validators:
-        try:
-            validator(username)
-        except ValidationError as error:
-            errors.append(error)
-    if errors:
-        raise ValidationError(errors)
+username_validators_list = [
+    MinLengthValidator(
+        5,
+        _('The username must contain at least %(limit_value)d characters.')
+    ),
+    RegexValidator(
+        r'^[a-zA-Z0-9\_]*$',
+        _('The username must contain only letters, numbers and underscore.'),
+        'invalid_character'
+    ),
+    RegexValidator(
+        r'^[a-zA-Z].*$',
+        _('The username can only start with a letter.'),
+        'invalid_start_character'
+    ),
+    RestrictedWordsValidator(
+        _('The username contains restricted word.'),
+        'restricted_word'
+    ),
+]

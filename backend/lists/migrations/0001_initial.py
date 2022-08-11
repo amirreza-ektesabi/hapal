@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('title', models.CharField(blank=True, max_length=255)),
                 ('description', models.CharField(blank=True, max_length=500)),
-                ('header', models.ImageField(blank=True, null=True, upload_to='images/list_headers')),
+                ('header', models.ImageField(blank=True, default=None, null=True, upload_to='images/list_headers')),
                 ('user', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL, verbose_name='user')),
             ],
             options={

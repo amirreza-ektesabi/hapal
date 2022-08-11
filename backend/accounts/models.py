@@ -1,5 +1,5 @@
 from softdelete.models import SoftDeleteObject, SoftDeleteManager
-from accounts.username_validation import validate_username
+from accounts.username_validators import username_validators_list
 from django.db import models
 from django.contrib.postgres import fields
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
@@ -28,7 +28,7 @@ class Account(SoftDeleteObject, AbstractUser):
     username = fields.CICharField(
         unique=True,
         max_length=32,
-        validators=[validate_username],
+        validators=[*username_validators_list],
         error_messages={
             'unique': _("A user with this username already exists."),
         },

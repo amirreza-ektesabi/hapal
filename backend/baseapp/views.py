@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
@@ -20,7 +19,6 @@ class SharedObjectPageAction(ListCreateAPIView):
         shared_object_model = self.shared_object_models_switch[shared_object_type]
         return get_object_or_404(shared_object_model, **{lookup_field: value})
 
-    @abstractmethod
     def get_filter_field_name_condition(self):
         raise NotImplementedError(
             '{cls}.get_filter_field_name_condition() must be implemented.'.format(

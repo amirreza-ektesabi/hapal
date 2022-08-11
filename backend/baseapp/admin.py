@@ -81,6 +81,9 @@ class SharedBaseAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
+    
+    def has_delete_permission(self, request: HttpRequest, obj=None) -> bool:
+        return False
 
     def __init__(self, model, admin_site):
         super().__init__(model, admin_site)

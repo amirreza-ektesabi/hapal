@@ -27,6 +27,9 @@ class FollowAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
+    
+    def has_delete_permission(self, request: HttpRequest, obj=None) -> bool:
+        return False
 
     @admin.display(ordering='user_id', description='follower')
     def follower(self, follow: Follow):
