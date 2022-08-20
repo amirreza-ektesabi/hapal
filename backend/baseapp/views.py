@@ -1,3 +1,4 @@
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
@@ -12,6 +13,8 @@ def PageNumberPaginationWithSize(page_size: int) -> type:
 
 
 class SharedObjectPageAction(ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
     def get_shared_object(self):
         lookup_field = self.kwargs['lookup_field']
         value = self.kwargs[lookup_field]

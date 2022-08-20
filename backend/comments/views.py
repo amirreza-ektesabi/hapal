@@ -2,6 +2,7 @@ from comments.models import Comment
 from comments.serializers import CommentSerializer
 from baseapp.views import PageNumberPaginationWithSize, SharedObjectPageAction
 from baseapp.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 
@@ -10,7 +11,7 @@ class CommentPage(RetrieveUpdateDestroyAPIView):
         prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes')
     serializer_class = CommentSerializer
     lookup_field = 'uuid'
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class ObjectPageComments(SharedObjectPageAction):

@@ -25,9 +25,16 @@ class ListSerializer(SharedObjectSerializer):
         ]
 
     followers_count = serializers.IntegerField(
-        source='followers.count', read_only=True)
+        source='followers.count',
+        read_only=True,
+    )
     posts_count = serializers.IntegerField(
-        source='posts.count', read_only=True)
+        source='posts.count',
+        read_only=True,
+    )
+    header = serializers.ImageField(
+        read_only=True,
+    )
 
     def create(self, validated_data: dict):
         validated_data.update(dict(

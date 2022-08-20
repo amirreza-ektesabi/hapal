@@ -1,9 +1,12 @@
 from posts.models import Post
+from lists.models import List
 from posts.serializers.post import PostSerializer
 from posts.permissions import ObjectPostsPermission
 from baseapp.views import PageNumberPaginationWithSize
 from baseapp.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.exceptions import NotFound
 
 
 class PostPage(RetrieveUpdateDestroyAPIView):
@@ -11,7 +14,7 @@ class PostPage(RetrieveUpdateDestroyAPIView):
         prefetch_related('comments', 'likes')
     serializer_class = PostSerializer
     lookup_field = 'uuid'
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class ObjectPagePosts(ListCreateAPIView):
@@ -19,7 +22,15 @@ class ObjectPagePosts(ListCreateAPIView):
         prefetch_related('comments', 'likes')
     serializer_class = PostSerializer
     pagination_class = PageNumberPaginationWithSize(10)
-    permission_classes = [ObjectPostsPermission]
+    permission_classes = [IsAuthenticatedOrReadOnly, ObjectPostsPermission]
+
+    def check_added_to_exists(self):
+        if not List.objects.filter(uuid=self.kwargs['uuid']).exists():
+            raise NotFound()
+
+    def initial(self, request, *args, **kwargs):
+        self.check_added_to_exists()
+        return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):
         lookup_field = self.kwargs['lookup_field']

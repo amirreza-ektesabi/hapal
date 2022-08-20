@@ -19,7 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
     path('favicon.ico/',
-         RedirectView.as_view(url=staticfiles_storage.url('img/favicon.ico'))),
+         RedirectView.as_view(url=staticfiles_storage.url('img/favicon-amougus.ico'))),
 
     path('<str:username>/', include('accounts.urls')),
     path('list/', include('lists.urls')),
