@@ -30,8 +30,22 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
         ]
 
     type = serializers.ChoiceField(Property.Type.labels)
-    
+
     pairs = PairSerializer(many=True, required=False)
+
+    def add_pairs(self, instance: Property, pairs_data: list, property_type: int):
+        value_model, fields_switch = PROPERTY_TYPES[property_type]
+
+        for pair_order_number, pair_data in enumerate(pairs_data, 1):
+            value_data = {model_field: pair_data[serializer_field]
+                           for serializer_field, model_field in fields_switch.items()}
+            value = value_model.objects.create(**value_data)
+            Pair.objects.create(
+                property=instance,
+                order_number=pair_order_number,
+                key=pair_data['key'],
+                value=value
+            )
 
     def create(self, validated_data: dict):
         pairs_data = validated_data.pop('pairs', [])
@@ -45,18 +59,8 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
         ))
 
         instance: Property = super().create(validated_data)
-
-        value_model, fields_switch = PROPERTY_TYPES[validated_data['type']]
-        for pair_order_number, pair_data in enumerate(pairs_data, 1):
-            value_datas = {model_field: pair_data[serializer_field]
-                           for serializer_field, model_field in fields_switch.items()}
-            value = value_model.objects.create(**value_datas)
-            Pair.objects.create(
-                property=instance,
-                order_number=pair_order_number,
-                key=pair_data['key'],
-                value=value
-            )
+        
+        self.add_pairs(instance, pairs_data, validated_data['type'])
 
         return instance
 

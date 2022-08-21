@@ -1,3 +1,4 @@
+from posts.models import Post
 from baseapp.views import PageNumberPaginationWithSize
 from posts.models import Property
 from posts.permissions import PropertyPermission
@@ -5,6 +6,7 @@ from posts.serializers.property import PropertyCreateSerializer, PropertyUpdateS
 from django.db.models import F
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.exceptions import NotFound
 
 
 class PropertyView(RetrieveUpdateDestroyAPIView):
@@ -13,6 +15,15 @@ class PropertyView(RetrieveUpdateDestroyAPIView):
     serializer_class = PropertyUpdateSerializer
     lookup_field = 'puuid'
     permission_classes = [IsAuthenticatedOrReadOnly, PropertyPermission]
+
+    def check_added_to_exists(self):
+        if not Post.objects.filter(uuid=self.kwargs['uuid']).exists() or \
+           not Property.objects.filter(puuid=self.kwargs['puuid']).exists():
+            raise NotFound()
+
+    def initial(self, request, *args, **kwargs):
+        self.check_added_to_exists()
+        return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):
         post_uuid = self.kwargs['uuid']
@@ -35,6 +46,14 @@ class PostPageProperties(ListCreateAPIView):
     serializer_class = PropertyCreateSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly, PropertyPermission]
+
+    def check_added_to_exists(self):
+        if not Post.objects.filter(uuid=self.kwargs['uuid']).exists():
+            raise NotFound()
+
+    def initial(self, request, *args, **kwargs):
+        self.check_added_to_exists()
+        return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):
         post_uuid = self.kwargs['uuid']
