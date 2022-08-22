@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 
 
@@ -34,6 +35,18 @@ class SharedObjectPageAction(ListCreateAPIView):
         return 'user' if self.get_filter_field_name_condition() else \
                '{}_{}'.format(self.object_name, shared_object_type)
 
+    def check_added_to_exists(self):
+        lookup_field = self.kwargs['lookup_field']
+        value = self.kwargs[lookup_field]
+        shared_object_type = self.kwargs['shared_object_type']
+        shared_object_model = self.shared_object_models_switch[shared_object_type]
+        if not shared_object_model.objects.filter(**{lookup_field: value}).exists():
+            raise NotFound()
+
+    def initial(self, request, *args, **kwargs):
+        self.check_added_to_exists()
+        return super().initial(request, *args, **kwargs)
+
     def get_queryset(self):
         return super().get_queryset().filter(
             **{self.get_filter_field_name(): self.get_shared_object()}
@@ -43,6 +56,7 @@ class SharedObjectPageAction(ListCreateAPIView):
         context = super().get_serializer_context()
         context.update(dict(
             user_id=self.request.user.id,
+            lookup_field=self.kwargs['lookup_field'],
             lookup_field_value=self.kwargs[self.kwargs['lookup_field']],
             shared_object_type=self.kwargs['shared_object_type'],
         ))

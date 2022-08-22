@@ -14,7 +14,6 @@ urlpatterns = [
     path('following/', ObjectPageFollows.as_view(),
          {**path_kwargs, 'side': 'following'}),
 
-    path('comments/', ObjectPageComments.as_view(), path_kwargs),
     path('timeline/', profile_page_timeline,
          path_kwargs, name='account_page_timeline'),
 ]

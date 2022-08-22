@@ -1,5 +1,8 @@
 from lists.models import List
 from posts.models import Post
+from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
+from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
+from follows.tests.test_follows import AbstractTestFollow, AbstractTestUnfollow, AbstractTestRetrieveListOfFollowers
 import uuid
 import pytest
 from model_bakery import baker
@@ -213,16 +216,62 @@ class TestRetrieveListOfPosts:
     def do(self, user: APIClient, uuid: str):
         return user.get(f'/list/{uuid}/posts/')
 
-    def test_if_list_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+    def test_if_list_doesnt_exist_returns_404(self, anonymous_user: APIClient):
+        response = self.do(anonymous_user, str(uuid.uuid4()))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_if_successes_returns_201(self, authenticated_user: APIClient):
-        user = authenticated_user.handler._force_user
-        object = baker.make(List, user=user)
-        posts = baker.make(Post, added_to=object, user=user, _quantity=10)
+    def test_if_successes_returns_201(self, anonymous_user: APIClient):
+        object = baker.make(List)
+        posts = baker.make(Post, added_to=object, user=object.user, _quantity=10)
 
-        response = self.do(authenticated_user, object.uuid)
+        response = self.do(anonymous_user, object.uuid)
 
         assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+class TestAddComment(AbstractTestAddComment):
+    replied_to_model = List
+    replied_to_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfComments(AbstractTestRetrieveListOfComments):
+    replied_to_model = List
+    replied_to_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestLike(AbstractTestLike):
+    liked_model = List
+    liked_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestUnlike(AbstractTestUnlike):
+    liked_model = List
+    liked_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfLikes(AbstractTestRetrieveListOfLikes):
+    liked_model = List
+    liked_model_name = 'list'
+
+@pytest.mark.django_db
+class TestFollow(AbstractTestFollow):
+    followed_model = List
+    followed_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestUnfollow(AbstractTestUnfollow):
+    followed_model = List
+    followed_model_name = 'list'
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfFollowers(AbstractTestRetrieveListOfFollowers):
+    followed_model = List
+    followed_model_name = 'list'

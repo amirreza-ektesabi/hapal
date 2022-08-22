@@ -90,7 +90,9 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         shared_object_model = self.shared_object_models_switch[self.context['shared_object_type']]
-        object = shared_object_model.objects.get(uuid=self.context['lookup_field_value'])
+        object = shared_object_model.objects.get(**{
+            self.context['lookup_field']: self.context['lookup_field_value']
+        })
         validated_data.update({
             'user_id': self.context['user_id'],
             self.object_name: object,
