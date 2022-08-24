@@ -1,9 +1,6 @@
 from baseapp.models import SharedBaseModel
-from accounts.models import Account
 from uuid import UUID
 from typing import Any, Union
-from dal import autocomplete
-from django.forms import ModelForm, ModelChoiceField
 from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
@@ -33,34 +30,7 @@ def string_to_UUID(as_string: str) -> Union[UUID, None]:
         return None
 
 
-class CreateSharedBaseForm(ModelForm):
-    class Meta:
-        model = SharedBaseModel
-        fields = ['new_user']
-        exclude = ['user']
-
-    new_user = ModelChoiceField(
-        queryset=Account.objects.all(),
-        required=True,
-        label='User',
-        widget=autocomplete.ModelSelect2(url='account-autocomplete'),
-    )
-
-    def clean_new_user(self):
-        return self.cleaned_data['new_user']
-
-    def save(self, commit: bool = True):
-        if self.instance.pk:
-            raise NotImplementedError(
-                'Editing of existing Item is not allowed!'
-            )
-
-        self.instance.user = self.cleaned_data['new_user']
-        return super().save(commit)
-
-
 class SharedBaseAdmin(admin.ModelAdmin):
-    create_form = CreateSharedBaseForm
     readonly_fields = [
         'user',
         'uuid',
@@ -88,22 +58,6 @@ class SharedBaseAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         super().__init__(model, admin_site)
         self.opts = self.model._meta
-
-    def add_view(self, request: HttpRequest, form_url='', extra_context=None):
-        self.fields[0] = ['new_user']
-        return super().add_view(request, form_url, extra_context)
-
-    def change_view(self, request: HttpRequest, object_id: int, form_url='', extra_context=None):
-        self.fields[0] = ['user']
-        return super().change_view(request, object_id, form_url, extra_context)
-
-    def get_form(self, request: HttpRequest, obj=None, **kwargs):
-        orig_self_form = self.form
-        if not obj:
-            self.form = self.create_form
-        result = super().get_form(request, obj=obj, **kwargs)
-        self.form = orig_self_form
-        return result
 
     def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str):
         queryset, may_have_duplicates = super().get_search_results(

@@ -11,21 +11,39 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
-class TestRetrieveTimeline:
-    def do(self, user: APIClient, username='testuser'):
-        return user.get(f'/{username}/timeline/')
+class TestRetrieveListOfLists:
+    def do(self, user: APIClient, username='testuser2'):
+        return user.get(f'/{username}/lists/')
 
     def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-    
-    def test_if_successes_returns_200(self, anonymous_user: APIClient):
-        user = baker.make(Account)
-        for _ in range(10):
-            baker.make(choice((List, Post)), user=user)
 
-        response = self.do(anonymous_user, user.username)
+    def test_if_successes_returns_200(self, anonymous_user: APIClient):
+        object = baker.make(Account)
+        posts = baker.make(List, user=object, _quantity=10)
+
+        response = self.do(anonymous_user, object.username)
+
+        assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfPosts:
+    def do(self, user: APIClient, username='testuser2'):
+        return user.get(f'/{username}/posts/')
+
+    def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):
+        response = self.do(anonymous_user)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_successes_returns_200(self, anonymous_user: APIClient):
+        object = baker.make(Account)
+        posts = baker.make(Post, user=object, _quantity=10)
+
+        response = self.do(anonymous_user, object.username)
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -50,7 +68,7 @@ class TestRetrieveListOfFollowers(AbstractTestRetrieveListOfFollowers):
 
 @pytest.mark.django_db
 class TestRetrieveListOfFollowing:
-    def do(self, user: APIClient, username='testuser'):
+    def do(self, user: APIClient, username='testuser2'):
         return user.get(f'/{username}/following/')
 
     def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):

@@ -3,7 +3,7 @@ from follows.serializers import FollowSerializer
 from baseapp.views import PageNumberPaginationWithSize, SharedObjectPageAction
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import exceptions, status
+from rest_framework import status
 
 
 class ObjectPageFollows(SharedObjectPageAction):

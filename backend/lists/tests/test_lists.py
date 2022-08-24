@@ -221,7 +221,7 @@ class TestRetrieveListOfPosts:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_if_successes_returns_201(self, anonymous_user: APIClient):
+    def test_if_successes_returns_200(self, anonymous_user: APIClient):
         object = baker.make(List)
         posts = baker.make(Post, added_to=object, user=object.user, _quantity=10)
 

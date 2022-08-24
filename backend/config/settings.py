@@ -27,8 +27,6 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
 
-    'dal_select2',
-    'dal',
     'softdelete',
 
     'accounts',

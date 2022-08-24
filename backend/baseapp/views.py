@@ -15,6 +15,7 @@ def PageNumberPaginationWithSize(page_size: int) -> type:
 
 class SharedObjectPageAction(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
+    shared_object_models_switch = None
     
     def get_shared_object(self):
         lookup_field = self.kwargs['lookup_field']
@@ -35,7 +36,7 @@ class SharedObjectPageAction(ListCreateAPIView):
         return 'user' if self.get_filter_field_name_condition() else \
                '{}_{}'.format(self.object_name, shared_object_type)
 
-    def check_added_to_exists(self):
+    def check_shared_object_exists(self):
         lookup_field = self.kwargs['lookup_field']
         value = self.kwargs[lookup_field]
         shared_object_type = self.kwargs['shared_object_type']
@@ -44,7 +45,7 @@ class SharedObjectPageAction(ListCreateAPIView):
             raise NotFound()
 
     def initial(self, request, *args, **kwargs):
-        self.check_added_to_exists()
+        self.check_shared_object_exists()
         return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):
