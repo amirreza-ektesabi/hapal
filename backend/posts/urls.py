@@ -5,7 +5,7 @@ from likes.views import ObjectPageLikes
 from django.urls import path
 
 
-path_kwargs = {'shared_object_type': 'post', 'lookup_field': 'uuid'}
+path_kwargs = {'type': 'post'}
 
 urlpatterns = [
     path('<uuid:uuid>/', PostPage.as_view(), name='post_page'),

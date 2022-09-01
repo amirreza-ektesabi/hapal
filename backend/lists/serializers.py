@@ -1,8 +1,6 @@
-from rest_framework import serializers
-
 from lists.models import List
-
 from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer
+from rest_framework import serializers
 
 
 class ListSimpleSerializer(SharedObjectBaseSerializer):
@@ -35,9 +33,3 @@ class ListSerializer(SharedObjectSerializer):
     header = serializers.ImageField(
         read_only=True,
     )
-
-    def create(self, validated_data: dict):
-        validated_data.update(dict(
-            user_id=self.context['user_id']
-        ))
-        return super().create(validated_data)

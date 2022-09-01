@@ -1,4 +1,3 @@
-from lists.models import List
 from posts.models import Post
 from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer
 from lists.serializers import ListSimpleSerializer
@@ -21,11 +20,3 @@ class PostSerializer(SharedObjectSerializer):
         ]
 
     added_to = ListSimpleSerializer(read_only=True)
-
-    def create(self, validated_data):
-        validated_data.update(dict(
-            user_id=self.context['user_id'],
-            added_to_id=List.objects.get(uuid=self.context['added_to_uuid']).id
-        ))
-        instance: Post = super().create(validated_data)
-        return instance

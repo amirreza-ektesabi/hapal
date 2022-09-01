@@ -1,12 +1,12 @@
-from rest_framework import serializers
 from likes.models import Like
-from lists.models import List
-from posts.models import Post
 from comments.models import Comment
-from baseapp.serializers import SharedObjectActionSerializer
-from lists.serializers import ListSimpleSerializer
-from posts.serializers.post import PostSimpleSerializer
 from comments.serializers import CommentSimpleSerializer
+from posts.models import Post
+from posts.serializers.post import PostSimpleSerializer
+from lists.models import List
+from lists.serializers import ListSimpleSerializer
+from baseapp.serializers import SharedObjectActionSerializer
+from rest_framework import serializers
 
 
 class LikeSerializer(SharedObjectActionSerializer):
@@ -20,17 +20,11 @@ class LikeSerializer(SharedObjectActionSerializer):
 
     object_name = 'liked'
 
-    shared_object_models_switch = {
-        'list': List,
-        'post': Post,
-        'comment': Comment,
-    }
-
-    shared_object_serializers_switch = {
+    related_objects_serializer_class = {
         List: ListSimpleSerializer,
         Post: PostSimpleSerializer,
         Comment: CommentSimpleSerializer,
     }
 
     def get_liked(self, obj):
-        return self.get_object(obj)
+        return self.get_related_object(obj)

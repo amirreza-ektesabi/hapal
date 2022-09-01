@@ -1,4 +1,4 @@
-from posts.models import Post, Property, Pair, PROPERTY_TYPES
+from posts.models import Property, Pair, PROPERTY_TYPES
 from itertools import zip_longest
 from rest_framework import serializers
 
@@ -19,7 +19,7 @@ class PairSerializer(serializers.ModelSerializer):
         return ret
 
 
-class PropertyCreateSerializer(serializers.ModelSerializer):
+class PropertyListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
@@ -46,17 +46,15 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
                 key=pair_data['key'],
                 value=value
             )
-
+    
     def create(self, validated_data: dict):
         pairs_data = validated_data.pop('pairs', [])
         validated_data['type'] = Property.Type[validated_data['type']]
-
-        post_id = Post.objects.get(uuid=self.context['post_uuid']).id
-        order_number = Property.objects.filter(post_id=post_id).count() + 1
-        validated_data.update(dict(
-            post_id=post_id,
-            order_number=order_number,
-        ))
+        
+        order_number = Property.objects.filter(post=validated_data['post']).count() + 1
+        validated_data.update({
+            'order_number': order_number,
+        })
 
         instance: Property = super().create(validated_data)
         
@@ -70,7 +68,7 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
         return ret
 
 
-class PropertyUpdateSerializer(PropertyCreateSerializer):
+class PropertyUpdateSerializer(PropertyListCreateSerializer):
     type = serializers.ChoiceField(Property.Type.labels, read_only=True)
 
     def update(self, instance: Property, validated_data: dict):

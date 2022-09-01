@@ -1,7 +1,10 @@
+from lists.models import List
 from baseapp.models import SharedBaseModel
 from accounts.serializers import AccountSerializer
 from rest_framework import serializers
+from django.db.models import Model
 from django.urls import reverse
+from typing import Dict
 
 
 class SharedObjectBaseSerializer(serializers.ModelSerializer):
@@ -79,22 +82,15 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    object_name: str
+
+    related_objects_serializer_class: Dict[str, Model]
+
     def get_type(self, obj):
         return self.Meta.model._meta.model_name
 
-    def get_object(self, obj):
-        object = getattr(obj, self.object_name)
-        kwargs = {'instance': object}
-        shared_object_serializer = self.shared_object_serializers_switch[object._meta.model]
-        return shared_object_serializer().to_representation(**kwargs)
-
-    def create(self, validated_data: dict):
-        shared_object_model = self.shared_object_models_switch[self.context['shared_object_type']]
-        object = shared_object_model.objects.get(**{
-            self.context['lookup_field']: self.context['lookup_field_value']
-        })
-        validated_data.update({
-            'user_id': self.context['user_id'],
-            self.object_name: object,
-        })
-        return super().create(validated_data)
+    def get_related_object(self, obj):
+        related_object_instance = getattr(obj, self.object_name)
+        kwargs = {'instance': related_object_instance}
+        related_object_serializer_class = self.related_objects_serializer_class[related_object_instance._meta.model]
+        return related_object_serializer_class().to_representation(**kwargs)

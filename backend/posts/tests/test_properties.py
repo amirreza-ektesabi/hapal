@@ -29,7 +29,8 @@ class TestUpdateProperty:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_if_property_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        post = baker.make(Post)
+        user = authenticated_user.handler._force_user
+        post = baker.make(Post, user=user)
         response = self.do(authenticated_user, post.uuid, str(uuid.uuid4()))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -92,8 +93,9 @@ class TestDestroyProperty:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_if_property_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        post = baker.make(Post)
+    def test_if_property_doesnt_exist_returns_403(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        post = baker.make(Post, user=user)
         response = self.do(authenticated_user, post.uuid, str(uuid.uuid4()))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND

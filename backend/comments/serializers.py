@@ -1,9 +1,9 @@
-from lists.models import List
-from posts.models import Post
 from comments.models import Comment
-from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer, SharedObjectActionSerializer
-from lists.serializers import ListSimpleSerializer
+from posts.models import Post
 from posts.serializers.post import PostSimpleSerializer
+from lists.models import List
+from lists.serializers import ListSimpleSerializer
+from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer, SharedObjectActionSerializer
 from rest_framework import serializers
 
 
@@ -25,17 +25,11 @@ class CommentSerializer(SharedObjectSerializer, SharedObjectActionSerializer):
 
     object_name = 'replied_to'
 
-    shared_object_models_switch = {
-        'list': List,
-        'post': Post,
-        'comment': Comment,
-    }
-
-    shared_object_serializers_switch = {
+    related_objects_serializer_class = {
         List: ListSimpleSerializer,
         Post: PostSimpleSerializer,
         Comment: CommentSimpleSerializer,
     }
 
     def get_replied_to(self, obj):
-        return self.get_object(obj)
+        return self.get_related_object(obj)

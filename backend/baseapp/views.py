@@ -1,8 +1,8 @@
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.generics import ListCreateAPIView
+from typing import Dict, Union
+from django.db.models import Model
+from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import NotFound
-from django.shortcuts import get_object_or_404
 
 
 def PageNumberPaginationWithSize(page_size: int) -> type:
@@ -13,52 +13,34 @@ def PageNumberPaginationWithSize(page_size: int) -> type:
     )
 
 
-class SharedObjectPageAction(ListCreateAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    shared_object_models_switch = None
-    
-    def get_shared_object(self):
-        lookup_field = self.kwargs['lookup_field']
-        value = self.kwargs[lookup_field]
-        shared_object_type = self.kwargs['shared_object_type']
-        shared_object_model = self.shared_object_models_switch[shared_object_type]
-        return get_object_or_404(shared_object_model, **{lookup_field: value})
-
-    def get_filter_field_name_condition(self):
-        raise NotImplementedError(
-            '{cls}.get_filter_field_name_condition() must be implemented.'.format(
-                cls=self.__class__.__name__,
-            )
-        )
-
-    def get_filter_field_name(self):
-        shared_object_type = self.kwargs['shared_object_type']
-        return 'user' if self.get_filter_field_name_condition() else \
-               '{}_{}'.format(self.object_name, shared_object_type)
-
-    def check_shared_object_exists(self):
-        lookup_field = self.kwargs['lookup_field']
-        value = self.kwargs[lookup_field]
-        shared_object_type = self.kwargs['shared_object_type']
-        shared_object_model = self.shared_object_models_switch[shared_object_type]
-        if not shared_object_model.objects.filter(**{lookup_field: value}).exists():
-            raise NotFound()
+class RelatedAPIView(GenericAPIView):
+    relateds: Dict[str, Dict[str, Union[str, Model]]]
 
     def initial(self, request, *args, **kwargs):
-        self.check_shared_object_exists()
+        self.related = self.relateds[kwargs['type']]
         return super().initial(request, *args, **kwargs)
 
+    def get_related_object_or_404(self):
+        try:
+            return self.related['model'].objects.get(**{
+                self.related['lookup_field']: self.kwargs[self.related['lookup_field']]
+            })
+        except:
+            raise NotFound()
+    
     def get_queryset(self):
         return super().get_queryset().filter(
-            **{self.get_filter_field_name(): self.get_shared_object()}
-        ).order_by('-created')
+            **{self.related['related_query_name']: self.get_related_object_or_404()}
+        )
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update(dict(
-            user_id=self.request.user.id,
-            lookup_field=self.kwargs['lookup_field'],
-            lookup_field_value=self.kwargs[self.kwargs['lookup_field']],
-            shared_object_type=self.kwargs['shared_object_type'],
-        ))
-        return context
+
+class ListRelatedAPIView(RelatedAPIView, ListAPIView):
+    ...
+
+
+class ListCreateRelatedAPIView(RelatedAPIView, ListAPIView, CreateAPIView):
+    def perform_create(self, serializer):
+        serializer.save(**{
+            'user_id': self.request.user.id,
+            self.related['related_field']: self.get_related_object_or_404(),
+        })
