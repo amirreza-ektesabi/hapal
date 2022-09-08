@@ -53,6 +53,12 @@ class TestFollow(AbstractTestFollow):
     followed_model = Account
     followed_model_name = 'account'
 
+    def test_if_user_followed_itself_returns_403(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        response = self.do(authenticated_user, user)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 @pytest.mark.django_db
 class TestUnfollow(AbstractTestUnfollow):

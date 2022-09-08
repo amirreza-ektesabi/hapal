@@ -30,6 +30,8 @@ class ObjectPageFollows(ListCreateRelatedAPIView):
     }
     
     def post(self, request, *args, **kwargs):
+        if request.user == self.get_related_object_or_404():
+            return Response({'detail': 'Can not follow yourself.'}, status=status.HTTP_403_FORBIDDEN)
         if self.get_queryset().filter(user=request.user).exists():
             return Response({'detail': 'Already followed.'}, status=status.HTTP_302_FOUND)
         return super().post(request, *args, **kwargs)

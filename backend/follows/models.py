@@ -1,4 +1,6 @@
+from accounts.models import Account
 from django.db import models
+from django.db.models import Q, F
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
@@ -24,7 +26,7 @@ class Follow(models.Model):
     )
 
     followed_id = models.PositiveIntegerField()
-    
+
     followed = contenttypes_fields.GenericForeignKey(
         'followed_type',
         'followed_id'
@@ -37,6 +39,13 @@ class Follow(models.Model):
         verbose_name_plural = _('follows')
 
         unique_together = ('user', 'followed_type', 'followed_id')
+        constraints = [
+            models.CheckConstraint(
+                check=~Q(followed_id=F('user_id'),
+                         followed_type_id=ContentType.objects.get_for_model(Account).id),
+                name='prevent_self_following'
+            )
+        ]
 
     def __str__(self) -> str:
         return '{} - {}'.format(self._meta.model_name.title(), self.id)
