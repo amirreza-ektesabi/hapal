@@ -4,20 +4,23 @@ import uuid
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 class AbstractTestFollow:
     followed_model = None
     followed_model_name = ''
 
-    def get_followed_part(self, followed):
+    def get_kwargs(self, followed):
         if self.followed_model == List:
-            return str(uuid.uuid4()) if followed is None else f'{self.followed_model_name}/{followed.uuid}'
+            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
-            return 'testuser2' if followed is None else followed.username
+            return {'username': 'testuser2' if followed is None else followed.username}
     
     def do(self, user: APIClient, followed=None):
-        return user.post(f'/{self.get_followed_part(followed)}/followers/')
+        return user.post(
+            reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(self.followed_model)
@@ -56,14 +59,16 @@ class AbstractTestUnfollow:
     followed_model = None
     followed_model_name = ''
 
-    def get_followed_part(self, followed):
+    def get_kwargs(self, followed):
         if self.followed_model == List:
-            return str(uuid.uuid4()) if followed is None else f'{self.followed_model_name}/{followed.uuid}'
+            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
-            return 'testuser2' if followed is None else followed.username
+            return {'username': 'testuser2' if followed is None else followed.username}
     
     def do(self, user: APIClient, followed=None):
-        return user.delete(f'/{self.get_followed_part(followed)}/followers/')
+        return user.delete(
+            reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(self.followed_model)
@@ -101,14 +106,16 @@ class AbstractTestRetrieveListOfFollowers:
     followed_model = None
     followed_model_name = ''
 
-    def get_followed_part(self, followed):
+    def get_kwargs(self, followed):
         if self.followed_model == List:
-            return str(uuid.uuid4()) if followed is None else f'{self.followed_model_name}/{followed.uuid}'
+            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
-            return 'testuser2' if followed is None else followed.username
+            return {'username': 'testuser2' if followed is None else followed.username}
     
     def do(self, user: APIClient, followed=None):
-        return user.get(f'/{self.get_followed_part(followed)}/followers/')
+        return user.get(
+            reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
+        )
 
     def test_if_followed_doesnt_exist_returns_404(self, authenticated_user: APIClient):
         response = self.do(authenticated_user)

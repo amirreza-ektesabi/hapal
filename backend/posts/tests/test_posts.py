@@ -6,12 +6,16 @@ import pytest
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUpdatePost:
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.patch(f'/post/{uuid}/', data)
+        return user.patch(
+            reverse('post_page', kwargs={'uuid': uuid}),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Post)
@@ -62,7 +66,9 @@ class TestUpdatePost:
 @pytest.mark.django_db
 class TestDestroyPost:
     def do(self, user: APIClient, uuid: str):
-        return user.delete(f'/post/{uuid}/')
+        return user.delete(
+            reverse('post_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Post)
@@ -97,7 +103,9 @@ class TestDestroyPost:
 @pytest.mark.django_db
 class TestRetrievePost:
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/post/{uuid}/')
+        return user.get(
+            reverse('post_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_post_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))
@@ -115,7 +123,10 @@ class TestRetrievePost:
 @pytest.mark.django_db
 class TestAddProperty:
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.post(f'/post/{uuid}/properties/', data, format='json')
+        return user.post(
+            reverse('post_properties', kwargs={'uuid': uuid}),
+            data, format='json'
+        )
     
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Post)
@@ -182,7 +193,9 @@ class TestAddProperty:
 @pytest.mark.django_db
 class TestRetrieveListOfProperties:
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/post/{uuid}/properties/')
+        return user.get(
+            reverse('post_properties', kwargs={'uuid': uuid})
+        )
 
     def test_if_post_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))

@@ -4,12 +4,16 @@ import pytest
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUpdateProperty:
     def do(self, user: APIClient, uuid: str, puuid: str, data: dict = {}):
-        return user.patch(f'/post/{uuid}/properties/{puuid}/', data, format='json')
+        return user.patch(
+            reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid}),
+            data, format='json'
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Property)
@@ -74,7 +78,9 @@ class TestUpdateProperty:
 @pytest.mark.django_db
 class TestDestroyProperty:
     def do(self, user: APIClient, uuid: str, puuid: str):
-        return user.delete(f'/post/{uuid}/properties/{puuid}/')
+        return user.delete(
+            reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Property)
@@ -122,7 +128,9 @@ class TestDestroyProperty:
 @pytest.mark.django_db
 class TestRetrieveProperty:
     def do(self, user: APIClient, uuid: str, puuid: str):
-        return user.get(f'/post/{uuid}/properties/{puuid}/')
+        return user.get(
+            reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid})
+        )
 
     def test_if_post_doesnt_exist_returns_404(self, authenticated_user: APIClient):
         response = self.do(authenticated_user, str(uuid.uuid4()), str(uuid.uuid4()))

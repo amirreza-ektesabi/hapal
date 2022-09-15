@@ -3,6 +3,7 @@ import uuid
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 class AbstractTestLike:
@@ -10,7 +11,9 @@ class AbstractTestLike:
     liked_model_name = ''
 
     def do(self, user: APIClient, uuid: str):
-        return user.post(f'/{self.liked_model_name}/{uuid}/likes/')
+        return user.post(
+            reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(self.liked_model)
@@ -50,7 +53,9 @@ class AbstractTestUnlike:
     liked_model_name = ''
 
     def do(self, user: APIClient, uuid: str):
-        return user.delete(f'/{self.liked_model_name}/{uuid}/likes/')
+        return user.delete(
+            reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(self.liked_model)
@@ -89,7 +94,9 @@ class AbstractTestRetrieveListOfLikes:
     liked_model_name = ''
 
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/{self.liked_model_name}/{uuid}/likes/')
+        return user.get(
+            reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
+        )
 
     def test_if_liked_doesnt_exist_returns_404(self, authenticated_user: APIClient):
         response = self.do(authenticated_user, str(uuid.uuid4()))

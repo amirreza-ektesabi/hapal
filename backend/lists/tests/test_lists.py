@@ -8,12 +8,16 @@ import pytest
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestCreateList:
     def do(self, user: APIClient, data: dict = {}):
-        return user.post('/list/create/', data)
+        return user.post(
+            reverse('list_create'),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         response = self.do(anonymous_user)
@@ -57,7 +61,10 @@ class TestCreateList:
 @pytest.mark.django_db
 class TestUpdateList:
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.patch(f'/list/{uuid}/', data)
+        return user.patch(
+            reverse('list_page', kwargs={'uuid': uuid}),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(List)
@@ -120,7 +127,9 @@ class TestUpdateList:
 @pytest.mark.django_db
 class TestDestroyList:
     def do(self, user: APIClient, uuid: str):
-        return user.delete(f'/list/{uuid}/')
+        return user.delete(
+            reverse('list_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(List)
@@ -155,7 +164,9 @@ class TestDestroyList:
 @pytest.mark.django_db
 class TestRetrieveList:
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/list/{uuid}/')
+        return user.get(
+            reverse('list_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_list_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))
@@ -173,7 +184,10 @@ class TestRetrieveList:
 @pytest.mark.django_db
 class TestAddPost:
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.post(f'/list/{uuid}/posts/', data)
+        return user.post(
+            reverse('list_posts', kwargs={'uuid': uuid}),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(List)
@@ -214,7 +228,9 @@ class TestAddPost:
 @pytest.mark.django_db
 class TestRetrieveListOfPosts:
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/list/{uuid}/posts/')
+        return user.get(
+            reverse('list_posts', kwargs={'uuid': uuid})
+        )
 
     def test_if_list_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))

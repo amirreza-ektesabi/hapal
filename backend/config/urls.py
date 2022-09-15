@@ -16,7 +16,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 
-    path('<str:username>/', include('accounts.urls')),
+    path('', include('accounts.urls')),
     path('list/', include('lists.urls')),
     path('post/', include('posts.urls')),
     path('comment/', include('comments.urls')),

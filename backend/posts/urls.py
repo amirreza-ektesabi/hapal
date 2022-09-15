@@ -2,16 +2,21 @@ from posts.views.post import PostPage
 from posts.views.property import PostPageProperties, PropertyView
 from comments.views import ObjectPageComments
 from likes.views import ObjectPageLikes
-from django.urls import path
+from django.urls import path, include
 
 
-path_kwargs = {'type': 'post'}
+property_urls = [
+    path('', PostPageProperties.as_view(), name='post_properties'),
+    path('<uuid:puuid>/', PropertyView.as_view(), name='property_page'),
+]
+
+post_urls = [
+    path('', PostPage.as_view(), name='post_page'),
+    path('comments/', ObjectPageComments.as_view(), name='post_comments'),
+    path('likes/', ObjectPageLikes.as_view(), name='post_likes'),
+    path('properties/', include(property_urls)),
+]
 
 urlpatterns = [
-    path('<uuid:uuid>/', PostPage.as_view(), name='post_page'),
-    path('<uuid:uuid>/comments/', ObjectPageComments.as_view(), path_kwargs),
-    path('<uuid:uuid>/likes/', ObjectPageLikes.as_view(), path_kwargs),
-    
-    path('<uuid:uuid>/properties/', PostPageProperties.as_view(), path_kwargs),
-    path('<uuid:uuid>/properties/<uuid:puuid>/', PropertyView.as_view(), path_kwargs),
+    path('<uuid:uuid>/', include(post_urls), kwargs={'type': 'post'}),
 ]

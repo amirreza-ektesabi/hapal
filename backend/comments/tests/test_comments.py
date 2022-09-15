@@ -5,12 +5,16 @@ import pytest
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 @pytest.mark.django_db
-class TestUpdatePost:
+class TestUpdateComment:
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.patch(f'/comment/{uuid}/', data)
+        return user.patch(
+            reverse('comment_page', kwargs={'uuid': uuid}),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Comment)
@@ -62,7 +66,9 @@ class TestUpdatePost:
 @pytest.mark.django_db
 class TestDestroyComment:
     def do(self, user: APIClient, uuid: str):
-        return user.delete(f'/comment/{uuid}/')
+        return user.delete(
+            reverse('comment_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(Comment)
@@ -96,9 +102,11 @@ class TestDestroyComment:
 
 
 @pytest.mark.django_db
-class TestRetrievePost:
+class TestRetrieveComment:
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/comment/{uuid}/')
+        return user.get(
+            reverse('comment_page', kwargs={'uuid': uuid})
+        )
 
     def test_if_comment_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))
@@ -119,7 +127,10 @@ class AbstractTestAddComment:
     replied_to_model_name = ''
 
     def do(self, user: APIClient, uuid: str, data: dict = {}):
-        return user.post(f'/{self.replied_to_model_name}/{uuid}/comments/', data)
+        return user.post(
+            reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid}),
+            data
+        )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
         object = baker.make(self.replied_to_model)
@@ -156,7 +167,9 @@ class AbstractTestRetrieveListOfComments:
     replied_to_model_name = ''
 
     def do(self, user: APIClient, uuid: str):
-        return user.get(f'/{self.replied_to_model_name}/{uuid}/comments/')
+        return user.get(
+            reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid})
+        )
 
     def test_if_replied_to_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user, str(uuid.uuid4()))

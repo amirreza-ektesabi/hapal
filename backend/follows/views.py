@@ -10,7 +10,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class ObjectPageFollows(ListCreateRelatedAPIView):
     queryset = Follow.objects.select_related('user') \
-        .prefetch_related('followed')
+        .prefetch_related('followed') \
+            .order_by('-created')
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PageNumberPaginationWithSize(40)
@@ -47,7 +48,8 @@ class ObjectPageFollows(ListCreateRelatedAPIView):
 
 class ProfilePageFollowing(ListRelatedAPIView):
     queryset = Follow.objects.select_related('user') \
-        .prefetch_related('followed')
+        .prefetch_related('followed') \
+            .order_by('-created')
     serializer_class = FollowSerializer
     pagination_class = PageNumberPaginationWithSize(40)
     relateds = {

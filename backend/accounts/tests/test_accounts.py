@@ -8,12 +8,15 @@ import pytest
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestRetrieveListOfLists:
     def do(self, user: APIClient, username='testuser2'):
-        return user.get(f'/{username}/lists/')
+        return user.get(
+            reverse('account_lists', kwargs={'username': username})
+        )
 
     def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user)
@@ -32,7 +35,9 @@ class TestRetrieveListOfLists:
 @pytest.mark.django_db
 class TestRetrieveListOfPosts:
     def do(self, user: APIClient, username='testuser2'):
-        return user.get(f'/{username}/posts/')
+        return user.get(
+            reverse('account_posts', kwargs={'username': username})
+        )
 
     def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user)
@@ -75,7 +80,9 @@ class TestRetrieveListOfFollowers(AbstractTestRetrieveListOfFollowers):
 @pytest.mark.django_db
 class TestRetrieveListOfFollowing:
     def do(self, user: APIClient, username='testuser2'):
-        return user.get(f'/{username}/following/')
+        return user.get(
+            reverse('account_following', kwargs={'username': username})
+        )
 
     def test_if_user_doesnt_exist_returns_404(self, anonymous_user: APIClient):
         response = self.do(anonymous_user)

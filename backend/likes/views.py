@@ -11,7 +11,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class ObjectPageLikes(ListCreateRelatedAPIView):
     queryset = Like.objects.select_related('user') \
-        .prefetch_related('liked', 'liked__user')
+        .prefetch_related('liked', 'liked__user') \
+            .order_by('-created')
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PageNumberPaginationWithSize(40)
