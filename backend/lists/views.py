@@ -1,36 +1,40 @@
 from lists.models import List
-from lists.serializers import ListSerializer
+from lists.serializers import ListPreviewSerializer, ListFullviewSerializer
 from accounts.models import Account
 from baseapp.permissions import IsOwnerOrReadOnly
-from baseapp.views import PageNumberPaginationWithSize, ListRelatedAPIView
+from baseapp.views import (
+    ListRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
+    PageNumberPaginationWithSize
+)
+
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 
 
-class ListPage(RetrieveUpdateDestroyAPIView):
+class ListPage(CheckObjectLikedByCurrentUserMixin, RetrieveUpdateDestroyAPIView):
     queryset = List.objects.select_related('user') \
         .prefetch_related('posts', 'comments', 'followers', 'likes')
-    serializer_class = ListSerializer
+    serializer_class = ListFullviewSerializer
     lookup_field = 'uuid'
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class CreateList(CreateAPIView):
     queryset = List.objects.all()
-    serializer_class = ListSerializer
+    serializer_class = ListFullviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         serializer.save(**{
             'user_id': self.request.user.id,
         })
 
 
-class ProfilePageLists(ListRelatedAPIView):
+class ProfilePageLists(CheckObjectLikedByCurrentUserMixin, ListRelatedAPIView):
     queryset = List.objects.select_related('user') \
         .prefetch_related('posts', 'comments', 'followers', 'likes') \
-            .order_by('-created')
-    serializer_class = ListSerializer
+        .order_by('-created')
+    serializer_class = ListPreviewSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     relateds = {
         'account': {

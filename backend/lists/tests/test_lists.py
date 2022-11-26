@@ -3,17 +3,20 @@ from posts.models import Post
 from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
 from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
 from follows.tests.test_follows import AbstractTestFollow, AbstractTestUnfollow, AbstractTestRetrieveListOfFollowers
+
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.response import Response
+
 import uuid
 import pytest
 from model_bakery import baker
-from rest_framework import status
-from rest_framework.test import APIClient
-from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestCreateList:
-    def do(self, user: APIClient, data: dict = {}):
+    def do(self, user: APIClient, data: dict = {}) -> Response:
         return user.post(
             reverse('list_create'),
             data
@@ -60,7 +63,7 @@ class TestCreateList:
 
 @pytest.mark.django_db
 class TestUpdateList:
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.patch(
             reverse('list_page', kwargs={'uuid': uuid}),
             data
@@ -126,7 +129,7 @@ class TestUpdateList:
 
 @pytest.mark.django_db
 class TestDestroyList:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.delete(
             reverse('list_page', kwargs={'uuid': uuid})
         )
@@ -163,7 +166,7 @@ class TestDestroyList:
 
 @pytest.mark.django_db
 class TestRetrieveList:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse('list_page', kwargs={'uuid': uuid})
         )
@@ -183,7 +186,7 @@ class TestRetrieveList:
 
 @pytest.mark.django_db
 class TestAddPost:
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.post(
             reverse('list_posts', kwargs={'uuid': uuid}),
             data
@@ -227,7 +230,7 @@ class TestAddPost:
 
 @pytest.mark.django_db
 class TestRetrieveListOfPosts:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse('list_posts', kwargs={'uuid': uuid})
         )

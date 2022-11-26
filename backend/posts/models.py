@@ -1,9 +1,11 @@
-from uuid import uuid4
 from baseapp.models import SharedBaseModel
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
+
+from uuid import uuid4
 
 
 class Post(SharedBaseModel):
@@ -59,7 +61,7 @@ class Property(models.Model):
         unique_together = (('post', 'order_number'),
                            ('post', 'puuid'))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Property - {}'.format(self.id)
 
 
@@ -101,7 +103,7 @@ class Pair(models.Model):
 
         unique_together = ('property', 'order_number')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Pair - {}'.format(self.id)
 
 
@@ -116,7 +118,7 @@ class PairValueBaseModel(models.Model):
     class Meta:
         abstract = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '{} - {}'.format(self._meta.model_name.title(), self.id)
 
 
@@ -127,7 +129,7 @@ class TextValue(PairValueBaseModel):
     )
 
     @property
-    def value(self):
+    def value(self) -> str:
         return self.text
 
     class Meta:

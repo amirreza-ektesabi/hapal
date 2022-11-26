@@ -1,4 +1,5 @@
 from baseapp.models import SharedBaseModel
+
 from django.db import models
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
@@ -32,7 +33,7 @@ class List(SharedBaseModel):
         verbose_name_plural = _('lists')
         ordering = ['-id']
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs) -> None:
         super().delete(*args, **kwargs)
 
         self.followers.clear()

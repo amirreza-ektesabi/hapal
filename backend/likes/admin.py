@@ -1,8 +1,10 @@
 from likes.models import Like
 from baseapp.admin import link_to_objectpage
+
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.safestring import SafeString
 
 
 @admin.register(Like)
@@ -33,7 +35,7 @@ class LikeAdmin(admin.ModelAdmin):
         return False
 
     @admin.display(ordering='user_id', description='user')
-    def user_(self, like: Like):
+    def user_(self, like: Like) -> SafeString:
         opts = like.user._meta
         return link_to_objectpage(
             str(like.user),
@@ -42,7 +44,7 @@ class LikeAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='liked_id', description='liked')
-    def liked_(self, like: Like):
+    def liked_(self, like: Like) -> SafeString:
         return link_to_objectpage(
             str(like.liked),
             like.liked.app_model_label,

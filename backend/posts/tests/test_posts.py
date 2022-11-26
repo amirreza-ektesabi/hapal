@@ -1,17 +1,20 @@
 from posts.models import Post, Property, Pair, PROPERTY_TYPES
 from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
 from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
+
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.response import Response
+
 import uuid
 import pytest
 from model_bakery import baker
-from rest_framework import status
-from rest_framework.test import APIClient
-from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUpdatePost:
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.patch(
             reverse('post_page', kwargs={'uuid': uuid}),
             data
@@ -65,7 +68,7 @@ class TestUpdatePost:
 
 @pytest.mark.django_db
 class TestDestroyPost:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.delete(
             reverse('post_page', kwargs={'uuid': uuid})
         )
@@ -102,7 +105,7 @@ class TestDestroyPost:
 
 @pytest.mark.django_db
 class TestRetrievePost:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse('post_page', kwargs={'uuid': uuid})
         )
@@ -122,7 +125,7 @@ class TestRetrievePost:
 
 @pytest.mark.django_db
 class TestAddProperty:
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.post(
             reverse('post_properties', kwargs={'uuid': uuid}),
             data, format='json'
@@ -192,7 +195,7 @@ class TestAddProperty:
 
 @pytest.mark.django_db
 class TestRetrieveListOfProperties:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse('post_properties', kwargs={'uuid': uuid})
         )

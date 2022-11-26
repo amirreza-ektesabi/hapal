@@ -1,10 +1,12 @@
 from lists.models import List
 from baseapp.admin import SharedBaseAdmin, link_to_listpage
+
 from django.contrib import admin
 from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
-from django.forms import Textarea
+from django.forms import Textarea, ModelForm
 from django.http import HttpRequest
+from django.utils.safestring import SafeString
 
 
 @admin.register(List)
@@ -36,12 +38,12 @@ class ListAdmin(SharedBaseAdmin):
         'description__icontains',
     ]
 
-    def get_form(self, request: HttpRequest, obj=None, **kwargs):
+    def get_form(self, request: HttpRequest, obj=None, **kwargs) -> ModelForm:
         kwargs['widgets'] = {'description': Textarea}
         return super().get_form(request, obj, **kwargs)
 
     @admin.display(ordering='followers_count', description='followers')
-    def followers_(self, list: List):
+    def followers_(self, list: List) -> SafeString:
         return link_to_listpage(
             list.followers_count,
             'follows_follow',
@@ -51,7 +53,7 @@ class ListAdmin(SharedBaseAdmin):
         )
 
     @admin.display(ordering='posts_count', description='posts')
-    def posts_(self, list: List):
+    def posts_(self, list: List) -> SafeString:
         return link_to_listpage(
             list.posts_count,
             'posts_post',

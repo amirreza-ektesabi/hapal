@@ -3,17 +3,20 @@ from lists.models import List
 from posts.models import Post
 from follows.models import Follow
 from follows.tests.test_follows import AbstractTestFollow, AbstractTestUnfollow, AbstractTestRetrieveListOfFollowers
-from random import choice
-import pytest
-from model_bakery import baker
+
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from django.urls import reverse
+from rest_framework.response import Response
+
+import pytest
+from random import choice
+from model_bakery import baker
 
 
 @pytest.mark.django_db
 class TestRetrieveListOfLists:
-    def do(self, user: APIClient, username='testuser2'):
+    def do(self, user: APIClient, username='testuser2') -> Response:
         return user.get(
             reverse('account_lists', kwargs={'username': username})
         )
@@ -34,7 +37,7 @@ class TestRetrieveListOfLists:
 
 @pytest.mark.django_db
 class TestRetrieveListOfPosts:
-    def do(self, user: APIClient, username='testuser2'):
+    def do(self, user: APIClient, username='testuser2') -> Response:
         return user.get(
             reverse('account_posts', kwargs={'username': username})
         )
@@ -79,7 +82,7 @@ class TestRetrieveListOfFollowers(AbstractTestRetrieveListOfFollowers):
 
 @pytest.mark.django_db
 class TestRetrieveListOfFollowing:
-    def do(self, user: APIClient, username='testuser2'):
+    def do(self, user: APIClient, username='testuser2') -> Response:
         return user.get(
             reverse('account_following', kwargs={'username': username})
         )

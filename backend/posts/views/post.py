@@ -1,26 +1,31 @@
-from posts.models import Post
-from posts.serializers.post import PostSerializer
 from lists.models import List
+from posts.models import Post
 from accounts.models import Account
-from baseapp.views import PageNumberPaginationWithSize, ListCreateRelatedAPIView, ListRelatedAPIView
+from posts.serializers.post import PostPreviewSerializer, PostFullviewSerializer
+from baseapp.views import (
+    ListCreateRelatedAPIView, ListRelatedAPIView,
+    CheckObjectLikedByCurrentUserMixin,
+    PageNumberPaginationWithSize
+)
 from baseapp.permissions import IsOwnerOrReadOnly, IsRelatedOwnerOrReadOnly
+
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 
-class PostPage(RetrieveUpdateDestroyAPIView):
+class PostPage(CheckObjectLikedByCurrentUserMixin, RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.select_related('user', 'added_to', 'added_to__user') \
         .prefetch_related('comments', 'likes')
-    serializer_class = PostSerializer
+    serializer_class = PostPreviewSerializer
     lookup_field = 'uuid'
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class ListPagePosts(ListCreateRelatedAPIView):
+class ListPagePosts(CheckObjectLikedByCurrentUserMixin, ListCreateRelatedAPIView):
     queryset = Post.objects.select_related('user', 'added_to', 'added_to__user') \
         .prefetch_related('comments', 'likes') \
-            .order_by('-created')
-    serializer_class = PostSerializer
+        .order_by('-created')
+    serializer_class = PostFullviewSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly, IsRelatedOwnerOrReadOnly]
     relateds = {
@@ -33,11 +38,11 @@ class ListPagePosts(ListCreateRelatedAPIView):
     }
 
 
-class ProfilePagePosts(ListRelatedAPIView):
+class ProfilePagePosts(CheckObjectLikedByCurrentUserMixin, ListRelatedAPIView):
     queryset = Post.objects.select_related('user', 'added_to', 'added_to__user') \
         .prefetch_related('comments', 'likes') \
-            .order_by('-created')
-    serializer_class = PostSerializer
+        .order_by('-created')
+    serializer_class = PostFullviewSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     relateds = {
         'account': {

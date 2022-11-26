@@ -1,17 +1,19 @@
-from follows.models import Follow
-from follows.serializers import FollowSerializer
-from accounts.models import Account
 from lists.models import List
+from follows.models import Follow
+from accounts.models import Account
+from follows.serializers import FollowSerializer
 from baseapp.views import PageNumberPaginationWithSize, ListCreateRelatedAPIView, ListRelatedAPIView
+
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.request import Request
 
 
 class ObjectPageFollows(ListCreateRelatedAPIView):
     queryset = Follow.objects.select_related('user') \
         .prefetch_related('followed') \
-            .order_by('-created')
+        .order_by('-created')
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PageNumberPaginationWithSize(40)
@@ -29,15 +31,15 @@ class ObjectPageFollows(ListCreateRelatedAPIView):
             'related_query_name': 'followed_account'
         }
     }
-    
-    def post(self, request, *args, **kwargs):
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
         if request.user == self.get_related_object_or_404():
             return Response({'detail': 'Can not follow yourself.'}, status=status.HTTP_403_FORBIDDEN)
         if self.get_queryset().filter(user=request.user).exists():
             return Response({'detail': 'Already followed.'}, status=status.HTTP_302_FOUND)
         return super().post(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request: Request, *args, **kwargs) -> Response:
         ''' unfollow '''
         queryset = self.get_queryset().filter(user=request.user)
         if not queryset.exists():
@@ -49,7 +51,7 @@ class ObjectPageFollows(ListCreateRelatedAPIView):
 class ProfilePageFollowing(ListRelatedAPIView):
     queryset = Follow.objects.select_related('user') \
         .prefetch_related('followed') \
-            .order_by('-created')
+        .order_by('-created')
     serializer_class = FollowSerializer
     pagination_class = PageNumberPaginationWithSize(40)
     relateds = {
@@ -60,5 +62,3 @@ class ProfilePageFollowing(ListRelatedAPIView):
             'related_query_name': 'user'
         }
     }
-
-    

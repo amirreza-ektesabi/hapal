@@ -1,6 +1,5 @@
 from baseapp.models import SharedBaseModel
-from uuid import UUID
-from typing import Any, Union
+
 from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
@@ -8,6 +7,9 @@ from django.http import HttpRequest
 from django.utils.safestring import SafeString
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
+
+from uuid import UUID
+from typing import Any, Union, Tuple
 
 
 def link_to_listpage(text_to_show: Any, app_model_label: str, **kwargs) -> SafeString:
@@ -59,7 +61,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         super().__init__(model, admin_site)
         self.opts = self.model._meta
 
-    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str):
+    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str) -> Tuple[QuerySet, bool]:
         queryset, may_have_duplicates = super().get_search_results(
             request, queryset, search_term
         )
@@ -73,7 +75,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         return queryset, may_have_duplicates
 
     @admin.display(ordering='user__username', description='owner')
-    def owner(self, object: SharedBaseModel):
+    def owner(self, object: SharedBaseModel) -> SafeString:
         user_opts = object.user._meta
         return link_to_objectpage(
             str(object.user),
@@ -82,7 +84,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='comments_count', description='comments')
-    def comments_(self, object: SharedBaseModel):
+    def comments_(self, object: SharedBaseModel) -> SafeString:
         return link_to_listpage(
             object.comments_count,
             'comments_comment',
@@ -92,7 +94,7 @@ class SharedBaseAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='likes_count', description='likes')
-    def likes_(self, object: SharedBaseModel):
+    def likes_(self, object: SharedBaseModel) -> SafeString:
         return link_to_listpage(
             object.likes_count,
             'likes_like',

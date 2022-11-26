@@ -2,6 +2,7 @@ from posts.views.post import PostPage
 from posts.views.property import PostPageProperties, PropertyView
 from comments.views import ObjectPageComments
 from likes.views import ObjectPageLikes
+
 from django.urls import path, include
 
 

@@ -1,11 +1,11 @@
-from posts.models import Post
-from posts.models import Property
-from baseapp.permissions import IsRelatedOwnerOrReadOnly
+from posts.models import Post, Property
 from posts.serializers.property import PropertyListCreateSerializer, PropertyUpdateSerializer
 from baseapp.views import PageNumberPaginationWithSize, RelatedAPIView, ListCreateRelatedAPIView
+from baseapp.permissions import IsRelatedOwnerOrReadOnly
+
+from django.db.models import F
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from django.db.models import F
 
 
 class PropertyView(RelatedAPIView, RetrieveUpdateDestroyAPIView):
@@ -23,7 +23,7 @@ class PropertyView(RelatedAPIView, RetrieveUpdateDestroyAPIView):
         }
     }
 
-    def perform_destroy(self, instance: Property):
+    def perform_destroy(self, instance: Property) -> None:
         deleted_order_number = instance.order_number
         instance.delete()
         Property.objects.filter(post=instance.post, order_number__gt=deleted_order_number) \
@@ -33,7 +33,7 @@ class PropertyView(RelatedAPIView, RetrieveUpdateDestroyAPIView):
 class PostPageProperties(ListCreateRelatedAPIView):
     queryset = Property.objects.select_related('post') \
         .prefetch_related('pairs') \
-            .order_by('order_number')
+        .order_by('order_number')
     serializer_class = PropertyListCreateSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly, IsRelatedOwnerOrReadOnly]
@@ -46,7 +46,7 @@ class PostPageProperties(ListCreateRelatedAPIView):
         }
     }
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         serializer.save(**{
             self.related['related_field']: self.get_related_object_or_404(),
         })

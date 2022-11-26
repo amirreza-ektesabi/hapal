@@ -1,6 +1,8 @@
 from posts.models import Property, Pair, PROPERTY_TYPES
-from itertools import zip_longest
+
 from rest_framework import serializers
+
+from itertools import zip_longest
 
 
 class PairSerializer(serializers.ModelSerializer):
@@ -13,7 +15,7 @@ class PairSerializer(serializers.ModelSerializer):
 
     value = serializers.CharField()
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Pair) -> dict:
         ret = super().to_representation(instance)
         ret['value'] = instance.value.value
         return ret
@@ -33,7 +35,7 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
 
     pairs = PairSerializer(many=True, required=False)
 
-    def add_pairs(self, instance: Property, pairs_data: list, property_type: int):
+    def add_pairs(self, instance: Property, pairs_data: list, property_type: int) -> None:
         value_model, fields_switch = PROPERTY_TYPES[property_type]
 
         for pair_order_number, pair_data in enumerate(pairs_data, 1):
@@ -47,7 +49,7 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
                 value=value
             )
     
-    def create(self, validated_data: dict):
+    def create(self, validated_data: dict) -> Property:
         pairs_data = validated_data.pop('pairs', [])
         validated_data['type'] = Property.Type[validated_data['type']]
         
@@ -62,7 +64,7 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
 
         return instance
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Property) -> dict:
         ret = super().to_representation(instance)
         ret['type'] = instance.get_type_display()
         return ret
@@ -71,7 +73,7 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
 class PropertyUpdateSerializer(PropertyListCreateSerializer):
     type = serializers.ChoiceField(Property.Type.labels, read_only=True)
 
-    def update(self, instance: Property, validated_data: dict):
+    def update(self, instance: Property, validated_data: dict) -> Property:
         pairs_data = validated_data.pop('pairs', [])
 
         super().update(instance, validated_data)

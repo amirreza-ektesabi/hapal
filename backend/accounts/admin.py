@@ -1,9 +1,11 @@
 from accounts.models import Account
 from baseapp.admin import link_to_listpage
+
 from django.contrib import admin
+from django.http import HttpRequest
 from django.db.models import QuerySet, Count, Q
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpRequest
+from django.utils.safestring import SafeString
 
 
 @admin.register(Account)
@@ -43,7 +45,7 @@ class AccountAdmin(admin.ModelAdmin):
         self.opts = self.model._meta
 
     @admin.display(ordering='followers_count', description='followers')
-    def followers_(self, account: Account):
+    def followers_(self, account: Account) -> SafeString:
         return link_to_listpage(
             account.followers_count,
             'follows_follow',
@@ -52,7 +54,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='followings_count', description='followings')
-    def followings_(self, account: Account):
+    def followings_(self, account: Account) -> SafeString:
         return link_to_listpage(
             account.followings_count,
             'follows_follow',
@@ -60,7 +62,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='lists_count', description='lists')
-    def lists_(self, account: Account):
+    def lists_(self, account: Account) -> SafeString:
         return link_to_listpage(
             account.lists_count,
             'lists_list',
@@ -68,7 +70,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='posts_count', description='posts')
-    def posts_(self, account: Account):
+    def posts_(self, account: Account) -> SafeString:
         return link_to_listpage(
             account.posts_count,
             'posts_post',
@@ -76,7 +78,7 @@ class AccountAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='comments_count', description='comments')
-    def comments_(self, account: Account):
+    def comments_(self, account: Account) -> SafeString:
         return link_to_listpage(
             account.comments_count,
             'comments_comment',

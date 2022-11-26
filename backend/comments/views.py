@@ -1,26 +1,30 @@
-from comments.models import Comment
-from comments.serializers import CommentSerializer
-from posts.models import Post
 from lists.models import List
-from baseapp.views import PageNumberPaginationWithSize, ListCreateRelatedAPIView
+from posts.models import Post
+from comments.models import Comment
+from comments.serializers import CommentFullviewSerializer
+from baseapp.views import (
+    ListCreateRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
+    PageNumberPaginationWithSize
+)
 from baseapp.permissions import IsOwnerOrReadOnly
+
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 
-class CommentPage(RetrieveUpdateDestroyAPIView):
+class CommentPage(CheckObjectLikedByCurrentUserMixin, RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.select_related('user') \
         .prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes')
-    serializer_class = CommentSerializer
+    serializer_class = CommentFullviewSerializer
     lookup_field = 'uuid'
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class ObjectPageComments(ListCreateRelatedAPIView):
+class ObjectPageComments(CheckObjectLikedByCurrentUserMixin, ListCreateRelatedAPIView):
     queryset = Comment.objects.select_related('user') \
         .prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes') \
-            .order_by('-created')
-    serializer_class = CommentSerializer
+        .order_by('-created')
+    serializer_class = CommentFullviewSerializer
     pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly]
     relateds = {

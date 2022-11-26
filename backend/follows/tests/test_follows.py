@@ -1,23 +1,27 @@
 from follows.models import Follow
 from lists.models import List
-import uuid
-from model_bakery import baker
+
+from django.urls import reverse
+from django.db.models import Model
 from rest_framework import status
 from rest_framework.test import APIClient
-from django.urls import reverse
+from rest_framework.response import Response
+
+import uuid
+from model_bakery import baker
 
 
 class AbstractTestFollow:
-    followed_model = None
-    followed_model_name = ''
+    followed_model: Model
+    followed_model_name: str
 
-    def get_kwargs(self, followed):
+    def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
             return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     
-    def do(self, user: APIClient, followed=None):
+    def do(self, user: APIClient, followed=None) -> Response:
         return user.post(
             reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
         )
@@ -56,16 +60,16 @@ class AbstractTestFollow:
 
 
 class AbstractTestUnfollow:
-    followed_model = None
-    followed_model_name = ''
+    followed_model: Model
+    followed_model_name: str
 
-    def get_kwargs(self, followed):
+    def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
             return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     
-    def do(self, user: APIClient, followed=None):
+    def do(self, user: APIClient, followed=None) -> Response:
         return user.delete(
             reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
         )
@@ -103,16 +107,16 @@ class AbstractTestUnfollow:
 
 
 class AbstractTestRetrieveListOfFollowers:
-    followed_model = None
-    followed_model_name = ''
+    followed_model: Model
+    followed_model_name: str
 
-    def get_kwargs(self, followed):
+    def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
             return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     
-    def do(self, user: APIClient, followed=None):
+    def do(self, user: APIClient, followed=None) -> Response:
         return user.get(
             reverse(f'{self.followed_model_name}_followers', kwargs=self.get_kwargs(followed))
         )

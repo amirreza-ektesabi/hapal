@@ -1,44 +1,22 @@
-from lists.models import List
 from baseapp.models import SharedBaseModel
 from accounts.serializers import AccountSerializer
-from rest_framework import serializers
+
 from django.db.models import Model
 from django.urls import reverse
+from rest_framework import serializers
+
 from typing import Dict
 
 
-class SharedObjectBaseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SharedBaseModel
-        fields = [
-            'type',
-            'uuid',
-            'user',
-            'created',
-            'updated',
-            'url',
-        ]
-
+class SharedObjectSubviewSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
 
     url = serializers.SerializerMethodField()
 
-    user = AccountSerializer(read_only=True)
-
-    created = serializers.DateTimeField(
-        format='%Y-%m-%d %H:%M:%S',
-        read_only=True
-    )
-
-    updated = serializers.DateTimeField(
-        format='%Y-%m-%d %H:%M:%S',
-        read_only=True
-    )
-
     def get_type(self, obj: SharedBaseModel) -> str:
         return self.Meta.model._meta.model_name
 
-    def get_url(self, obj: SharedBaseModel):
+    def get_url(self, obj: SharedBaseModel) -> str:
         return reverse('{}_page'.format(self.get_type(obj)), args=[obj.uuid])
 
     def to_representation(self, instance: SharedBaseModel) -> dict:
@@ -47,12 +25,13 @@ class SharedObjectBaseSerializer(serializers.ModelSerializer):
         return {'deleted': True}
 
 
-class SharedObjectSerializer(SharedObjectBaseSerializer):
-    class Meta(SharedObjectBaseSerializer.Meta):
-        fields = SharedObjectBaseSerializer.Meta.fields + [
-            'comments_count',
-            'likes_count',
-        ]
+class SharedObjectPreviewSerializer(SharedObjectSubviewSerializer):
+    user = AccountSerializer(read_only=True)
+
+    created = serializers.DateTimeField(
+        format='%Y-%m-%d %H:%M:%S',
+        read_only=True
+    )
 
     comments_count = serializers.IntegerField(
         source='comments.count',
@@ -64,15 +43,19 @@ class SharedObjectSerializer(SharedObjectBaseSerializer):
         read_only=True
     )
 
+    is_liked = serializers.BooleanField(
+        read_only=True
+    )
+
+
+class SharedObjectFullviewSerializer(SharedObjectPreviewSerializer):
+    updated = serializers.DateTimeField(
+        format='%Y-%m-%d %H:%M:%S',
+        read_only=True
+    )
+
 
 class SharedObjectActionSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = [
-            'type',
-            'user',
-            'created',
-        ]
-
     type = serializers.SerializerMethodField()
 
     user = AccountSerializer(read_only=True)
@@ -86,10 +69,10 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
 
     related_objects_serializer_class: Dict[str, Model]
 
-    def get_type(self, obj):
+    def get_type(self, obj: Model) -> str:
         return self.Meta.model._meta.model_name
 
-    def get_related_object(self, obj):
+    def get_related_object(self, obj: Model) -> dict:
         related_object_instance = getattr(obj, self.object_name)
         kwargs = {'instance': related_object_instance}
         related_object_serializer_class = self.related_objects_serializer_class[related_object_instance._meta.model]

@@ -1,16 +1,20 @@
 from comments.models import Comment
 from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
+
+from django.urls import reverse
+from django.db.models import Model
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.response import Response
+
 import uuid
 import pytest
 from model_bakery import baker
-from rest_framework import status
-from rest_framework.test import APIClient
-from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUpdateComment:
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.patch(
             reverse('comment_page', kwargs={'uuid': uuid}),
             data
@@ -65,7 +69,7 @@ class TestUpdateComment:
 
 @pytest.mark.django_db
 class TestDestroyComment:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.delete(
             reverse('comment_page', kwargs={'uuid': uuid})
         )
@@ -103,7 +107,7 @@ class TestDestroyComment:
 
 @pytest.mark.django_db
 class TestRetrieveComment:
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse('comment_page', kwargs={'uuid': uuid})
         )
@@ -123,10 +127,10 @@ class TestRetrieveComment:
 
 
 class AbstractTestAddComment:
-    replied_to_model = None
-    replied_to_model_name = ''
+    replied_to_model: Model
+    replied_to_model_name: str
 
-    def do(self, user: APIClient, uuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.post(
             reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid}),
             data
@@ -163,10 +167,10 @@ class AbstractTestAddComment:
 
 
 class AbstractTestRetrieveListOfComments:
-    replied_to_model = None
-    replied_to_model_name = ''
+    replied_to_model: Model
+    replied_to_model_name: str
 
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid})
         )
@@ -183,7 +187,6 @@ class AbstractTestRetrieveListOfComments:
         response = self.do(anonymous_user, object.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-
 
 
 @pytest.mark.django_db

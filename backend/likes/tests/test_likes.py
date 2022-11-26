@@ -1,16 +1,20 @@
 from likes.models import Like
-import uuid
-from model_bakery import baker
+
+from django.urls import reverse
+from django.db.models import Model
 from rest_framework import status
 from rest_framework.test import APIClient
-from django.urls import reverse
+from rest_framework.response import Response
+
+import uuid
+from model_bakery import baker
 
 
 class AbstractTestLike:
-    liked_model = None
-    liked_model_name = ''
+    liked_model: Model
+    liked_model_name: str
 
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.post(
             reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
         )
@@ -49,10 +53,10 @@ class AbstractTestLike:
 
 
 class AbstractTestUnlike:
-    liked_model = None
-    liked_model_name = ''
+    liked_model: Model
+    liked_model_name: str
 
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.delete(
             reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
         )
@@ -90,10 +94,10 @@ class AbstractTestUnlike:
 
 
 class AbstractTestRetrieveListOfLikes:
-    liked_model = None
-    liked_model_name = ''
+    liked_model: Model
+    liked_model_name: str
 
-    def do(self, user: APIClient, uuid: str):
+    def do(self, user: APIClient, uuid: str) -> Response:
         return user.get(
             reverse(f'{self.liked_model_name}_likes', kwargs={'uuid': uuid})
         )

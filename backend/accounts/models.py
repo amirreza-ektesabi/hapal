@@ -1,5 +1,6 @@
 from softdelete.models import SoftDeleteObject, SoftDeleteManager
-from accounts.username_validators import username_validators_list
+from accounts.validators.username import username_validators_list
+
 from django.db import models
 from django.contrib.postgres import fields
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
@@ -16,7 +17,7 @@ class Account(SoftDeleteObject, AbstractUser):
         models.Model.__init__(self, *args, **kwargs)
         self.__dirty = False
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         AbstractBaseUser.save(self, *args, **kwargs)
         if self.__dirty:
             self.__dirty = False
@@ -91,12 +92,12 @@ class Account(SoftDeleteObject, AbstractUser):
     def app_model_label(self) -> str:
         return '{}_{}'.format(self._meta.app_label, self._meta.model_name)
 
-    def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs) -> None:
         super().delete(*args, **kwargs)
 
         self.followers.clear()
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
         return self.name
 
     get_short_name = get_full_name

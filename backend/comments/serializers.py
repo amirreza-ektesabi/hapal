@@ -1,35 +1,54 @@
-from comments.models import Comment
-from posts.models import Post
-from posts.serializers.post import PostSimpleSerializer
 from lists.models import List
-from lists.serializers import ListSimpleSerializer
-from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer, SharedObjectActionSerializer
+from posts.models import Post
+from comments.models import Comment
+from lists.serializers import ListSubviewSerializer
+from posts.serializers.post import PostSubviewSerializer
+from baseapp.serializers import (
+    SharedObjectSubviewSerializer,
+    SharedObjectFullviewSerializer,
+    SharedObjectActionSerializer
+)
+
+from django.db.models import Model
 from rest_framework import serializers
 
 
-class CommentSimpleSerializer(SharedObjectBaseSerializer):
-    class Meta(SharedObjectBaseSerializer.Meta):
-        model = Comment
-        fields = SharedObjectBaseSerializer.Meta.fields
-
-
-class CommentSerializer(SharedObjectSerializer, SharedObjectActionSerializer):
-    class Meta(SharedObjectSerializer.Meta):
-        model = Comment
-        fields = SharedObjectSerializer.Meta.fields + [
-            'body',
-            'replied_to',
+class CommentSubviewSerializer(SharedObjectSubviewSerializer):
+    class Meta:
+        model = List
+        fields = [
+            'type',
+            'uuid',
+            'url',
         ]
 
+
+class CommentFullviewSerializer(SharedObjectFullviewSerializer, SharedObjectActionSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'user',
+            'body',
+            'replied_to',
+            'comments_count',
+            'likes_count',
+            'is_liked',
+            'created',
+            'updated',
+        ]
+    
     replied_to = serializers.SerializerMethodField()
 
     object_name = 'replied_to'
 
     related_objects_serializer_class = {
-        List: ListSimpleSerializer,
-        Post: PostSimpleSerializer,
-        Comment: CommentSimpleSerializer,
+        List: ListSubviewSerializer,
+        Post: PostSubviewSerializer,
+        Comment: CommentSubviewSerializer,
     }
 
-    def get_replied_to(self, obj):
+    def get_replied_to(self, obj: Comment) -> Model:
         return self.get_related_object(obj)

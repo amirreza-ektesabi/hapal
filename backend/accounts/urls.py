@@ -2,6 +2,7 @@ from accounts.views import ProfilePage
 from lists.views import ProfilePageLists
 from posts.views.post import ProfilePagePosts
 from follows.views import ObjectPageFollows, ProfilePageFollowing
+
 from django.urls import path, include
 
 

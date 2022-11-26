@@ -1,22 +1,57 @@
 from posts.models import Post
-from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer
-from lists.serializers import ListSimpleSerializer
+from lists.serializers import ListSubviewSerializer
+from baseapp.serializers import (
+    SharedObjectSubviewSerializer,
+    SharedObjectPreviewSerializer,
+    SharedObjectFullviewSerializer
+)
 
 
-class PostSimpleSerializer(SharedObjectBaseSerializer):
-    class Meta(SharedObjectBaseSerializer.Meta):
+class PostSubviewSerializer(SharedObjectSubviewSerializer):
+    class Meta:
         model = Post
-        fields = SharedObjectBaseSerializer.Meta.fields + [
-            'title'
-        ]
-
-
-class PostSerializer(SharedObjectSerializer):
-    class Meta(SharedObjectSerializer.Meta):
-        model = Post
-        fields = SharedObjectSerializer.Meta.fields + [
+        fields = [
+            'type',
+            'uuid',
+            'url',
             'title',
-            'added_to'
         ]
 
-    added_to = ListSimpleSerializer(read_only=True)
+
+class PostPreviewSerializer(SharedObjectPreviewSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'user',
+            'added_to',
+            'title',
+            'comments_count',
+            'likes_count',
+            'is_liked',
+            'created',
+        ]
+    
+    added_to = ListSubviewSerializer(read_only=True)
+
+
+class PostFullviewSerializer(SharedObjectFullviewSerializer):
+    class Meta:
+        model = Post
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'user',
+            'added_to',
+            'title',
+            'comments_count',
+            'likes_count',
+            'is_liked',
+            'created',
+            'updated',
+        ]
+
+    added_to = ListSubviewSerializer(read_only=True)

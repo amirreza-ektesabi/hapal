@@ -3,6 +3,7 @@ from posts.views.post import ListPagePosts
 from comments.views import ObjectPageComments
 from likes.views import ObjectPageLikes
 from follows.views import ObjectPageFollows
+
 from django.urls import path, include
 
 

@@ -1,15 +1,18 @@
 from posts.models import Post, Property, Pair, PROPERTY_TYPES
+
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.response import Response
+
 import uuid
 import pytest
 from model_bakery import baker
-from rest_framework import status
-from rest_framework.test import APIClient
-from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUpdateProperty:
-    def do(self, user: APIClient, uuid: str, puuid: str, data: dict = {}):
+    def do(self, user: APIClient, uuid: str, puuid: str, data: dict = {}) -> Response:
         return user.patch(
             reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid}),
             data, format='json'
@@ -77,7 +80,7 @@ class TestUpdateProperty:
 
 @pytest.mark.django_db
 class TestDestroyProperty:
-    def do(self, user: APIClient, uuid: str, puuid: str):
+    def do(self, user: APIClient, uuid: str, puuid: str) -> Response:
         return user.delete(
             reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid})
         )
@@ -127,7 +130,7 @@ class TestDestroyProperty:
 
 @pytest.mark.django_db
 class TestRetrieveProperty:
-    def do(self, user: APIClient, uuid: str, puuid: str):
+    def do(self, user: APIClient, uuid: str, puuid: str) -> Response:
         return user.get(
             reverse('property_page', kwargs={'uuid': uuid, 'puuid': puuid})
         )

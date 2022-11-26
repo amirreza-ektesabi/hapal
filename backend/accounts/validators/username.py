@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
+
+from abc import ABC, abstractmethod
 
 
 @deconstructible
@@ -20,7 +21,7 @@ class BaseValidator(ABC):
         if self.check(value):
             raise ValidationError(self.message, code=self.code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return (
@@ -41,7 +42,7 @@ class RestrictedWordsValidator(BaseValidator):
     username_restricted_words = {'admin', 'deleted', 'hapal',
                                  'lists', 'list', 'posts', 'post', 'comments', 'comment'}
 
-    def check(self, value):
+    def check(self, value) -> bool:
         return any(word == value for word in self.username_restricted_words)
 
 

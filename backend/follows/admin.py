@@ -1,8 +1,10 @@
 from follows.models import Follow
 from baseapp.admin import link_to_objectpage
+
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.safestring import SafeString
 
 
 @admin.register(Follow)
@@ -32,7 +34,7 @@ class FollowAdmin(admin.ModelAdmin):
         return False
 
     @admin.display(ordering='user_id', description='follower')
-    def follower(self, follow: Follow):
+    def follower(self, follow: Follow) -> SafeString:
         return link_to_objectpage(
             str(follow.user),
             follow.user.app_model_label,
@@ -40,7 +42,7 @@ class FollowAdmin(admin.ModelAdmin):
         )
 
     @admin.display(ordering='followed_id', description='followed')
-    def followed_(self, follow: Follow):
+    def followed_(self, follow: Follow) -> SafeString:
         return link_to_objectpage(
             str(follow.followed),
             follow.followed.app_model_label,

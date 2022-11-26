@@ -1,8 +1,9 @@
 from accounts.models import Account
-from rest_framework import serializers
-from djoser.serializers import UserCreateSerializer as DjoserUserCreateSerializer
+
 from django.urls import reverse
+from rest_framework import serializers
 from djoser.conf import settings
+from djoser.serializers import UserCreateSerializer as DjoserUserCreateSerializer
 
 
 class UserCreateSerializer(DjoserUserCreateSerializer):
@@ -25,10 +26,10 @@ class AccountBaseSerializer(serializers.ModelSerializer):
 
     url = serializers.SerializerMethodField()
 
-    def get_type(self, obj: Account):
+    def get_type(self, obj: Account) -> str:
         return self.Meta.model._meta.model_name
 
-    def get_url(self, obj: Account):
+    def get_url(self, obj: Account) -> str:
         return reverse('{}_page'.format(self.get_type(obj)), args=[obj.username])
 
 

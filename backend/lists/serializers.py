@@ -1,35 +1,82 @@
 from lists.models import List
-from baseapp.serializers import SharedObjectSerializer, SharedObjectBaseSerializer
+from baseapp.serializers import (
+    SharedObjectSubviewSerializer,
+    SharedObjectPreviewSerializer,
+    SharedObjectFullviewSerializer
+)
+
 from rest_framework import serializers
 
 
-class ListSimpleSerializer(SharedObjectBaseSerializer):
-    class Meta(SharedObjectBaseSerializer.Meta):
+class ListSubviewSerializer(SharedObjectSubviewSerializer):
+    class Meta:
         model = List
-        fields = SharedObjectBaseSerializer.Meta.fields + [
-            'title'
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'title',
         ]
 
 
-class ListSerializer(SharedObjectSerializer):
-    class Meta(SharedObjectSerializer.Meta):
+class ListPreviewSerializer(SharedObjectPreviewSerializer):
+    class Meta:
         model = List
-        fields = SharedObjectSerializer.Meta.fields + [
-            'followers_count',
-            'posts_count',
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'user',
             'title',
             'header',
             'description',
+            'posts_count',
+            'comments_count',
+            'likes_count',
+            'is_liked',
+            'created',
+        ]
+    
+    posts_count = serializers.IntegerField(
+        source='posts.count',
+        read_only=True,
+    )
+
+    header = serializers.ImageField(
+        read_only=True,
+    )
+
+
+class ListFullviewSerializer(SharedObjectFullviewSerializer):
+    class Meta:
+        model = List
+        fields = [
+            'type',
+            'uuid',
+            'url',
+            'user',
+            'title',
+            'header',
+            'description',
+            'comments_count',
+            'likes_count',
+            'followers_count',
+            'posts_count',
+            'is_liked',
+            'created',
+            'updated',
         ]
 
     followers_count = serializers.IntegerField(
         source='followers.count',
         read_only=True,
     )
+
     posts_count = serializers.IntegerField(
         source='posts.count',
         read_only=True,
     )
+
     header = serializers.ImageField(
         read_only=True,
     )
