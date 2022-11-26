@@ -58,6 +58,7 @@ class SharedBaseModel(SoftDeleteObject):
         unique=True,
         default=uuid4,
         editable=False,
+        db_index=True,
     )
 
     user = models.ForeignKey(
