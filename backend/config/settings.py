@@ -1,16 +1,18 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from decouple import config as decouple_config
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = decouple_config('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,9 +84,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': decouple_config('POSTGRES_USER'),
-        'PASSWORD': decouple_config('POSTGRES_PASSWORD'),
+        'NAME': os.getenv('POSTGRES_NAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -115,7 +117,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

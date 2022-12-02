@@ -34,6 +34,7 @@ class ListPreviewSerializer(SharedObjectPreviewSerializer):
             'comments_count',
             'likes_count',
             'is_liked',
+            'is_followed',
             'created',
         ]
     
@@ -44,6 +45,10 @@ class ListPreviewSerializer(SharedObjectPreviewSerializer):
 
     header = serializers.ImageField(
         read_only=True,
+    )
+    
+    is_followed = serializers.BooleanField(
+        read_only=True
     )
 
 
@@ -63,6 +68,7 @@ class ListFullviewSerializer(SharedObjectFullviewSerializer):
             'followers_count',
             'posts_count',
             'is_liked',
+            'is_followed',
             'created',
             'updated',
         ]
@@ -79,4 +85,8 @@ class ListFullviewSerializer(SharedObjectFullviewSerializer):
 
     header = serializers.ImageField(
         read_only=True,
+    )
+
+    is_followed = serializers.BooleanField(
+        read_only=True
     )

@@ -1,3 +1,4 @@
+from lists.managers import ListManager
 from baseapp.models import SharedBaseModel
 
 from django.db import models
@@ -27,6 +28,8 @@ class List(SharedBaseModel):
         object_id_field='followed_id',
         related_query_name='followed_list',
     )
+
+    objects = ListManager()
 
     class Meta:
         verbose_name = _('list')

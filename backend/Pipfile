@@ -8,12 +8,12 @@ django = "*"
 psycopg2 = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
-python-decouple = "*"
 pillow = "*"
 django-debug-toolbar = "*"
 django-softdelete = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
+python-dotenv = "*"
 
 [dev-packages]
 autopep8 = "*"

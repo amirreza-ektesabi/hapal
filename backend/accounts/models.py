@@ -1,15 +1,13 @@
-from softdelete.models import SoftDeleteObject, SoftDeleteManager
+from accounts.managers import AccountManager
 from accounts.validators.username import username_validators_list
 
 from django.db import models
 from django.contrib.postgres import fields
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
 
-
-class UserSoftDeleteManager(SoftDeleteManager, UserManager):
-    ...
+from softdelete.models import SoftDeleteObject
 
 
 class Account(SoftDeleteObject, AbstractUser):
@@ -76,7 +74,7 @@ class Account(SoftDeleteObject, AbstractUser):
     first_name = None
     last_name = None
 
-    objects = UserSoftDeleteManager()
+    objects = AccountManager()
 
     class Meta:
         verbose_name = _('account')

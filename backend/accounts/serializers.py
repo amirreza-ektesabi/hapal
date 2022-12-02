@@ -52,6 +52,7 @@ class ProfileSerializer(AccountBaseSerializer):
             'joined',
             'followers_count',
             'following_count',
+            'is_followed',
         ]
 
     joined = serializers.DateTimeField(
@@ -67,5 +68,9 @@ class ProfileSerializer(AccountBaseSerializer):
 
     following_count = serializers.IntegerField(
         source='followings.count',
+        read_only=True
+    )
+
+    is_followed = serializers.BooleanField(
         read_only=True
     )

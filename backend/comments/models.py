@@ -10,9 +10,11 @@ from django.utils.translation import gettext_lazy as _
 class Comment(SharedBaseModel):
     body = models.CharField(max_length=1023, blank=True)
 
-    replied_to_limit_choices = Q(app_label='lists', model='List') | \
-        Q(app_label='posts', model='Post') | \
-        Q(app_label='comments', model='Comment')
+    replied_to_limit_choices = (
+        Q(app_label='lists', model='list') |
+        Q(app_label='posts', model='post') |
+        Q(app_label='comments', model='comment')
+    )
 
     replied_to_type = models.ForeignKey(
         ContentType,

@@ -80,7 +80,9 @@ class Pair(models.Model):
         blank=True
     )
 
-    value_limit_choices = models.Q(app_label='post', model='TextValue')
+    value_limit_choices = (
+        models.Q(app_label='post', model='TextValue')
+    )
 
     value_type = models.ForeignKey(
         ContentType,

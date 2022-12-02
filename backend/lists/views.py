@@ -3,15 +3,17 @@ from lists.serializers import ListPreviewSerializer, ListFullviewSerializer
 from accounts.models import Account
 from baseapp.permissions import IsOwnerOrReadOnly
 from baseapp.views import (
-    ListRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
-    PageNumberPaginationWithSize
+    ListRelatedAPIView, PageNumberPaginationWithSize,
+    CheckObjectLikedByCurrentUserMixin, CheckObjectFollowedByCurrentUserMixin
 )
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 
 
-class ListPage(CheckObjectLikedByCurrentUserMixin, RetrieveUpdateDestroyAPIView):
+class ListPage(CheckObjectLikedByCurrentUserMixin,
+               CheckObjectFollowedByCurrentUserMixin,
+               RetrieveUpdateDestroyAPIView):
     queryset = List.objects.select_related('user') \
         .prefetch_related('posts', 'comments', 'followers', 'likes')
     serializer_class = ListFullviewSerializer
@@ -30,7 +32,9 @@ class CreateList(CreateAPIView):
         })
 
 
-class ProfilePageLists(CheckObjectLikedByCurrentUserMixin, ListRelatedAPIView):
+class ProfilePageLists(CheckObjectLikedByCurrentUserMixin,
+                       CheckObjectFollowedByCurrentUserMixin,
+                       ListRelatedAPIView):
     queryset = List.objects.select_related('user') \
         .prefetch_related('posts', 'comments', 'followers', 'likes') \
         .order_by('-created')

@@ -1,16 +1,12 @@
-from accounts.models import Account
-from likes.models import Like
+from baseapp.managers import SharedBaseManager
 
 from django.db import DEFAULT_DB_ALIAS, models
-from django.db.models import QuerySet, Exists, OuterRef, Value
+from django.db.models import QuerySet
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import AnonymousUser
 
-from softdelete.models import SoftDeleteObject, SoftDeleteManager, SoftDeleteQuerySet
+from softdelete.models import SoftDeleteObject
 from uuid import uuid4
-from typing import Union
 
 
 class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRelation):
@@ -26,30 +22,6 @@ class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRe
             qs = qs.none()
         return qs
 
-
-class SharedBaseQuerySet(SoftDeleteQuerySet):
-    def annotate_is_liked_by_current_user(self, user: Union[Account, AnonymousUser]) -> QuerySet:
-        if user.is_authenticated:
-            liked_by_user = Like.objects.filter(
-                user=user,
-                liked_id=OuterRef('id'),
-                liked_type=ContentType.objects.get_for_model(self.model),
-            )
-            queryset = self.annotate(is_liked=Exists(liked_by_user))
-        else:
-            queryset = self.annotate(is_liked=Value(False))
-        
-        return queryset
-
-
-class SharedBaseManager(SoftDeleteManager):
-    def get_queryset(self):
-        qs = super().get_queryset().filter(
-            deleted_at__isnull=True)
-        if not issubclass(qs.__class__, SharedBaseQuerySet):
-            qs.__class__ = SharedBaseQuerySet
-        return qs
-    
 
 class SharedBaseModel(SoftDeleteObject):
     objects = SharedBaseManager()

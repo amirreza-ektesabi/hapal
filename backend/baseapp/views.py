@@ -1,3 +1,6 @@
+from likes.models import Like
+from follows.models import Follow
+
 from django.db.models import QuerySet, Model
 from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
 from rest_framework.pagination import PageNumberPagination
@@ -53,4 +56,10 @@ class ListCreateRelatedAPIView(RelatedAPIView, ListAPIView, CreateAPIView):
 class CheckObjectLikedByCurrentUserMixin:
     def get_queryset(self: APIView):
         return super().get_queryset() \
-            .annotate_is_liked_by_current_user(user=self.request.user)
+            .annotate_is_liked(self.request.user)
+
+
+class CheckObjectFollowedByCurrentUserMixin:
+    def get_queryset(self: APIView):
+        return super().get_queryset() \
+            .annotate_is_followed(self.request.user)

@@ -1,7 +1,6 @@
-from accounts.models import Account
-
 from django.db import models
 from django.db.models import Q, F
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
@@ -15,8 +14,10 @@ class Follow(models.Model):
         related_name='followings',
     )
 
-    followed_limit_choices = models.Q(app_label='accounts', model='Account') | \
-        models.Q(app_label='lists', model='List')
+    followed_limit_choices = (
+        models.Q(app_label='accounts', model='account') |
+        models.Q(app_label='lists', model='list')
+    )
 
     followed_type = models.ForeignKey(
         ContentType,
@@ -43,7 +44,7 @@ class Follow(models.Model):
         constraints = [
             models.CheckConstraint(
                 check=~Q(followed_id=F('user_id'),
-                         followed_type_id=ContentType.objects.get_for_model(Account).id),
+                         followed_type_id=ContentType.objects.get(app_label='accounts', model='account').id),
                 name='prevent_self_following'
             )
         ]

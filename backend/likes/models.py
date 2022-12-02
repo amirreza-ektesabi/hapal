@@ -12,9 +12,11 @@ class Like(models.Model):
         related_name='likes',
     )
 
-    liked_limit_choices = models.Q(app_label='lists', model='List') | \
-        models.Q(app_label='posts', model='Post') | \
-        models.Q(app_label='comments', model='Comment')
+    liked_limit_choices = (
+        models.Q(app_label='lists', model='list') |
+        models.Q(app_label='posts', model='post') |
+        models.Q(app_label='comments', model='comment')
+    )
     
     liked_type = models.ForeignKey(
         ContentType,
