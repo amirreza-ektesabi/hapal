@@ -1,24 +1,24 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import ListItems from "../components/listItems";
-import Property from "../components/property/view";
-import FloatingBox from "../components/objectRelated/floatingBox";
-import CommentDrawer from "../components/comment/drawer";
-import Statistic from "../components/objectRelated/statistic";
-import User from "../components/objectRelated/user";
-import { dateFormat, timeFormat } from "../general/datetimeFormat";
-import stringToColor from "../general/stringToColor";
-import { selectCommentUuids } from "../general/reducers/comments";
-import { selectPostByUuid } from "../general/reducers/posts";
-import { selectPropertyPuuids } from "../general/reducers/properties";
+import FloatingBox from "src/components/objectRelated/floatingBox";
+import { PropertyList } from "src/components/post/propertyList";
+import CommentDrawer from "src/components/comment/drawer";
+import Statistic from "src/components/objectRelated/statistic";
+import User from "src/components/objectRelated/user";
+import { dateFormat, timeFormat } from "src/general/datetimeFormat";
+import stringToColor from "src/general/stringToColor";
+import { selectCommentUuids } from "src/general/reducers/comments";
+import { selectPostByUuid } from "src/general/reducers/posts";
+import { selectPropertyPuuids } from "src/general/reducers/properties";
+import post_items from "public/sample_data/post_items";
 
 function PostedIn({ data, className }) {
   return (
-    <Grid container className="space-x-1.5 place-items-center">
+    <Box container className="flex space-x-1.5 place-items-center">
       <Typography
         variant="body1"
         className="font-normal"
@@ -34,26 +34,26 @@ function PostedIn({ data, className }) {
         className="truncate font-medium whitespace-pre"
         children={data.added_to.title}
       />
-    </Grid>
+    </Box>
   );
 }
 
 function Statistics({ data, className }) {
   return (
-    <Grid className={className + " flex space-x-10"}>
+    <Box container className={className + " flex space-x-10"}>
       <Statistic
         variant="horizontal"
         title={dateFormat(data.created)}
         value={timeFormat(data.created)}
       />
-    </Grid>
+    </Box>
   );
 }
 
 function About({ data, className }) {
   return (
-    <Grid className={className}>
-      <Grid>
+    <Box className={className}>
+      <Box>
         <Typography
           variant="h6"
           className="font-bold whitespace-pre-wrap"
@@ -67,8 +67,8 @@ function About({ data, className }) {
           wrap={true}
         />
         <Statistics data={data} className="mr-4 mt-3" />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 
@@ -82,23 +82,11 @@ function Top({ data, className }) {
   );
 }
 
-function Timeline({ data, className }) {
+export default function PostPage({}) {
+  const router = useRouter();
+  const uuid = post_items[0].uuid;
   const property_puuids = useSelector(selectPropertyPuuids);
-  return (
-    <React.Fragment>
-      <ListItems
-        data={property_puuids}
-        itemKey="uuid"
-        component={Property}
-        includeDivider={false}
-        className="space-y-4"
-        itemComponentClassName="mx-4"
-      />
-    </React.Fragment>
-  );
-}
 
-export default function PostPage({ uuid, className }) {
   const [state, setState] = React.useState({
     drawerIsOpen: false,
   });
@@ -111,11 +99,11 @@ export default function PostPage({ uuid, className }) {
 
   return (
     <Box className="flex flex-col place-items-center">
-      <Grid className="max-w-lg w-full">
+      <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <Timeline data={data} />
-      </Grid>
+        <PropertyList data={data} puuis={property_puuids} className="px-4" />
+      </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer
         uuids={comment_uuids}

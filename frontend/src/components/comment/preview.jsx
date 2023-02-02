@@ -2,9 +2,9 @@ import * as React from "react";
 import { useSelector } from "react-redux";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import CardIcons from "../cardRelated/icons";
-import CardTop from "../cardRelated/top";
-import { selectCommentByUuid } from "../../general/reducers/comments";
+import CardIcons from "src/components/cardRelated/icons";
+import CardTop from "src/components/cardRelated/top";
+import { selectCommentByUuid } from "src/general/reducers/comments";
 
 
 export default function CommentPreview({ uuid, className }) {

@@ -2,7 +2,7 @@ import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
-import stringToColor from "../../general/stringToColor";
+import stringToColor from "src/general/stringToColor";
 
 export default function User({
   data,

@@ -13,7 +13,7 @@ export default createTheme({
     whiteZ: "#d8d8d8",
     greyZ: grey["400"],
     blueZ: blue["700"],
-    favorite: red["600"],
+    redZ: red["600"],
     divider: "#27272a",
     text: {
       primary: "#d8d8d8",

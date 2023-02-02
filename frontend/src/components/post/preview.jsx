@@ -3,25 +3,23 @@ import { useSelector } from "react-redux";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
-import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
-import CardIcons from "../cardRelated/icons";
-import CardTop from "../cardRelated/top";
-import stringToColor from "../../general/stringToColor";
-import { selectPostByUuid } from "../../general/reducers/posts";
+import CardIcons from "src/components/cardRelated/icons";
+import CardTop from "src/components/cardRelated/top";
+import stringToColor from "src/general/stringToColor";
+import { selectPostByUuid } from "src/general/reducers/posts";
 
-function MediaPart({ data, className }) {
+function Media({ data, className }) {
   return (
-    <Skeleton
+    <Box
       variant="rectangular"
-      animation={false}
       sx={{ bgcolor: stringToColor(data.title) }}
       className={className}
     />
   );
 }
 
-function ContentPart({ data, className }) {
+function Content({ data, className }) {
   return (
     <Typography
       variant="h6"
@@ -39,8 +37,8 @@ export default function PostPreview({ uuid, className }) {
       <Card className="h-28 rounded-2xl">
         <CardActionArea className="flex">
           <Box className="flex grid-cols-2 w-full h-full">
-            <MediaPart data={data} className="h-28 w-28" />
-            <ContentPart data={data} className="ml-4 mt-2.5 truncate" />
+            <Media data={data} className="h-28 w-28" />
+            <Content data={data} className="ml-4 mt-2.5 truncate" />
           </Box>
         </CardActionArea>
       </Card>

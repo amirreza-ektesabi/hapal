@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
-import theme from "../../general/theme";
-import { profileFollowed } from "../../general/reducers/profile";
-import { listFollowed } from "../../general/reducers/lists";
+import theme from "src/general/theme";
+import { profileFollowed } from "src/general/reducers/profile";
+import { listFollowed } from "src/general/reducers/lists";
 
 const followedReducers = {
   account: profileFollowed,

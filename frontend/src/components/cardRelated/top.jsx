@@ -1,9 +1,9 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
-import User from "../objectRelated/user";
+import User from "src/components/objectRelated/user";
 import Date from "./date";
-import More from "../objectRelated/more";
+import More from "src/components/objectRelated/more";
 
 export default function CardTop({ data, className }) {
   return (

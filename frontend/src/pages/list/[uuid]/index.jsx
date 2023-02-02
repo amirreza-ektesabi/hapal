@@ -4,18 +4,19 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import ListItems from "../components/listItems";
-import Statistic from "../components/objectRelated/statistic";
-import Header from "../components/objectRelated/header";
-import PostPreview from "../components/post/preview";
-import User from "../components/objectRelated/user";
-import FloatingBox from "../components/objectRelated/floatingBox";
-import CommentDrawer from "../components/comment/drawer";
-import { dateFormat, timeFormat } from "../general/datetimeFormat";
-import numberFormat from "../general/numberFormat";
-import { selectPostUuids } from "../general/reducers/posts";
-import { selectCommentUuids } from "../general/reducers/comments";
-import { selectListByUuid } from "../general/reducers/lists";
+import ListItems from "src/components/listItems";
+import Statistic from "src/components/objectRelated/statistic";
+import Header from "src/components/objectRelated/header";
+import PostPreview from "src/components/post/preview";
+import User from "src/components/objectRelated/user";
+import FloatingBox from "src/components/objectRelated/floatingBox";
+import CommentDrawer from "src/components/comment/drawer";
+import { dateFormat, timeFormat } from "src/general/datetimeFormat";
+import numberFormat from "src/general/numberFormat";
+import { selectPostUuids } from "src/general/reducers/posts";
+import { selectCommentUuids } from "src/general/reducers/comments";
+import { selectListByUuid } from "src/general/reducers/lists";
+import list_items from "public/sample_data/list_items";
 
 function Statistics({ data, className }) {
   return (
@@ -64,14 +65,14 @@ function Top({ data, className }) {
   return (
     <Box className={className}>
       <Box className="max-w-lg w-full">
-        <Header data={data} colorDecider={data.title} />
+        <Header data={data} colorDecider={data.title} includeMoreIcon={true} />
         <About data={data} className="mt-7 ml-4" />
       </Box>
     </Box>
   );
 }
 
-function Timeline({ data, className }) {
+function PostList({ data, className }) {
   const post_uuids = useSelector(selectPostUuids);
   return (
     <React.Fragment>
@@ -95,6 +96,7 @@ export default function ListPage({ uuid, className }) {
   const [state, setState] = React.useState({
     drawerIsOpen: false,
   });
+  uuid = list_items[0].uuid;
   const comment_uuids = useSelector(selectCommentUuids);
   const data = useSelector((state) => selectListByUuid(state, uuid));
 
@@ -107,7 +109,7 @@ export default function ListPage({ uuid, className }) {
       <Grid className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <Timeline data={data} />
+        <PostList data={data} />
       </Grid>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer

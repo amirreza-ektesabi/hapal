@@ -1,10 +1,6 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Unstable_Grid2";
-import Typography from "@mui/material/Typography";
-import ModeCommentRoundedIcon from "@mui/icons-material/ModeCommentRounded";
-import numberFormat from "../../general/numberFormat";
 import Favorite from "./favorite";
 import Comment from "./comment";
 

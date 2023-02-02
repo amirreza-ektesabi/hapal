@@ -5,10 +5,10 @@ import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import CardIcons from "../cardRelated/icons";
-import CardTop from "../cardRelated/top";
-import stringToColor from "../../general/stringToColor";
-import { selectListByUuid } from "../../general/reducers/lists";
+import CardIcons from "src/components/cardRelated/icons";
+import CardTop from "src/components/cardRelated/top";
+import stringToColor from "src/general/stringToColor";
+import { selectListByUuid } from "src/general/reducers/lists";
 
 function Media({ data, className }) {
   return data.header === null ? (

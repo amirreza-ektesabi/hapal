@@ -3,13 +3,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CloseRounded from "@mui/icons-material/CloseRounded";
-import ListItems from "../listItems";
-import CommentPreview from "./preview";
-import theme from "../../general/theme";
-import { commentAdded } from "../../general/reducers/comments";
+import ListItems from "src/components/listItems";
+import CommentPreview from "src/components/comment/preview";
+import theme from "src/general/theme";
 
 function getAnchor() {
   return typeof window === "undefined" || window.innerWidth > 640
@@ -19,7 +17,7 @@ function getAnchor() {
 
 function TitleBar({ toggleDrawer, className }) {
   return (
-    <Grid className="flex ml-4 items-center">
+    <Box container className="flex ml-4 items-center">
       <Typography
         variant="h6"
         color="greyZ"
@@ -27,7 +25,7 @@ function TitleBar({ toggleDrawer, className }) {
         children="Comments"
       />
       <CloseRounded className="ml-auto mr-4" onClick={toggleDrawer(false)} />
-    </Grid>
+    </Box>
   );
 }
 
@@ -39,7 +37,7 @@ function ReplyBox({
   className,
 }) {
   return (
-    <Grid className="px-4 space-y-1">
+    <Box container className="px-4 space-y-1">
       <TextField
         multiline
         variant="outlined"
@@ -61,11 +59,11 @@ function ReplyBox({
           onClick={handleClickOnReplyButton}
         />
       </Box>
-    </Grid>
+    </Box>
   );
 }
 
-function Timeline({ uuids }) {
+function CommentList({ uuids }) {
   return (
     <ListItems
       data={uuids}
@@ -127,7 +125,7 @@ export default function CommentDrawer({
           handleTextInputChange={handleTextInputChange}
           handleClickOnReplyButton={handleClickOnReplyButton}
         />
-        <Timeline uuids={uuids} />
+        <CommentList uuids={uuids} />
       </Box>
     </SwipeableDrawer>
   );

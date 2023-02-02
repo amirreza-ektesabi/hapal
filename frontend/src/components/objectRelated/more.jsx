@@ -7,13 +7,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import IconButton from "@mui/material/IconButton";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import PersonRemoveAlt1RoundedIcon from "@mui/icons-material/PersonRemoveAlt1Rounded";
-import { listUserFollowed } from "../../general/reducers/lists";
-import { postUserFollowed } from "../../general/reducers/posts";
-import { commentUserFollowed } from "../../general/reducers/comments";
+import CircleIcon from "src/components/circleIcon";
+import { listUserFollowed } from "src/general/reducers/lists";
+import { postUserFollowed } from "src/general/reducers/posts";
+import { commentUserFollowed } from "src/general/reducers/comments";
 
 const userFollowedReducers = {
   list: listUserFollowed,
@@ -71,16 +71,15 @@ export default function More({ data, button = false, className }) {
   return (
     <Box>
       {button ? (
-        <IconButton
+        <CircleIcon
           onClick={handleClick}
           className={className}
         >
           <MoreVertRoundedIcon color="white" />
-        </IconButton>
+        </CircleIcon>
       ) : (
         <MoreVertRoundedIcon
-          fontSize="small"
-          className={className + " fill-greyZ "}
+          className={className + " text-xl cursor-pointer hover:fill-greyZ"}
           onClick={handleClick}
         />
       )}

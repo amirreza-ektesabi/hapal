@@ -10,12 +10,17 @@ export default function ListItems({
   component: ItemComponent,
   includeDivider = true,
   itemComponentClassName,
+  ...props
 }) {
   return (
     <List className={className + " flex flex-col place-items-center w-full"}>
       {data.map((item, index) => (
         <Box className="w-full" key={index}>
-          <ItemComponent {...{[itemKey]: item}} className={itemComponentClassName} />
+          <ItemComponent
+            {...{ [itemKey]: item }}
+            className={itemComponentClassName}
+            {...props}
+          />
           {includeDivider && index != data.length - 1 && (
             <Divider className="w-full my-3" />
           )}

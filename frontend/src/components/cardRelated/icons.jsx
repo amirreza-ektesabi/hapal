@@ -2,12 +2,12 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
-import Favorite from "../objectRelated/favorite";
-import Comment from "../objectRelated/comment";
+import Favorite from "src/components/objectRelated/favorite";
+import Comment from "src/components/objectRelated/comment";
 
 function Share({ data, className }) {
   return (
-    <ShareRoundedIcon fontSize="small" className={className + " fill-greyZ"} />
+    <ShareRoundedIcon className={className + " text-xl cursor-pointer hover:fill-greyZ"} />
   );
 }
 

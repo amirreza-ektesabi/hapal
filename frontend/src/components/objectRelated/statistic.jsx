@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
-import numberFormat from "../../general/numberFormat";
+import numberFormat from "src/general/numberFormat";
 
 export default function ObjectStatistic({ title, value, variant }) {
   if (typeof value == "number") value = numberFormat(value);

@@ -2,26 +2,13 @@ import * as React from "react";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
-import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import ListItems from "../components/listItems";
-import Statistic from "../components/objectRelated/statistic";
-import Header from "../components/objectRelated/header";
-import ListPreview from "../components/list/preview";
-import stringToColor from "../general/stringToColor";
-import { selectListUuids } from "../general/reducers/lists";
-
-function UserAvatar({ data, className }) {
-  return (
-    <Avatar
-      src={data.avatar}
-      sx={{ bgcolor: stringToColor(data.name) }}
-      className="w-20 h-20 text-4xl absolute left-4 border-[3px] border-blackZ"
-      children={data.name[0]}
-    />
-  );
-}
+import ListItems from "src/components/listItems";
+import Statistic from "src/components/objectRelated/statistic";
+import Header from "src/components/objectRelated/header";
+import ListPreview from "src/components/list/preview";
+import { selectListUuids } from "src/general/reducers/lists";
 
 function Statistics({ data, className }) {
   return (
@@ -73,7 +60,7 @@ function Top({ data, className }) {
         <Header
           data={data}
           colorDecider={data.name + data.username}
-          avatar={<UserAvatar data={data} />}
+          includeProfileAvatar={true}
         />
         <About data={data} className="mt-12 ml-4" />
       </Box>

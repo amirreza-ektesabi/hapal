@@ -3,10 +3,10 @@ import { useDispatch } from "react-redux";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
-import numberFormat from "../../general/numberFormat";
-import { listLiked } from "../../general/reducers/lists";
-import { postLiked } from "../../general/reducers/posts";
-import { commentLiked } from "../../general/reducers/comments";
+import numberFormat from "src/general/numberFormat";
+import { listLiked } from "src/general/reducers/lists";
+import { postLiked } from "src/general/reducers/posts";
+import { commentLiked } from "src/general/reducers/comments";
 
 const likedReducers = {
   list: listLiked,
@@ -22,12 +22,15 @@ export default function Favorite({ data, className }) {
     dispatch(reducer(data.uuid));
   };
 
+  const colorClassName = data.is_liked
+    ? "fill-redZ"
+    : "fill-whiteZ hover:fill-greyZ";
+
   return (
     <Grid className={className + " space-x-1"}>
       <FavoriteRoundedIcon
-        fontSize="small"
-        className={data.is_liked ? "fill-redZ" : "fill-greyZ"}
         onClick={handleOnClick}
+        className={colorClassName + " text-xl cursor-pointer"}
       />
       <Typography
         variant="caption"
