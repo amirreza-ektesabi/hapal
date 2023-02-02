@@ -4,7 +4,7 @@ from comments.models import Comment
 from comments.serializers import CommentFullviewSerializer
 from baseapp.views import (
     ListCreateRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
-    PageNumberPaginationWithSize
+    CheckObjectUserFollowedByCurrentUserMixin, PageNumberPaginationWithSize
 )
 from baseapp.permissions import IsOwnerOrReadOnly
 
@@ -12,16 +12,20 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 
-class CommentPage(CheckObjectLikedByCurrentUserMixin, RetrieveUpdateDestroyAPIView):
-    queryset = Comment.objects.select_related('user') \
+class CommentPage(CheckObjectLikedByCurrentUserMixin,
+                  CheckObjectUserFollowedByCurrentUserMixin,
+                  RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects \
         .prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes')
     serializer_class = CommentFullviewSerializer
     lookup_field = 'uuid'
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class ObjectPageComments(CheckObjectLikedByCurrentUserMixin, ListCreateRelatedAPIView):
-    queryset = Comment.objects.select_related('user') \
+class ObjectPageComments(CheckObjectLikedByCurrentUserMixin,
+                         CheckObjectUserFollowedByCurrentUserMixin,
+                         ListCreateRelatedAPIView):
+    queryset = Comment.objects \
         .prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes') \
         .order_by('-created')
     serializer_class = CommentFullviewSerializer

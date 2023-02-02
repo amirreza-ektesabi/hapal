@@ -1,7 +1,6 @@
-from likes.models import Like
-from follows.models import Follow
+from accounts.models import Account
 
-from django.db.models import QuerySet, Model
+from django.db.models import QuerySet, Model, Prefetch
 from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import ModelSerializer
@@ -63,3 +62,10 @@ class CheckObjectFollowedByCurrentUserMixin:
     def get_queryset(self: APIView):
         return super().get_queryset() \
             .annotate_is_followed(self.request.user)
+    
+
+class CheckObjectUserFollowedByCurrentUserMixin:
+    def get_queryset(self):
+        account_subquery = Account.objects.all().annotate_is_followed(self.request.user)
+        return super().get_queryset() \
+            .prefetch_related(Prefetch('user', account_subquery))

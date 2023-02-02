@@ -15,5 +15,5 @@ account_urls = [
 ]
 
 urlpatterns = [
-    path('<str:username>/', include(account_urls), kwargs={'type': 'account'}),
+    path('account/<str:username>/', include(account_urls), kwargs={'type': 'account'}),
 ]

@@ -4,7 +4,8 @@ from accounts.models import Account
 from baseapp.permissions import IsOwnerOrReadOnly
 from baseapp.views import (
     ListRelatedAPIView, PageNumberPaginationWithSize,
-    CheckObjectLikedByCurrentUserMixin, CheckObjectFollowedByCurrentUserMixin
+    CheckObjectLikedByCurrentUserMixin, CheckObjectFollowedByCurrentUserMixin,
+    CheckObjectUserFollowedByCurrentUserMixin
 )
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -13,8 +14,9 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 
 class ListPage(CheckObjectLikedByCurrentUserMixin,
                CheckObjectFollowedByCurrentUserMixin,
+               CheckObjectUserFollowedByCurrentUserMixin,
                RetrieveUpdateDestroyAPIView):
-    queryset = List.objects.select_related('user') \
+    queryset = List.objects \
         .prefetch_related('posts', 'comments', 'followers', 'likes')
     serializer_class = ListFullviewSerializer
     lookup_field = 'uuid'
@@ -34,8 +36,9 @@ class CreateList(CreateAPIView):
 
 class ProfilePageLists(CheckObjectLikedByCurrentUserMixin,
                        CheckObjectFollowedByCurrentUserMixin,
+                       CheckObjectUserFollowedByCurrentUserMixin,
                        ListRelatedAPIView):
-    queryset = List.objects.select_related('user') \
+    queryset = List.objects \
         .prefetch_related('posts', 'comments', 'followers', 'likes') \
         .order_by('-created')
     serializer_class = ListPreviewSerializer

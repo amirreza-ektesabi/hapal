@@ -1,5 +1,5 @@
 from baseapp.models import SharedBaseModel
-from accounts.serializers import AccountSerializer
+from accounts.serializers import AccountSerializer, SharedObjectUserSerializer
 
 from django.db.models import Model
 from django.urls import reverse
@@ -26,10 +26,9 @@ class SharedObjectSubviewSerializer(serializers.ModelSerializer):
 
 
 class SharedObjectPreviewSerializer(SharedObjectSubviewSerializer):
-    user = AccountSerializer(read_only=True)
+    user = SharedObjectUserSerializer(read_only=True)
 
     created = serializers.DateTimeField(
-        format='%Y-%m-%d %H:%M:%S',
         read_only=True
     )
 
@@ -50,7 +49,6 @@ class SharedObjectPreviewSerializer(SharedObjectSubviewSerializer):
 
 class SharedObjectFullviewSerializer(SharedObjectPreviewSerializer):
     updated = serializers.DateTimeField(
-        format='%Y-%m-%d %H:%M:%S',
         read_only=True
     )
 
@@ -61,7 +59,6 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
     user = AccountSerializer(read_only=True)
 
     created = serializers.DateTimeField(
-        format='%Y-%m-%d %H:%M:%S',
         read_only=True
     )
 
@@ -75,5 +72,6 @@ class SharedObjectActionSerializer(serializers.ModelSerializer):
     def get_related_object(self, obj: Model) -> dict:
         related_object_instance = getattr(obj, self.object_name)
         kwargs = {'instance': related_object_instance}
-        related_object_serializer_class = self.related_objects_serializer_class[related_object_instance._meta.model]
+        related_object_serializer_class = self.related_objects_serializer_class[
+            related_object_instance._meta.model]
         return related_object_serializer_class().to_representation(**kwargs)

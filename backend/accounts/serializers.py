@@ -42,6 +42,20 @@ class AccountSerializer(AccountBaseSerializer):
         ]
 
 
+class SharedObjectUserSerializer(AccountBaseSerializer):
+    is_followed = serializers.BooleanField(
+        read_only=True
+    )
+
+    class Meta(AccountBaseSerializer.Meta):
+        fields = AccountBaseSerializer.Meta.fields + [
+            'name',
+            'username',
+            'avatar',
+            'is_followed',
+        ]
+
+
 class ProfileSerializer(AccountBaseSerializer):
     class Meta(AccountBaseSerializer.Meta):
         fields = AccountBaseSerializer.Meta.fields + [
