@@ -1,4 +1,5 @@
-export default {
+export default [
+  {
     username: "amrez",
     type: "account",
     name: "Amrez",
@@ -10,4 +11,5 @@ export default {
     posts_count: 237,
     lists_count: 4,
     is_followed: true,
-};
+  },
+];

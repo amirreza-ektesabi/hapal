@@ -1,18 +1,24 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import ErrorPage from "src/pages/_error";
 import ListItems from "src/components/listItems";
 import Statistic from "src/components/objectRelated/statistic";
 import Header from "src/components/objectRelated/header";
 import ListPreview from "src/components/list/preview";
 import { selectListUuids } from "src/general/reducers/lists";
+import { selectUserByUsername } from "src/general/reducers/users";
+import {
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
 
 function Statistics({ data, className }) {
   return (
-    <Grid className={className + " flex space-x-10"}>
+    <Box className={className + " flex space-x-10"}>
       <Statistic
         variant="horizontal"
         title={"Following"}
@@ -23,14 +29,14 @@ function Statistics({ data, className }) {
         title={"Followers"}
         value={data.followers_count}
       />
-    </Grid>
+    </Box>
   );
 }
 
 function About({ data, className }) {
   return (
-    <Grid container className={className}>
-      <Grid>
+    <Box className={className}>
+      <Box>
         <Typography
           variant="h6"
           className="font-bold whitespace-pre-wrap"
@@ -48,8 +54,8 @@ function About({ data, className }) {
           children={data.bio}
         />
         <Statistics data={data} className="mt-2.5" />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 
@@ -68,13 +74,18 @@ function Top({ data, className }) {
   );
 }
 
-export default function ProfilePage({ className }) {
-  const data = useSelector((state) => state.profile);
+export default function ProfilePage({ username, className }) {
+  const router = useRouter();
+
+  const data = useSelector((state) => selectUserByUsername(state, username));
+  if (!router.isFallback && (!username || !data)) {
+    return <ErrorPage statusCode={404} />;
+  }
   const list_uuids = useSelector(selectListUuids);
 
   return (
     <Box className="flex flex-col place-items-center">
-      <Grid className="max-w-lg">
+      <Box className="max-w-lg">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full my-2.5" />
         <Typography
@@ -89,7 +100,10 @@ export default function ProfilePage({ className }) {
           component={ListPreview}
           itemComponentClassName="mx-4"
         />
-      </Grid>
+      </Box>
     </Box>
   );
 }
+
+export const getStaticProps = getDefaultStaticProps("username");
+export { getDefaultStaticPaths as getStaticPaths };

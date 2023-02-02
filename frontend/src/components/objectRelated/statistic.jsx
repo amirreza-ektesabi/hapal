@@ -1,5 +1,5 @@
 import * as React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import numberFormat from "src/general/numberFormat";
 
@@ -12,7 +12,7 @@ export default function ObjectStatistic({ title, value, variant }) {
       ? "flex space-x-1"
       : "";
   return (
-    <Grid className={className}>
+    <Box className={className}>
       <Typography variant="body1" className="font-bold">
         {value}
       </Typography>
@@ -23,6 +23,6 @@ export default function ObjectStatistic({ title, value, variant }) {
       >
         {title}
       </Typography>
-    </Grid>
+    </Box>
   );
 }

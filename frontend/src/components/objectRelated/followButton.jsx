@@ -2,11 +2,11 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import { profileFollowed } from "src/general/reducers/profile";
+import { userFollowed } from "src/general/reducers/users";
 import { listFollowed } from "src/general/reducers/lists";
 
 const followedReducers = {
-  account: profileFollowed,
+  account: userFollowed,
   list: listFollowed,
 };
 
@@ -50,7 +50,7 @@ export default function FollowButton({ data, className }) {
 
   const handleOnClick = (event) => {
     const reducer = followedReducers[data.type];
-    dispatch(reducer(data.type == "list" ? data.uuid : null));
+    dispatch(reducer(data.type == "list" ? data.uuid : data.username ));
   };
 
   return data.is_followed ? (

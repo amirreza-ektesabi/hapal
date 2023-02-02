@@ -1,9 +1,9 @@
 import * as React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
-import FollowButton from "./followButton";
-import HeaderIcons from "./headerIcons";
-import HeaderImage from "./headerImage";
-import ProfileAvatar from "./profileAvatar";
+import Box from "@mui/material/Box";
+import FollowButton from "src/components/objectRelated/followButton";
+import HeaderIcons from "src/components/objectRelated/headerIcons";
+import HeaderImage from "src/components/objectRelated/headerImage";
+import ProfileAvatar from "src/components/objectRelated/profileAvatar";
 
 function BottomEdge({
   data,
@@ -13,8 +13,7 @@ function BottomEdge({
   forEdit = false,
 }) {
   return (
-    <Grid
-      container
+    <Box
       className={
         "absolute flex w-full items-center px-4" +
         (includeProfileAvatar ? " -bottom-10" : " -bottom-5")
@@ -22,7 +21,7 @@ function BottomEdge({
     >
       {includeProfileAvatar && <ProfileAvatar data={data} forEdit={forEdit} />}
       {includeFollowButton && <FollowButton data={data} className="ml-auto" />}
-    </Grid>
+    </Box>
   );
 }
 
@@ -33,14 +32,14 @@ export function HeaderEdit({
   includeProfileAvatar = false,
 }) {
   return (
-    <Grid container className="relative">
+    <Box className="relative">
       <HeaderImage data={data} colorDecider={colorDecider} forEdit={true} />
       <BottomEdge
         data={data}
         includeProfileAvatar={includeProfileAvatar}
         forEdit={true}
       />
-    </Grid>
+    </Box>
   );
 }
 
@@ -52,7 +51,7 @@ export default function Header({
   includeProfileAvatar = false,
 }) {
   return (
-    <Grid container className="relative">
+    <Box className="relative">
       <HeaderImage data={data} colorDecider={colorDecider} />
       <HeaderIcons
         data={data}
@@ -64,6 +63,6 @@ export default function Header({
         includeProfileAvatar={includeProfileAvatar}
         includeFollowButton={true}
       />
-    </Grid>
+    </Box>
   );
 }

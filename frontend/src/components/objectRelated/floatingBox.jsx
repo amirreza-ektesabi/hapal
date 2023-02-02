@@ -1,13 +1,12 @@
 import * as React from "react";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Unstable_Grid2";
-import Favorite from "./favorite";
-import Comment from "./comment";
+import Favorite from "src/components/objectRelated/favorite";
+import Comment from "src/components/objectRelated/comment";
 
 export default function FloatingButton({ data, className, toggleDrawer }) {
   return (
-    <Grid
-      container
+    <Box
       className="fixed bottom-4 h-8 rounded-full bg-blackZ shadow-black shadow-sm flex place-items-center px-4"
     >
       <Favorite data={data} />
@@ -18,6 +17,6 @@ export default function FloatingButton({ data, className, toggleDrawer }) {
         className="mx-3"
       />
       <Comment data={data} iconOnClick={toggleDrawer(true)} />
-    </Grid>
+    </Box>
   );
 }

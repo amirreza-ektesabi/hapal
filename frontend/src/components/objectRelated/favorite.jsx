@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import Grid from "@mui/material/Unstable_Grid2";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import numberFormat from "src/general/numberFormat";
@@ -27,7 +27,7 @@ export default function Favorite({ data, className }) {
     : "fill-whiteZ hover:fill-greyZ";
 
   return (
-    <Grid className={className + " space-x-1"}>
+    <Box className={className + " space-x-1"}>
       <FavoriteRoundedIcon
         onClick={handleOnClick}
         className={colorClassName + " text-xl cursor-pointer"}
@@ -37,6 +37,6 @@ export default function Favorite({ data, className }) {
         color="text.secondary"
         children={numberFormat(data.likes_count)}
       />
-    </Grid>
+    </Box>
   );
 }

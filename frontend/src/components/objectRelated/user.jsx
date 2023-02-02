@@ -1,6 +1,6 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Grid from "@mui/material/Unstable_Grid2";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import stringToColor from "src/general/stringToColor";
 
@@ -35,9 +35,9 @@ export default function User({
   );
 
   return wrap ? (
-    <Grid container className={className + " space-x-2"}>
+    <Box className={className + " flex space-x-2"}>
       {components}
-    </Grid>
+    </Box>
   ) : (
     components
   );

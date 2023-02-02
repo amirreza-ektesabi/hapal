@@ -42,7 +42,7 @@ export default function TemporaryHomePage() {
 const rows = [
   [{ href: "/", name: "Home" }],
   [
-    { href: "/ananux", name: "Profile" },
+    { href: "/amrez", name: "Profile" },
     { href: "/settings/profile", name: "Edit Profile" },
   ],
   [

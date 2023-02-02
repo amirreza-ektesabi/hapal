@@ -17,7 +17,7 @@ function getAnchor() {
 
 function TitleBar({ toggleDrawer, className }) {
   return (
-    <Box container className="flex ml-4 items-center">
+    <Box className="flex ml-4 items-center">
       <Typography
         variant="h6"
         color="greyZ"
@@ -37,7 +37,7 @@ function ReplyBox({
   className,
 }) {
   return (
-    <Box container className="px-4 space-y-1">
+    <Box className="px-4 space-y-1">
       <TextField
         multiline
         variant="outlined"

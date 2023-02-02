@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -40,12 +39,12 @@ function UserFollowItem({ data, handleMenuClose }) {
         )}
       </ListItemIcon>
       <ListItemText>
-        <Grid container className="space-x-1">
+        <Box className="flex space-x-1">
           <Typography
             children={data.user.is_followed ? "Follow" : "Unfollow"}
           />
           <Typography className="font-bold" children={data.user.name} />
-        </Grid>
+        </Box>
       </ListItemText>
     </MenuItem>
   );

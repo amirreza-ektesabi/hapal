@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import ErrorPage from "src/pages/_error";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import { PropertyList } from "src/components/post/propertyList";
 import CommentDrawer from "src/components/comment/drawer";
@@ -14,11 +15,14 @@ import stringToColor from "src/general/stringToColor";
 import { selectCommentUuids } from "src/general/reducers/comments";
 import { selectPostByUuid } from "src/general/reducers/posts";
 import { selectPropertyPuuids } from "src/general/reducers/properties";
-import post_items from "public/sample_data/post_items";
+import {
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
 
 function PostedIn({ data, className }) {
   return (
-    <Box container className="flex space-x-1.5 place-items-center">
+    <Box className="flex space-x-1.5 place-items-center">
       <Typography
         variant="body1"
         className="font-normal"
@@ -40,7 +44,7 @@ function PostedIn({ data, className }) {
 
 function Statistics({ data, className }) {
   return (
-    <Box container className={className + " flex space-x-10"}>
+    <Box className={className + " flex space-x-10"}>
       <Statistic
         variant="horizontal"
         title={dateFormat(data.created)}
@@ -82,16 +86,20 @@ function Top({ data, className }) {
   );
 }
 
-export default function PostPage({}) {
+export default function PostPage({ uuid }) {
   const router = useRouter();
-  const uuid = post_items[0].uuid;
+  
+  const data = useSelector((state) => selectPostByUuid(state, uuid));
+  if (!router.isFallback && (!uuid || !data)) {
+    return <ErrorPage statusCode={404} />;
+  }
+
   const property_puuids = useSelector(selectPropertyPuuids);
+  const comment_uuids = useSelector(selectCommentUuids);
 
   const [state, setState] = React.useState({
     drawerIsOpen: false,
   });
-  const comment_uuids = useSelector(selectCommentUuids);
-  const data = useSelector((state) => selectPostByUuid(state, uuid));
 
   const toggleDrawer = (open) => () => {
     setState({ ...state, drawerIsOpen: open });
@@ -113,3 +121,6 @@ export default function PostPage({}) {
     </Box>
   );
 }
+
+export const getStaticProps = getDefaultStaticProps("uuid");
+export { getDefaultStaticPaths as getStaticPaths };
