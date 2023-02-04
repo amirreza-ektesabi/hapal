@@ -16,7 +16,6 @@ class ObjectPageFollows(ListCreateRelatedAPIView):
         .order_by('-created')
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = PageNumberPaginationWithSize(40)
     relateds = {
         'list': {
             'lookup_field': 'uuid',
@@ -53,7 +52,6 @@ class ProfilePageFollowing(ListRelatedAPIView):
         .prefetch_related('followed') \
         .order_by('-created')
     serializer_class = FollowSerializer
-    pagination_class = PageNumberPaginationWithSize(40)
     relateds = {
         'account': {
             'lookup_field': 'username',

@@ -29,7 +29,6 @@ class ObjectPageComments(CheckObjectLikedByCurrentUserMixin,
         .prefetch_related('replied_to', 'replied_to__user', 'comments', 'likes') \
         .order_by('-created')
     serializer_class = CommentFullviewSerializer
-    pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly]
     relateds = {
         'list': {

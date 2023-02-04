@@ -35,7 +35,6 @@ class PostPageProperties(ListCreateRelatedAPIView):
         .prefetch_related('pairs') \
         .order_by('order_number')
     serializer_class = PropertyListCreateSerializer
-    pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly, IsRelatedOwnerOrReadOnly]
     relateds = {
         'post': {

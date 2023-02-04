@@ -42,7 +42,6 @@ class ProfilePageLists(CheckObjectLikedByCurrentUserMixin,
         .prefetch_related('posts', 'comments', 'followers', 'likes') \
         .order_by('-created')
     serializer_class = ListPreviewSerializer
-    pagination_class = PageNumberPaginationWithSize(10)
     relateds = {
         'account': {
             'lookup_field': 'username',

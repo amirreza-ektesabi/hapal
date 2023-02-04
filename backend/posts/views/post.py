@@ -30,7 +30,6 @@ class ListPagePosts(CheckObjectLikedByCurrentUserMixin,
         .prefetch_related('comments', 'likes') \
         .order_by('-created')
     serializer_class = PostFullviewSerializer
-    pagination_class = PageNumberPaginationWithSize(10)
     permission_classes = [IsAuthenticatedOrReadOnly, IsRelatedOwnerOrReadOnly]
     relateds = {
         'list': {
@@ -49,7 +48,6 @@ class ProfilePagePosts(CheckObjectLikedByCurrentUserMixin,
         .prefetch_related('comments', 'likes') \
         .order_by('-created')
     serializer_class = PostFullviewSerializer
-    pagination_class = PageNumberPaginationWithSize(10)
     relateds = {
         'account': {
             'lookup_field': 'username',

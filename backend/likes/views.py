@@ -17,7 +17,6 @@ class ObjectPageLikes(ListCreateRelatedAPIView):
         .order_by('-created')
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = PageNumberPaginationWithSize(40)
     relateds = {
         'list': {
             'lookup_field': 'uuid',
