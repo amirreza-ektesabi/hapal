@@ -13,7 +13,6 @@ class PostSubviewSerializer(SharedObjectSubviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'title',
         ]
 
@@ -24,7 +23,6 @@ class PostPreviewSerializer(SharedObjectPreviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'user',
             'added_to',
             'title',
@@ -43,7 +41,6 @@ class PostFullviewSerializer(SharedObjectFullviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'user',
             'added_to',
             'title',

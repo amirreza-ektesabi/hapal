@@ -18,19 +18,13 @@ class AccountBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = [
-            'type',
-            'url'
+            'type'
         ]
 
     type = serializers.SerializerMethodField()
 
-    url = serializers.SerializerMethodField()
-
     def get_type(self, obj: Account) -> str:
         return self.Meta.model._meta.model_name
-
-    def get_url(self, obj: Account) -> str:
-        return reverse('{}_page'.format(self.get_type(obj)), args=[obj.username])
 
 
 class AccountSerializer(AccountBaseSerializer):

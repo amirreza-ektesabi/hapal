@@ -18,8 +18,7 @@ class CommentSubviewSerializer(SharedObjectSubviewSerializer):
         model = List
         fields = [
             'type',
-            'uuid',
-            'url',
+            'uuid'
         ]
 
 
@@ -29,7 +28,6 @@ class CommentFullviewSerializer(SharedObjectFullviewSerializer, SharedObjectActi
         fields = [
             'type',
             'uuid',
-            'url',
             'user',
             'body',
             'replied_to',

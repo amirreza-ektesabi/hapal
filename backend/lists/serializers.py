@@ -14,7 +14,6 @@ class ListSubviewSerializer(SharedObjectSubviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'title',
         ]
 
@@ -25,7 +24,6 @@ class ListPreviewSerializer(SharedObjectPreviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'user',
             'title',
             'header',
@@ -58,7 +56,6 @@ class ListFullviewSerializer(SharedObjectFullviewSerializer):
         fields = [
             'type',
             'uuid',
-            'url',
             'user',
             'title',
             'header',

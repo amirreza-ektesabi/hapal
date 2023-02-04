@@ -11,13 +11,8 @@ from typing import Dict
 class SharedObjectSubviewSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
 
-    url = serializers.SerializerMethodField()
-
     def get_type(self, obj: SharedBaseModel) -> str:
         return self.Meta.model._meta.model_name
-
-    def get_url(self, obj: SharedBaseModel) -> str:
-        return reverse('{}_page'.format(self.get_type(obj)), args=[obj.uuid])
 
     def to_representation(self, instance: SharedBaseModel) -> dict:
         if instance.deleted_at is None:
