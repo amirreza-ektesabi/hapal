@@ -1,29 +1,35 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import ErrorPage from "src/pages/_error";
 import SetPostPage from "src/components/post/setPage";
-import {
-  getDefaultStaticProps,
-  getDefaultStaticPaths,
-} from "src/components/routing";
-import { selectListByUuid } from "src/general/reducers/lists";
+import { getDefaultStaticPaths } from "src/components/routing";
+import { addedOneList } from "src/general/reducers/lists";
+import { getList } from "api/lists";
 
-export default function NewPostPage({ uuid: posted_in_uuid, className }) {
+export default function NewPostPage({ posted_in_uuid, response }) {
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const posted_in_data = useSelector((state) => selectListByUuid(state, posted_in_uuid));
-  if (!router.isFallback && (!posted_in_uuid || !posted_in_data)) {
+  if (!router.isFallback && response.error) {
     return <ErrorPage statusCode={404} />;
   }
 
-  const data = {
-    title: "",
-  };
-  const property_puuids = [];
+  dispatch(addedOneList(response.data));
 
-  return <SetPostPage data={data} property_puuids={property_puuids} />;
+  const data = { title: "", properties: [] };
+
+  return <SetPostPage data={data} />;
 }
 
-export const getStaticProps = getDefaultStaticProps("uuid");
+export async function getStaticProps({ params }) {
+  const response = await getList(params.uuid);
+
+  return {
+    props: {
+      posted_in_uuid: params.uuid,
+      response,
+    },
+  };
+}
 export { getDefaultStaticPaths as getStaticPaths };

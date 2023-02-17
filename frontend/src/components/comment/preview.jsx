@@ -15,7 +15,7 @@ export default function CommentPreview({ uuid, className }) {
       <Box>
         <Typography
           variant="body2"
-          className="truncate whitespace-pre-wrap"
+          className="whitespace-pre-wrap break-words"
           children={data.body}
         />
       </Box>

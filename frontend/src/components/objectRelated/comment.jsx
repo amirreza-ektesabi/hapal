@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ModeCommentRoundedIcon from "@mui/icons-material/ModeCommentRounded";
-import numberFormat from "src/general/numberFormat";
+import numberFormat from "src/general/functions/numberFormat";
 
 export default function Comment({ data, className, iconOnClick }) {
   return (

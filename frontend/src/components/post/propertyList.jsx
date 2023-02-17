@@ -1,30 +1,39 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import ListItems from "src/components/listItems";
-import Property, { EditProperty } from "src/components/property/view";
+import Property from "src/components/property/view";
+import EditProperty from "src/components/property/editView";
 
-export function PropertyEditList({ data, className, puuids = [] }) {
-  const [openEditPropertyBox, setOpenEditPropertyBox] = React.useState(null);
+export function PropertyEditList({ data, className, handleRemove, handleEdit }) {
+  const [openEditBox, setOpenEditBox] = React.useState(null);
 
-  const handleEditOpen = (puuid) => {
-    setOpenEditPropertyBox(puuid);
+  const handleEditOpen = (index) => {
+    setOpenEditBox(index);
   };
 
   const handleEditClose = () => {
-    setOpenEditPropertyBox(null);
+    setOpenEditBox(null);
+  };
+
+  const handleEditSave = (editedData) => {
+    setOpenEditBox(null);
+    handleEdit(editedData);
   };
 
   return (
     <Box className={className}>
       <ListItems
-        data={puuids}
-        itemKey="puuid"
+        data={data}
+        itemKey="data"
         component={EditProperty}
         includeDivider={false}
+        randomKey={true}
         className="space-y-4"
         handleEditOpen={handleEditOpen}
         handleEditClose={handleEditClose}
-        openEditPropertyBox={openEditPropertyBox}
+        handleEditSave={handleEditSave}
+        handleRemove={handleRemove}
+        openEditBox={openEditBox}
       />
     </Box>
   );

@@ -24,7 +24,7 @@ function TitleBar({ toggleDrawer, className }) {
         className="font-medium"
         children="Comments"
       />
-      <CloseRounded className="ml-auto mr-4" onClick={toggleDrawer(false)} />
+      <CloseRounded className="ml-auto mr-4 cursor-pointer hover:fill-greyZ" onClick={toggleDrawer(false)} />
     </Box>
   );
 }

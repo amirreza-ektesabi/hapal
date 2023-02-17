@@ -1,4 +1,5 @@
 import * as React from "react";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
@@ -7,15 +8,14 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
-import stringToColor from "src/general/stringToColor";
+import stringToColor from "src/general/functions/stringToColor";
 import { selectListByUuid } from "src/general/reducers/lists";
+import stringFormat from "src/general/functions/stringFormat";
+import urls from "src/general/urls";
 
 function Media({ data, className }) {
   return data.header === null ? (
-    <Box
-      sx={{ bgcolor: stringToColor(data.title) }}
-      className={className}
-    />
+    <Box sx={{ bgcolor: stringToColor(data.title) }} className={className} />
   ) : (
     <CardMedia component="img" image={data.header} className={className} />
   );
@@ -42,16 +42,17 @@ function Content({ data, className }) {
 
 export default function ListPreview({ uuid, className }) {
   const data = useSelector((state) => selectListByUuid(state, uuid));
+  const listHref = stringFormat(urls.list, data.uuid);
 
   return (
     <Box className={className}>
       <CardTop data={data} className="mb-2" />
       <Card className="h-64 rounded-2xl">
         <CardActionArea>
-          <Box>
+          <Link href={listHref}>
             <Media data={data} className="h-64 w-full" />
             <Content data={data} />
-          </Box>
+          </Link>
         </CardActionArea>
       </Card>
       <CardIcons data={data} className="mt-1" />

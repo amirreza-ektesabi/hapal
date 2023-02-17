@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import numberFormat from "src/general/numberFormat";
+import numberFormat from "src/general/functions/numberFormat";
 
 export default function ObjectStatistic({ title, value, variant }) {
   if (typeof value == "number") value = numberFormat(value);

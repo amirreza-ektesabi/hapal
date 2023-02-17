@@ -1,7 +1,7 @@
 import * as React from "react";
 import Typography from "@mui/material/Typography";
 import NoSsr from "@mui/material/NoSsr";
-import { timeAgo } from "src/general/datetimeFormat";
+import { timeAgo } from "src/general/functions/datetimeFormat";
 
 export default function Date({ data, className }) {
   return (

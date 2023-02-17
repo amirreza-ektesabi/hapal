@@ -5,13 +5,9 @@ import CircleIcon from "src/components/circleIcon";
 
 export default function Back({ className }) {
   const router = useRouter();
-
+  
   const handleOnClick = () => {
-    if (window?.history?.state?.idx > 0) {
-      router.back();
-    } else {
-      router.push("/");
-    }
+    router.back();
   };
 
   return (

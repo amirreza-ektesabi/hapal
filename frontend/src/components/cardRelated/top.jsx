@@ -7,7 +7,7 @@ import More from "src/components/objectRelated/more";
 export default function CardTop({ data, className }) {
   return (
     <Box className={className + " flex w-full"}>
-      <Box className="flex space-x-2">
+      <Box className="flex max-w-[92%] space-x-2">
         <User data={data.user} />
         <Date data={data.created} className="mt-2.5" />
       </Box>

@@ -17,51 +17,115 @@ function Top({ data, className }) {
   );
 }
 
-function InputFields({ data, className, property_puuids }) {
+function InputFields({
+  data,
+  className,
+  setTitle,
+  handleRemoveProperty,
+  handleEditProperty,
+}) {
   return (
     <Box className={className}>
       <TextField
         label="Title"
-        defaultValue={data.title}
+        value={data.title}
+        onChange={setTitle}
         variant="standard"
         className="w-full"
       />
-      <PropertyEditList data={data} puuids={property_puuids} />
+      <PropertyEditList
+        data={data.properties}
+        handleRemove={handleRemoveProperty}
+        handleEdit={handleEditProperty}
+      />
     </Box>
   );
 }
 
-function AddPropertyButton({ className }) {
+function AddPropertyButton({ className, handleAddNewProperty }) {
   return (
     <Button
       variant="contained"
       className="px-7 mr-auto rounded-full h-10 font-bold bg-blueZ"
       children="Add Property"
+      onClick={handleAddNewProperty}
     />
   );
 }
 
-function Buttons({ data, className }) {
+function Buttons({ data, className, handleAddNewProperty }) {
   return (
     <Box className={className + " flex"}>
-      <AddPropertyButton />
+      <AddPropertyButton handleAddNewProperty={handleAddNewProperty} />
       <SaveButton isEnable={true} />
     </Box>
   );
 }
 
-export default function SetPostPage({ data, property_puuids, className }) {
+export default function SetPostPage({ data, className }) {
+  const [formData, setFormData] = React.useState(data);
+  const endRef = React.useRef(null);
+
+  const scrollToBottom = () => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleAddNewProperty = () => {
+    const newProperty = {
+      key: "Untitled",
+      pairs: [],
+      index: formData.properties.length,
+    };
+    setFormData({
+      ...formData,
+      properties: [...formData.properties, newProperty],
+    });
+    scrollToBottom();
+  };
+  const handleRemoveProperty = (index) => {
+    setFormData({
+      ...formData,
+      properties: formData.properties
+        .filter((property) => index !== property.index)
+        .map((property) => ({
+          ...property,
+          index: property.index - (property.index > index ? 1 : 0),
+        })),
+    });
+  };
+  const handleEditProperty = (editedData) => {
+    setFormData({
+      ...formData,
+      properties: formData.properties.map((property) =>
+        property.index === editedData.index ? editedData : property
+      ),
+    });
+  };
+  const setTitle = (event) => {
+    setFormData({
+      ...formData,
+      title: event.target.value,
+    });
+  };
+
   return (
     <Box className="flex flex-col place-items-center mb-6">
       <Box className="max-w-lg w-full space-y-16">
-        <Top data={data} />
+        <Top data={formData} />
         <InputFields
-          data={data}
-          property_puuids={property_puuids}
+          data={formData}
           className="px-4 space-y-16"
+          setTitle={setTitle}
+          handleRemoveProperty={handleRemoveProperty}
+          handleEditProperty={handleEditProperty}
         />
-        <Buttons data={data} className="px-4" />
+        <Buttons
+          data={formData}
+          className="px-4"
+          handleAddNewProperty={handleAddNewProperty}
+        />
       </Box>
+      <div ref={endRef} />
     </Box>
   );
 }

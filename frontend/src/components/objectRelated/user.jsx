@@ -1,8 +1,11 @@
 import * as React from "react";
+import Link from "next/link";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import stringToColor from "src/general/stringToColor";
+import stringToColor from "src/general/functions/stringToColor";
+import stringFormat from "src/general/functions/stringFormat";
+import urls from "src/general/urls";
 
 export default function User({
   data,
@@ -10,19 +13,25 @@ export default function User({
   includeUsername = false,
   wrap = false,
 }) {
+  const userHref = stringFormat(urls.user, data.username);
+
   let components = (
     <React.Fragment>
-      <Avatar
-        src={data.avatar}
-        sx={{ bgcolor: stringToColor(data.name) }}
-        className="w-9 h-9"
-        children={data.name[0]}
-      />
-      <Typography
-        variant="body1"
-        className="mt-1.5 font-medium whitespace-pre max-w-[60%] truncate"
-        children={data.name}
-      />
+      <Link href={userHref} className="cursor-pointer">
+        <Avatar
+          src={data.avatar}
+          sx={{ bgcolor: stringToColor(data.name) }}
+          className="w-9 h-9"
+          children={data.name[0]}
+        />
+      </Link>
+      <Link href={userHref} className="max-w-[60%] cursor-pointer">
+        <Typography
+          variant="body1"
+          className="mt-1.5 font-medium whitespace-pre truncate"
+          children={data.name}
+        />
+      </Link>
       {includeUsername && (
         <Typography
           variant="body2"
@@ -35,9 +44,7 @@ export default function User({
   );
 
   return wrap ? (
-    <Box className={className + " flex space-x-2"}>
-      {components}
-    </Box>
+    <Box className={className + " flex space-x-2"}>{components}</Box>
   ) : (
     components
   );

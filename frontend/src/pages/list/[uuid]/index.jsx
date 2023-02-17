@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -12,22 +12,26 @@ import PostPreview from "src/components/post/preview";
 import User from "src/components/objectRelated/user";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
-import { dateFormat, timeFormat } from "src/general/datetimeFormat";
-import numberFormat from "src/general/numberFormat";
-import { selectPostUuids } from "src/general/reducers/posts";
-import { selectCommentUuids } from "src/general/reducers/comments";
-import { selectListByUuid } from "src/general/reducers/lists";
+import { dateFormat, timeFormat } from "src/general/functions/datetimeFormat";
 import {
-  getDefaultStaticProps,
-  getDefaultStaticPaths,
-} from "src/components/routing";
+  addedManyPosts,
+  selectPostUuidsByAddedTo,
+} from "src/general/reducers/posts";
+import {
+  addedManyComments,
+  selectCommentUuidsByRepliedTo,
+} from "src/general/reducers/comments";
+import { addedOneList, selectListByUuid } from "src/general/reducers/lists";
+import { getDefaultStaticPaths } from "src/components/routing";
+import { getList, getListComments, getListPosts } from "api/lists";
+import pluralize from "src/general/functions/pluralize";
 
 function Statistics({ data, className }) {
   return (
     <Box className={className + " flex space-x-10"}>
       <Statistic
         variant="horizontal"
-        title={"Followers"}
+        title={pluralize(data.followers_count, "Follower")}
         value={data.followers_count}
       />
       <Statistic
@@ -45,12 +49,12 @@ function About({ data, className }) {
       <Box>
         <Typography
           variant="h6"
-          className="font-bold whitespace-pre-wrap"
+          className="font-bold whitespace-pre-wrap break-words"
           children={data.title}
         />
         <Typography
           variant="body1"
-          className="font-light mt-2.5 whitespace-pre-wrap"
+          className="font-light mt-2.5 whitespace-pre-wrap break-words"
           children={data.description}
         />
         <User
@@ -76,14 +80,13 @@ function Top({ data, className }) {
   );
 }
 
-function PostList({ data, className }) {
-  const post_uuids = useSelector(selectPostUuids);
+function PostList({ data, post_uuids, className }) {
   return (
     <React.Fragment>
       <Typography
         variant="body2"
         className="font-normal ml-6"
-        children={`${numberFormat(data.posts_count, true)} posts`}
+        children={`${data.posts_count} ${pluralize(data.posts_count, "post")}`}
         paragraph={true}
       />
       <ListItems
@@ -96,16 +99,31 @@ function PostList({ data, className }) {
   );
 }
 
-export default function ListPage({ uuid, className }) {
+export default function ListPage({
+  uuid,
+  response,
+  posts_response,
+  comments_response,
+}) {
   const router = useRouter();
-  
-  const data = useSelector((state) => selectListByUuid(state, uuid));
-  if (!router.isFallback && (!uuid || !data)) {
-    return <ErrorPage statusCode={404} />;
+  const dispatch = useDispatch();
+
+  if (!router.isFallback && response.error) {
+    return <ErrorPage statusCode={response.status} />;
   }
-  
-  const comment_uuids = useSelector(selectCommentUuids);
-  
+
+  dispatch(addedOneList(response.data));
+  dispatch(addedManyPosts(posts_response.data));
+  dispatch(addedManyComments(comments_response.data));
+
+  const data = useSelector((state) => selectListByUuid(state, uuid));
+  const post_uuids = useSelector((state) =>
+    selectPostUuidsByAddedTo(state, data)
+  );
+  const comment_uuids = useSelector((state) =>
+    selectCommentUuidsByRepliedTo(state, data)
+  );
+
   const [state, setState] = React.useState({
     drawerIsOpen: false,
   });
@@ -119,7 +137,7 @@ export default function ListPage({ uuid, className }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <PostList data={data} />
+        <PostList data={data} post_uuids={post_uuids} />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer
@@ -131,5 +149,18 @@ export default function ListPage({ uuid, className }) {
   );
 }
 
-export const getStaticProps = getDefaultStaticProps("uuid");
+export async function getStaticProps({ params }) {
+  const response = await getList(params.uuid);
+  const posts_response = await getListPosts(params.uuid);
+  const comments_response = await getListComments(params.uuid);
+
+  return {
+    props: {
+      uuid: params.uuid,
+      response,
+      posts_response,
+      comments_response,
+    },
+  };
+}
 export { getDefaultStaticPaths as getStaticPaths };

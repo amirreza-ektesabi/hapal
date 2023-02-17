@@ -1,21 +1,54 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
+import ErrorPage from "src/pages/_error";
 import SetPostPage from "src/components/post/setPage";
 import { selectPostByUuid } from "src/general/reducers/posts";
-import { selectPropertyPuuids } from "src/general/reducers/properties";
-import post_items from "public/sample_data/post_items";
 import {
-  getDefaultStaticProps,
-  getDefaultStaticPaths,
-} from "src/components/routing";
+  addedManyProperties,
+  selectPropertiesByPostUuid,
+} from "src/general/reducers/properties";
+import { getDefaultStaticPaths } from "src/components/routing";
+import { getPost, getPostProperties } from "api/posts";
+import { addedOnePost } from "src/general/reducers/posts";
 
-export default function EditPostPage({ uuid, className }) {
-  uuid = post_items[0].uuid;
-  const data = useSelector((state) => selectPostByUuid(state, uuid));
-  const property_puuids = useSelector(selectPropertyPuuids);
+export default function EditPostPage({ uuid, response, properties_response }) {
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  return <SetPostPage data={data} property_puuids={property_puuids} />;
+  if (!router.isFallback && response.error) {
+    return <ErrorPage statusCode={response.status} />;
+  }
+
+  dispatch(addedOnePost(response.data));
+  dispatch(addedManyProperties(properties_response.data));
+
+  const postData = useSelector((state) => selectPostByUuid(state, uuid));
+  const propertiesData = useSelector((state) =>
+    selectPropertiesByPostUuid(state, postData)
+  );
+  
+  const data = {
+    title: postData.title,
+    properties: propertiesData.map((property, index) => ({
+      ...property,
+      index: index,
+    })),
+  };
+
+  return <SetPostPage data={data} />;
 }
 
-export const getStaticProps = getDefaultStaticProps("uuid");
+export async function getStaticProps({ params }) {
+  const response = await getPost(params.uuid);
+  const properties_response = await getPostProperties(params.uuid);
+
+  return {
+    props: {
+      uuid: params.uuid,
+      response,
+      properties_response,
+    },
+  };
+}
 export { getDefaultStaticPaths as getStaticPaths };
