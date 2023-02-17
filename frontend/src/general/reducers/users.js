@@ -3,7 +3,6 @@ import {
   createSelector,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import user_items from "public/sample_data/user_items";
 
 const usersAdapter = createEntityAdapter({
   selectId: (obj) => obj.username,
@@ -12,10 +11,7 @@ const usersAdapter = createEntityAdapter({
 
 const usersSlice = createSlice({
   name: "users",
-  initialState: usersAdapter.addMany(
-    usersAdapter.getInitialState({}),
-    user_items
-  ),
+  initialState: usersAdapter.getInitialState({}),
   reducers: {
     followed(state, action) {
       const username = action.payload;
@@ -23,12 +19,18 @@ const usersSlice = createSlice({
       obj.followers_count += obj.is_followed ? -1 : +1;
       obj.is_followed = !obj.is_followed;
     },
+    addedOne: usersAdapter.addOne,
+    addedMany: usersAdapter.addMany,
   },
 });
 
 export default usersSlice.reducer;
 
-export const { followed: userFollowed } = usersSlice.actions;
+export const {
+  followed: userFollowed,
+  addedOne: addedOneUser,
+  addedMany: addedManyUser,
+} = usersSlice.actions;
 
 const { selectAll: selectAllUsers, selectById: selectUserByUsername } =
   usersAdapter.getSelectors((state) => state.users);

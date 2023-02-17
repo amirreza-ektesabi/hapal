@@ -1,45 +1,61 @@
 import {
-    createSlice,
-    createSelector,
-    createEntityAdapter,
+  createSlice,
+  createSelector,
+  createEntityAdapter,
 } from "@reduxjs/toolkit";
-import comment_items from "public/sample_data/comment_items";
 
 const commentsAdapter = createEntityAdapter({
-    selectId: (obj) => obj.uuid,
-    sortComparer: (a, b) => a.created.localeCompare(b.created),
+  selectId: (obj) => obj.uuid,
+  sortComparer: (a, b) => a.created.localeCompare(b.created),
 });
 
 const commentsSlice = createSlice({
-    name: "comments",
-    initialState: commentsAdapter.addMany(
-        commentsAdapter.getInitialState({}),
-        comment_items
-    ),
-    reducers: {
-        liked(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.likes_count += obj.is_liked ? -1 : +1;
-            obj.is_liked = !obj.is_liked;
-        },
-        userFollowed(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.user.is_followed = !obj.user.is_followed;
-        },
-        added: commentsAdapter.addOne,
+  name: "comments",
+  initialState: commentsAdapter.getInitialState({}),
+  reducers: {
+    liked(state, action) {
+      const uuid = action.payload;
+      const obj = state.entities[uuid];
+      obj.likes_count += obj.is_liked ? -1 : +1;
+      obj.is_liked = !obj.is_liked;
     },
+    userFollowed(state, action) {
+      const uuid = action.payload;
+      const obj = state.entities[uuid];
+      obj.user.is_followed = !obj.user.is_followed;
+    },
+    addedOne: commentsAdapter.addOne,
+    addedMany: commentsAdapter.addMany,
+  },
 });
 
 export default commentsSlice.reducer;
 
-export const { liked: commentLiked, userFollowed: commentUserFollowed, added: commentAdded } =
-commentsSlice.actions;
+export const {
+  liked: commentLiked,
+  userFollowed: commentUserFollowed,
+  addedOne: addedOneComment,
+  addedMany: addedManyComments,
+} = commentsSlice.actions;
 
 export const { selectAll: selectComments, selectById: selectCommentByUuid } =
-commentsAdapter.getSelectors((state) => state.comments);
+  commentsAdapter.getSelectors((state) => state.comments);
 
-export const selectCommentUuids = createSelector(selectComments, (entities) =>
-    entities.map((obj) => obj.uuid)
+const selectUuids = (entities) => entities.map((obj) => obj.uuid);
+
+export const selectCommentUuids = createSelector(selectComments, selectUuids);
+
+export const selectCommentsByRepliedTo = createSelector(
+  [selectComments, (state, repliedTo) => repliedTo],
+  (entities, repliedTo) =>
+    entities.filter(
+      (obj) =>
+        obj.replied_to.uuid == repliedTo.uuid &&
+        obj.replied_to.type == repliedTo.type
+    )
+);
+
+export const selectCommentUuidsByRepliedTo = createSelector(
+  selectCommentsByRepliedTo,
+  selectUuids
 );

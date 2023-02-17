@@ -1,33 +1,45 @@
 import {
-    createSlice,
-    createSelector,
-    createEntityAdapter,
+  createSlice,
+  createSelector,
+  createEntityAdapter,
 } from "@reduxjs/toolkit";
-import property_items from "public/sample_data/property_items";
 
 const propertiesAdapter = createEntityAdapter({
-    selectId: (obj) => obj.puuid,
+  selectId: (obj) => obj.puuid,
 });
 
 const propertiesSlice = createSlice({
-    name: "properties",
-    initialState: propertiesAdapter.addMany(
-        propertiesAdapter.getInitialState({}),
-        property_items
-    ),
-    reducers: {},
+  name: "properties",
+  initialState: propertiesAdapter.getInitialState({}),
+  reducers: {
+    addedOne: propertiesAdapter.addOne,
+    addedMany: propertiesAdapter.addMany,
+  },
 });
 
 export default propertiesSlice.reducer;
 
-export const { propertyLiked } = propertiesSlice.actions;
+export const { addedOne: addedOneProperty, addedMany: addedManyProperties } =
+  propertiesSlice.actions;
 
 export const {
-    selectAll: selectProperties,
-    selectById: selectPropertyByPuuid,
+  selectAll: selectProperties,
+  selectById: selectPropertyByPuuid,
 } = propertiesAdapter.getSelectors((state) => state.properties);
 
+const selectPuuids = (entities) => entities.map((obj) => obj.puuid);
+
 export const selectPropertyPuuids = createSelector(
-    selectProperties,
-    (entities) => entities.map((obj) => obj.puuid)
+  selectProperties,
+  selectPuuids
+);
+
+export const selectPropertiesByPostUuid = createSelector(
+  [selectProperties, (state, post) => post],
+  (entities, post) => entities.filter((obj) => obj.post.uuid == post.uuid)
+);
+
+export const selectpropertyPuuidsByPostUuid = createSelector(
+  selectPropertiesByPostUuid,
+  selectPuuids
 );
