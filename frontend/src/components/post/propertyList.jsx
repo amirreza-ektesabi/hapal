@@ -5,21 +5,6 @@ import Property from "src/components/property/view";
 import EditProperty from "src/components/property/editView";
 
 export function PropertyEditList({ data, className, handleRemove, handleEdit }) {
-  const [openEditBox, setOpenEditBox] = React.useState(null);
-
-  const handleEditOpen = (index) => {
-    setOpenEditBox(index);
-  };
-
-  const handleEditClose = () => {
-    setOpenEditBox(null);
-  };
-
-  const handleEditSave = (editedData) => {
-    setOpenEditBox(null);
-    handleEdit(editedData);
-  };
-
   return (
     <Box className={className}>
       <ListItems
@@ -29,11 +14,8 @@ export function PropertyEditList({ data, className, handleRemove, handleEdit }) 
         includeDivider={false}
         randomKey={true}
         className="space-y-4"
-        handleEditOpen={handleEditOpen}
-        handleEditClose={handleEditClose}
-        handleEditSave={handleEditSave}
+        handleEdit={handleEdit}
         handleRemove={handleRemove}
-        openEditBox={openEditBox}
       />
     </Box>
   );

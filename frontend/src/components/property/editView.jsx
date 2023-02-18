@@ -7,19 +7,21 @@ import ListItems from "src/components/listItems";
 import EditPropertyBox from "src/components/property/editBox";
 import Pair from "src/components/pair/view";
 
-function Icons({
-  data,
-  openEditBox,
-  handleEditClose,
-  handleEditOpen,
-  handleEditSave,
-  handleRemove,
-}) {
+function Icons({ data, handleRemove, handleEdit }) {
+  const [openEditBox, setOpenEditBox] = React.useState(false);
+
+  const handleOpenEditBox = () => setOpenEditBox(true);
+  const handleCloseEditBox = () => setOpenEditBox(false);
+  const handleSaveEditBox = (editedData) => {
+    setOpenEditBox(false);
+    handleEdit(editedData);
+  };
+  
   return (
     <Box className="mb-1 space-x-1">
       <EditRoundedIcon
         className="text-xl cursor-pointer hover:fill-greyZ"
-        onClick={() => handleEditOpen(data.index)}
+        onClick={handleOpenEditBox}
       />
       <DeleteRoundedIcon
         className="text-xl cursor-pointer hover:text-greyZ"
@@ -27,31 +29,20 @@ function Icons({
       />
       <EditPropertyBox
         data={data}
-        open={openEditBox === data.index}
-        handleClose={handleEditClose}
-        handleSave={handleEditSave}
+        open={openEditBox}
+        handleClose={handleCloseEditBox}
+        handleSave={handleSaveEditBox}
       />
     </Box>
   );
 }
 
-function Key({
-  data,
-  openEditBox,
-  handleEditClose,
-  handleEditOpen,
-  handleEditSave,
-  handleRemove,
-  className,
-}) {
+function Key({ data, handleEdit, handleRemove, className }) {
   return (
     <Box className="flex items-center space-x-1">
       <Icons
         data={data}
-        openEditBox={openEditBox}
-        handleEditClose={handleEditClose}
-        handleEditOpen={handleEditOpen}
-        handleEditSave={handleEditSave}
+        handleEdit={handleEdit}
         handleRemove={handleRemove}
       />
       <Typography
@@ -78,21 +69,15 @@ function Value({ data, className }) {
 export default function EditProperty({
   data,
   className,
-  openEditBox,
-  handleEditOpen,
-  handleEditClose,
-  handleEditSave,
+  handleEdit,
   handleRemove,
 }) {
   return (
     <Box className={className}>
       <Key
         data={data}
-        openEditBox={openEditBox}
-        handleEditClose={handleEditClose}
-        handleEditOpen={handleEditOpen}
-        handleEditSave={handleEditSave}
         handleRemove={handleRemove}
+        handleEdit={handleEdit}
       />
       <Value data={data} />
     </Box>
