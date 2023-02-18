@@ -1,8 +1,8 @@
-import { comments } from "api/urls";
-import responseApi from "api/responseApi";
+import apiUrls from "./urls";
+import responseApi from "./responseApi";
 import { stringFormat } from "src/_helpers";
 
 export async function getComments(type, uuid) {
-    const url = stringFormat(comments, type, uuid);
-    return await responseApi(url, "get");
+  const url = stringFormat(apiUrls.comments, type, uuid);
+  return await responseApi(url, "get");
 }

@@ -10,7 +10,7 @@ import {
   selectPropertiesByPostUuid,
 } from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
-import { getPost, getPostProperties } from "api/posts";
+import { getPost, getPostProperties } from "api";
 
 export default function EditPostPage({ uuid, response, properties_response }) {
   const router = useRouter();

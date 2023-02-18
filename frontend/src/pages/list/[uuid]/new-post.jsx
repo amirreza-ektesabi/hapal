@@ -5,7 +5,7 @@ import ErrorPage from "src/pages/_error";
 import SetPostPage from "src/components/post/setPage";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { addedOneList } from "src/_store";
-import { getList } from "api/lists";
+import { getList } from "api";
 
 export default function NewPostPage({ posted_in_uuid, response }) {
   const router = useRouter();

@@ -8,7 +8,7 @@ import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
 } from "src/components/routing";
-import { getList } from "api/lists";
+import { getList } from "api";
 
 export default function EditListPage({ uuid, response }) {
   const router = useRouter();

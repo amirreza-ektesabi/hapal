@@ -16,7 +16,7 @@ import {
   selectListUuidsByCreatedBy,
 } from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
-import { getUser, getUserLists } from "api/users";
+import { getUser, getUserLists } from "api";
 import { pluralize } from "src/_helpers";
 
 function Statistics({ data, className }) {

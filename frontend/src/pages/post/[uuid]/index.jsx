@@ -26,7 +26,7 @@ import {
   selectCommentUuidsByRepliedTo,
 } from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
-import { getPost, getPostComments, getPostProperties } from "api/posts";
+import { getPost, getPostComments, getPostProperties } from "api";
 import urls from "src/general/urls";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import HeaderIcons from "src/components/objectRelated/headerIcons";

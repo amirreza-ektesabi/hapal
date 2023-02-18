@@ -22,7 +22,7 @@ import {
   selectCommentUuidsByRepliedTo,
 } from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
-import { getList, getListComments, getListPosts } from "api/lists";
+import { getList, getListComments, getListPosts } from "api";
 
 function Statistics({ data, className }) {
   return (
