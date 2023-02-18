@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import CircleIcon from "src/components/circleIcon";
-import stringToColor from "src/general/functions/stringToColor";
+import { stringToColor } from "src/_helpers";
 
 function ImportPhoto({ data, className }) {
   return (

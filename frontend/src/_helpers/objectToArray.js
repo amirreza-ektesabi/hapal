@@ -1,4 +1,4 @@
-export default function objectToArray(value) {
+export function objectToArray(value) {
   if (typeof value === "object")
     return Array.prototype.concat.apply(
       [],

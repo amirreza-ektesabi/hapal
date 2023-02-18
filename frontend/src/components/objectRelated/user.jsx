@@ -3,8 +3,7 @@ import Link from "next/link";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import stringToColor from "src/general/functions/stringToColor";
-import stringFormat from "src/general/functions/stringFormat";
+import { stringFormat, stringToColor } from "src/_helpers";
 import urls from "src/general/urls";
 
 export default function User({

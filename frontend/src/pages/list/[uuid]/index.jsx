@@ -12,7 +12,7 @@ import PostPreview from "src/components/post/preview";
 import User from "src/components/objectRelated/user";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
-import { dateFormat, timeFormat } from "src/general/functions/datetimeFormat";
+import { dateFormat, timeFormat, pluralize } from "src/_helpers";
 import {
   addedManyPosts,
   selectPostUuidsByAddedTo,
@@ -24,7 +24,6 @@ import {
 import { addedOneList, selectListByUuid } from "src/general/reducers/lists";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getList, getListComments, getListPosts } from "api/lists";
-import pluralize from "src/general/functions/pluralize";
 
 function Statistics({ data, className }) {
   return (

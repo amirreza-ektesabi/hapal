@@ -11,8 +11,7 @@ import { PropertyList } from "src/components/post/propertyList";
 import CommentDrawer from "src/components/comment/drawer";
 import Statistic from "src/components/objectRelated/statistic";
 import User from "src/components/objectRelated/user";
-import { dateFormat, timeFormat } from "src/general/functions/datetimeFormat";
-import stringToColor from "src/general/functions/stringToColor";
+import { stringFormat, stringToColor, dateFormat, timeFormat } from "src/_helpers";
 import {
   addedManyComments,
   selectCommentUuidsByRepliedTo,
@@ -25,7 +24,6 @@ import {
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getPost, getPostComments, getPostProperties } from "api/posts";
 import { addedOnePost } from "src/general/reducers/posts";
-import stringFormat from "src/general/functions/stringFormat";
 import urls from "src/general/urls";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import HeaderIcons from "src/components/objectRelated/headerIcons";

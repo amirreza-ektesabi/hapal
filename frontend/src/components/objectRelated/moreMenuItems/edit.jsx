@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import stringFormat from "src/general/functions/stringFormat";
+import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
 const urlMap = {

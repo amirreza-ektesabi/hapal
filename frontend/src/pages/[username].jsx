@@ -16,7 +16,7 @@ import {
 import { addedOneUser, selectUserByUsername } from "src/general/reducers/users";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getUser, getUserLists } from "api/users";
-import pluralize from "src/general/functions/pluralize";
+import { pluralize } from "src/_helpers";
 
 function Statistics({ data, className }) {
   return (
@@ -98,7 +98,10 @@ export default function ProfilePage({ username, response, lists_response }) {
         <Typography
           variant="body2"
           className="font-normal ml-6"
-          children={`${data.lists_count} ${pluralize(data.lists_count, 'list')}`}
+          children={`${data.lists_count} ${pluralize(
+            data.lists_count,
+            "list"
+          )}`}
           paragraph={true}
         />
         <ListItems

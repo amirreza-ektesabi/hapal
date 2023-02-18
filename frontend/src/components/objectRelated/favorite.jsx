@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
-import numberFormat from "src/general/functions/numberFormat";
+import { numberFormat } from "src/_helpers";
 import { listLiked } from "src/general/reducers/lists";
 import { postLiked } from "src/general/reducers/posts";
 import { commentLiked } from "src/general/reducers/comments";

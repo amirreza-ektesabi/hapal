@@ -7,9 +7,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
-import stringToColor from "src/general/functions/stringToColor";
+import { stringFormat, stringToColor } from "src/_helpers";
 import { selectPostByUuid } from "src/general/reducers/posts";
-import stringFormat from "src/general/functions/stringFormat";
 import urls from "src/general/urls";
 
 function Media({ data, className }) {

@@ -1,4 +1,4 @@
-export default function stringToColor(str = "") {
+export function stringToColor(str = "") {
   if (str === "") return "#de4c8a";
   var hash = 0;
   for (var i = 0; i < str.length; i++) {

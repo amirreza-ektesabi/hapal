@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import stringFormat from "src/general/functions/stringFormat";
+import { stringFormat } from "src/_helpers";
 
 export default function LinkButton({ href, name, className, textInput }) {
   href = href.includes("{0}") ? stringFormat(href, textInput) : href;

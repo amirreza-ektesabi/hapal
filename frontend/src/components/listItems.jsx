@@ -15,10 +15,7 @@ function Item({
   ...props
 }) {
   return (
-    <Box
-      className="w-full"
-      key={randomKey ? Math.random() : index}
-    >
+    <Box className="w-full" key={randomKey ? Math.random() + index : index}>
       <ItemComponent
         {...{ [itemKey]: data }}
         className={itemComponentClassName}
