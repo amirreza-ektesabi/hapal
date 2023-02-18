@@ -10,10 +10,11 @@ import Statistic from "src/components/objectRelated/statistic";
 import Header from "src/components/objectRelated/header";
 import ListPreview from "src/components/list/preview";
 import {
+  addedOneUser,
+  selectUserByUsername,
   addedManyLists,
   selectListUuidsByCreatedBy,
-} from "src/general/reducers/lists";
-import { addedOneUser, selectUserByUsername } from "src/general/reducers/users";
+} from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getUser, getUserLists } from "api/users";
 import { pluralize } from "src/_helpers";

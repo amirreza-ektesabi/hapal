@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import ErrorPage from "src/pages/_error";
 import SetListPage from "src/components/list/setList";
-import { addedOneList, selectListByUuid } from "src/general/reducers/lists";
+import { addedOneList, selectListByUuid } from "src/_store";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,

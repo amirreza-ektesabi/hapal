@@ -17,7 +17,7 @@ const propertiesSlice = createSlice({
   },
 });
 
-export default propertiesSlice.reducer;
+export const propertiesReducer = propertiesSlice.reducer;
 
 export const { addedOne: addedOneProperty, addedMany: addedManyProperties } =
   propertiesSlice.actions;

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import ErrorPage from "src/pages/_error";
 import SetPostPage from "src/components/post/setPage";
 import { getDefaultStaticPaths } from "src/components/routing";
-import { addedOneList } from "src/general/reducers/lists";
+import { addedOneList } from "src/_store";
 import { getList } from "api/lists";
 
 export default function NewPostPage({ posted_in_uuid, response }) {

@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import darkTheme from "src/general/theme";
-import store from "src/general/store";
+import store from "src/_store";
 import "styles/global.css";
 import "tailwindcss/tailwind.css";
 

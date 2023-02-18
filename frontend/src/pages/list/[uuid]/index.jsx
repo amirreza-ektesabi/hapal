@@ -14,14 +14,13 @@ import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
 import { dateFormat, timeFormat, pluralize } from "src/_helpers";
 import {
+  addedOneList,
+  selectListByUuid,
   addedManyPosts,
   selectPostUuidsByAddedTo,
-} from "src/general/reducers/posts";
-import {
   addedManyComments,
   selectCommentUuidsByRepliedTo,
-} from "src/general/reducers/comments";
-import { addedOneList, selectListByUuid } from "src/general/reducers/lists";
+} from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getList, getListComments, getListPosts } from "api/lists";
 

@@ -7,9 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import PersonRemoveAlt1RoundedIcon from "@mui/icons-material/PersonRemoveAlt1Rounded";
-import { listUserFollowed } from "src/general/reducers/lists";
-import { postUserFollowed } from "src/general/reducers/posts";
-import { commentUserFollowed } from "src/general/reducers/comments";
+import { listUserFollowed, postUserFollowed, commentUserFollowed } from "src/_store";
 
 const reducerMap = {
   list: listUserFollowed,

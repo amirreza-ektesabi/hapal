@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import SaveButton from "src/components/objectRelated/saveButton";
-import { selectUserByUsername } from "src/general/reducers/users";
+import { selectUserByUsername } from "src/_store";
 
 function Top({ data, className }) {
   return (

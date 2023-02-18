@@ -35,7 +35,7 @@ const listsSlice = createSlice({
   },
 });
 
-export default listsSlice.reducer;
+export const listsReducer = listsSlice.reducer;
 
 export const {
   liked: listLiked,

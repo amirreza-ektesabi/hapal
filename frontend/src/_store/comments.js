@@ -29,7 +29,7 @@ const commentsSlice = createSlice({
   },
 });
 
-export default commentsSlice.reducer;
+export const commentsReducer = commentsSlice.reducer;
 
 export const {
   liked: commentLiked,

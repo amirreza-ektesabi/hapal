@@ -11,19 +11,22 @@ import { PropertyList } from "src/components/post/propertyList";
 import CommentDrawer from "src/components/comment/drawer";
 import Statistic from "src/components/objectRelated/statistic";
 import User from "src/components/objectRelated/user";
-import { stringFormat, stringToColor, dateFormat, timeFormat } from "src/_helpers";
 import {
-  addedManyComments,
-  selectCommentUuidsByRepliedTo,
-} from "src/general/reducers/comments";
-import { selectPostByUuid } from "src/general/reducers/posts";
+  stringFormat,
+  stringToColor,
+  dateFormat,
+  timeFormat,
+} from "src/_helpers";
 import {
+  addedOnePost,
+  selectPostByUuid,
   addedManyProperties,
   selectpropertyPuuidsByPostUuid,
-} from "src/general/reducers/properties";
+  addedManyComments,
+  selectCommentUuidsByRepliedTo,
+} from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getPost, getPostComments, getPostProperties } from "api/posts";
-import { addedOnePost } from "src/general/reducers/posts";
 import urls from "src/general/urls";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import HeaderIcons from "src/components/objectRelated/headerIcons";

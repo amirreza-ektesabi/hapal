@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
 import { stringFormat, stringToColor } from "src/_helpers";
-import { selectListByUuid } from "src/general/reducers/lists";
+import { selectListByUuid } from "src/_store";
 import urls from "src/general/urls";
 
 function Media({ data, className }) {

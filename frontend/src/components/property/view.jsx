@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ListItems from "src/components/listItems";
-import { selectPropertyByPuuid } from "src/general/reducers/properties";
+import { selectPropertyByPuuid } from "src/_store";
 import Pair from "src/components/pair/view";
 
 function Key({ data }) {

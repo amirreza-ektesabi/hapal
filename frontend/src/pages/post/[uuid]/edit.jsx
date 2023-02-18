@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import ErrorPage from "src/pages/_error";
 import SetPostPage from "src/components/post/setPage";
-import { selectPostByUuid } from "src/general/reducers/posts";
 import {
+  addedOnePost,
+  selectPostByUuid,
   addedManyProperties,
   selectPropertiesByPostUuid,
-} from "src/general/reducers/properties";
+} from "src/_store";
 import { getDefaultStaticPaths } from "src/components/routing";
 import { getPost, getPostProperties } from "api/posts";
-import { addedOnePost } from "src/general/reducers/posts";
 
 export default function EditPostPage({ uuid, response, properties_response }) {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function EditPostPage({ uuid, response, properties_response }) {
   const propertiesData = useSelector((state) =>
     selectPropertiesByPostUuid(state, postData)
   );
-  
+
   const data = {
     title: postData.title,
     properties: propertiesData.map((property, index) => ({
