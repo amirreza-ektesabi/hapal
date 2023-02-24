@@ -6,6 +6,6 @@ from rest_framework.generics import RetrieveAPIView
 
 
 class ProfilePage(CheckObjectFollowedByCurrentUserMixin, RetrieveAPIView):
-    queryset = Account.objects.prefetch_related('followers', 'followings')
+    queryset = Account.objects.all()
     serializer_class = ProfileSerializer
     lookup_field = 'username'

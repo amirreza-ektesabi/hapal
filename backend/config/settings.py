@@ -55,7 +55,10 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-# CORS_ORIGIN_WHITELIST = ()
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
 
 ROOT_URLCONF = 'config.urls'
 
@@ -96,12 +99,6 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 

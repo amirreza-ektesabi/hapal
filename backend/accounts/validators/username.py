@@ -39,8 +39,12 @@ class BaseValidator(ABC):
 
 
 class RestrictedWordsValidator(BaseValidator):
-    username_restricted_words = {'admin', 'deleted', 'hapal',
-                                 'lists', 'list', 'posts', 'post', 'comments', 'comment'}
+    username_restricted_words = {
+        'admin', 'deleted', 'hapal',
+        'lists', 'list', 'posts', 'post', 'comments', 'comment',
+        'home', 'new-list', 'settings',
+        '404', '_404', 'error', '_error'
+    }
 
     def check(self, value) -> bool:
         return any(word == value for word in self.username_restricted_words)
@@ -62,7 +66,7 @@ username_validators_list = [
         'invalid_start_character'
     ),
     RestrictedWordsValidator(
-        _('The username contains restricted word.'),
+        _('A user with this username already exists.'),
         'restricted_word'
     ),
 ]

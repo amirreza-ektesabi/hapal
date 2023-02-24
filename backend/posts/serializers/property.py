@@ -1,3 +1,4 @@
+from posts.serializers.post import PostSubviewSerializer
 from posts.models import Property, Pair, PROPERTY_TYPES
 
 from rest_framework import serializers
@@ -29,7 +30,10 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
             'type',
             'key',
             'pairs',
+            'post',
         ]
+
+    post = PostSubviewSerializer(read_only=True)
 
     type = serializers.ChoiceField(Property.Type.labels)
 
@@ -40,7 +44,7 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
 
         for pair_order_number, pair_data in enumerate(pairs_data, 1):
             value_data = {model_field: pair_data[serializer_field]
-                           for serializer_field, model_field in fields_switch.items()}
+                          for serializer_field, model_field in fields_switch.items()}
             value = value_model.objects.create(**value_data)
             Pair.objects.create(
                 property=instance,
@@ -48,18 +52,19 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
                 key=pair_data['key'],
                 value=value
             )
-    
+
     def create(self, validated_data: dict) -> Property:
         pairs_data = validated_data.pop('pairs', [])
         validated_data['type'] = Property.Type[validated_data['type']]
-        
-        order_number = Property.objects.filter(post=validated_data['post']).count() + 1
+
+        order_number = Property.objects.filter(
+            post=validated_data['post']).count() + 1
         validated_data.update({
             'order_number': order_number,
         })
 
         instance: Property = super().create(validated_data)
-        
+
         self.add_pairs(instance, pairs_data, validated_data['type'])
 
         return instance

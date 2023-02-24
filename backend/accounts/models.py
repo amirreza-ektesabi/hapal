@@ -44,8 +44,6 @@ class Account(SoftDeleteObject, AbstractUser):
     '''
     validators
         min_length=8
-        check with common passwords
-        can't be entirely numeric
     '''
 
     name = models.CharField(blank=True, max_length=50)
