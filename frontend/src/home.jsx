@@ -1,8 +1,12 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import TextField from "@mui/material/TextField";
 import LinkButton from "src/components/linkButton";
+import LoginButton from "src/components/auth/loginButton";
+import LogoutButton from "src/components/auth/logoutButton";
+import { selectAuthUser } from "src/_store";
 import urls from "src/general/urls";
 
 function BoxOfLinks({ data, className = "space-x-3", textInput }) {
@@ -21,10 +25,10 @@ function BoxOfLinks({ data, className = "space-x-3", textInput }) {
 }
 
 export default function TemporaryHomePage() {
+  const authUser = useSelector(selectAuthUser);
   const [textInput, setTextInput] = React.useState("");
-  const handleTextInputChange = (event) => {
-    setTextInput(event.target.value);
-  };
+
+  const handleTextInputChange = (event) => setTextInput(event.target.value);
 
   return (
     <Box className="relative">
@@ -33,6 +37,8 @@ export default function TemporaryHomePage() {
         src="/sample_data/images/Space.jpg"
         className="w-screen h-screen object-cover"
       />
+      <LoginButton className="absolute top-4 right-4" />
+      <LogoutButton className="absolute top-4 right-4" />
       <Box className="absolute top-44 flex w-full">
         <Box
           component="img"
@@ -42,7 +48,11 @@ export default function TemporaryHomePage() {
         <Box className="absolute left-4 grid space-y-3">
           <List>
             {rows.map((item, index) => (
-              <BoxOfLinks data={item} key={index} textInput={textInput} />
+              <BoxOfLinks
+                data={item}
+                key={index}
+                textInput={textInput.trim()}
+              />
             ))}
           </List>
           <TextField
