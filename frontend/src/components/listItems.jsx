@@ -5,17 +5,15 @@ import Box from "@mui/material/Box";
 
 function Item({
   data,
-  index,
   isLast,
   itemKey,
   component: ItemComponent,
   includeDivider = true,
   itemComponentClassName,
-  randomKey = false,
   ...props
 }) {
   return (
-    <Box className="w-full" key={randomKey ? Math.random() + index : index}>
+    <Box className="w-full">
       <ItemComponent
         {...{ [itemKey]: data }}
         className={itemComponentClassName}
@@ -26,14 +24,19 @@ function Item({
   );
 }
 
-export default function ListItems({ data, className, ...props }) {
+export default function ListItems({
+  data,
+  className,
+  randomKey = false,
+  ...props
+}) {
   return (
     <List className={className + " flex flex-col place-items-center w-full"}>
       {data.map((item, index) => (
         <Item
           data={item}
-          index={index}
           isLast={index === data.length - 1}
+          key={randomKey ? Math.random() + index : index}
           {...props}
         />
       ))}
