@@ -2,6 +2,7 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import NoSsr from "@mui/material/NoSsr";
 import darkTheme from "src/general/theme";
 import store from "src/_store";
 import "styles/global.css";
@@ -15,8 +16,10 @@ export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <Component {...pageProps} />
+        <NoSsr>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </NoSsr>
       </ThemeProvider>
     </Provider>
   );

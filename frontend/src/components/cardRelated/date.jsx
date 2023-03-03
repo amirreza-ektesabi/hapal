@@ -1,11 +1,10 @@
 import * as React from "react";
 import Typography from "@mui/material/Typography";
-import NoSsr from "@mui/material/NoSsr";
 import { timeAgo } from "src/_helpers";
 
 export default function Date({ data, className }) {
   return (
-    <NoSsr>
+    <React.StrictMode>
       <Typography
         variant="caption"
         color="text.secondary"
@@ -13,6 +12,6 @@ export default function Date({ data, className }) {
       >
         ·&nbsp;&nbsp;{timeAgo(data)}
       </Typography>
-    </NoSsr>
+    </React.StrictMode>
   );
 }

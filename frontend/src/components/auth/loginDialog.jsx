@@ -156,6 +156,7 @@ export default function LoginDialog({
         open={open}
         onClose={handleCloseBox}
         onKeyDown={handlePressEnter}
+        id="__next"
       >
         <Title handleCloseDialog={handleCloseBox} />
         <Content

@@ -15,6 +15,10 @@ function getAnchor() {
     : "bottom";
 }
 
+const iOS =
+  typeof navigator !== "undefined" &&
+  /iPad|iPhone|iPod/.test(navigator.userAgent);
+
 function TitleBar({ toggleDrawer, className }) {
   return (
     <Box className="flex ml-4 items-center">
@@ -24,7 +28,10 @@ function TitleBar({ toggleDrawer, className }) {
         className="font-medium"
         children="Comments"
       />
-      <CloseRounded className="ml-auto mr-4 cursor-pointer hover:fill-greyZ" onClick={toggleDrawer(false)} />
+      <CloseRounded
+        className="ml-auto mr-4 cursor-pointer hover:fill-greyZ"
+        onClick={toggleDrawer(false)}
+      />
     </Box>
   );
 }
@@ -53,6 +60,7 @@ function ReplyBox({
           size="small"
           className="rounded-full px-4 ml-auto"
           children="Reply"
+          disabled={!replyButtonIsEnable}
           style={{
             background: replyButtonIsEnable ? theme.palette.blueZ : "grey",
           }}
@@ -111,6 +119,9 @@ export default function CommentDrawer({
       open={drawerIsOpen}
       onOpen={toggleDrawer(true)}
       onClose={toggleDrawer(false)}
+      disableBackdropTransition={!iOS}
+      disableDiscovery={iOS}
+      id="__next"
     >
       <Box
         sx={{ ...(anchor == "right" && { width: 450 }), height: "80vh" }}

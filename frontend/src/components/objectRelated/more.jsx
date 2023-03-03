@@ -16,6 +16,7 @@ function MoreMenu({ data, menuIsOpen, anchorEl, handleClose }) {
       open={menuIsOpen}
       onClose={handleClose}
       disableScrollLock={true}
+      id="__next"
     >
       {editItemConditions(data) && (
         <EditItem data={data} handleMenuClose={handleClose} />

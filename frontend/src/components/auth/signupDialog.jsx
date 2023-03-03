@@ -186,6 +186,7 @@ export default function SignupDialog({
         open={open}
         onClose={handleCloseBox}
         onKeyDown={handlePressEnter}
+        id="__next"
       >
         <Title handleCloseDialog={handleCloseBox} />
         <Content

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
-import NoSsr from "@mui/material/NoSsr";
 import theme from "src/general/theme";
 import { logout, selectAuthUser } from "src/_store";
 
@@ -14,7 +13,7 @@ export default function LogoutButton({ className }) {
   };
 
   return (
-    <NoSsr>
+    <React.StrictMode>
       {authUser && (
         <Button
           variant="contained"
@@ -27,6 +26,6 @@ export default function LogoutButton({ className }) {
           children="Log out"
         />
       )}
-    </NoSsr>
+    </React.StrictMode>
   );
 }

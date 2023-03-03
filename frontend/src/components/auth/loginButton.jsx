@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
-import NoSsr from "@mui/material/NoSsr";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
 import { selectAuthUser } from "src/_store";
@@ -19,20 +18,18 @@ export default function LoginButton({ className }) {
 
   return (
     <React.StrictMode>
-      <NoSsr>
-        {!authUser && (
-          <Button
-            variant="contained"
-            style={{
-              background: "white",
-              color: theme.palette.blackZ,
-            }}
-            className={className + " px-4 font-black"}
-            onClick={handleOpenLoginBox}
-            children="Log in"
-          />
-        )}
-      </NoSsr>
+      {!authUser && (
+        <Button
+          variant="contained"
+          style={{
+            background: "white",
+            color: theme.palette.blackZ,
+          }}
+          className={className + " px-4 font-black"}
+          onClick={handleOpenLoginBox}
+          children="Log in"
+        />
+      )}
       <LoginDialog
         open={openLoginBox}
         handleClose={handleCloseLoginBox}
