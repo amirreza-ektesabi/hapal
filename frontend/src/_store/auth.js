@@ -65,6 +65,11 @@ export const selectAuthUser = createSelector(
   (state) => state[name].token
 );
 
+export const selectMe = createSelector(
+  selectSelf,
+  (state) => state[name].user
+);
+
 export const login = createAsyncThunk(`${name}/login`, async (data) => {
   const response = await createToken(data);
   return response;

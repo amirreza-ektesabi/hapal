@@ -1,10 +1,11 @@
 import * as React from "react";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import ErrorPage from "src/pages/_error";
+import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
 import Statistic from "src/components/objectRelated/statistic";
 import Header from "src/components/objectRelated/header";
@@ -14,15 +15,16 @@ import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
 import { dateFormat, timeFormat, pluralize } from "src/_helpers";
 import {
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
+import {
+  addedManyPosts,
   addedOneList,
   selectListByUuid,
-  addedManyPosts,
   selectPostUuidsByAddedTo,
-  addedManyComments,
-  selectCommentUuidsByRepliedTo,
 } from "src/_store";
-import { getDefaultStaticPaths } from "src/components/routing";
-import { getList, getListComments, getListPosts } from "api";
+import { getList, getListPosts } from "api";
 
 function Statistics({ data, className }) {
   return (
@@ -78,87 +80,89 @@ function Top({ data, className }) {
   );
 }
 
-function PostList({ data, post_uuids, className }) {
+function PostList({ uuids, isLoading, isError, className }) {
   return (
-    <React.Fragment>
+    <React.StrictMode>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        ""
+      ) : (
+        <ListItems
+          data={uuids}
+          itemKey="uuid"
+          component={PostPreview}
+          itemComponentClassName="mx-4"
+        />
+      )}
+    </React.StrictMode>
+  );
+}
+
+function Posts({ data, className }) {
+  const dispatch = useDispatch();
+
+  let uuids = useSelector((state) => selectPostUuidsByAddedTo(state, data));
+
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedManyPosts(response.data));
+  });
+
+  const { data: response, isLoading } = useSWR(
+    `posts/${data.type}/${data.uuid}`,
+    () => getListPosts(data.uuid)
+  );
+  const isError = response && response.error;
+
+  return (
+    <React.StrictMode>
       <Typography
         variant="body2"
         className="font-normal ml-6"
         children={`${data.posts_count} ${pluralize(data.posts_count, "post")}`}
         paragraph={true}
       />
-      <ListItems
-        data={post_uuids}
-        itemKey="uuid"
-        component={PostPreview}
-        itemComponentClassName="mx-4"
-      />
-    </React.Fragment>
+      <PostList uuids={uuids} isLoading={isLoading} isError={isError} />
+    </React.StrictMode>
   );
 }
 
-export default function ListPage({
-  uuid,
-  response,
-  posts_response,
-  comments_response,
-}) {
-  const router = useRouter();
+export default function ListPage({ uuid }) {
   const dispatch = useDispatch();
 
-  if (!router.isFallback && response.error) {
-    return <ErrorPage statusCode={response.status} />;
-  }
-
-  dispatch(addedOneList(response.data));
-  dispatch(addedManyPosts(posts_response.data));
-  dispatch(addedManyComments(comments_response.data));
+  const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
+  const toggleDrawer = (open) => () => setDrawerIsOpen(open);
 
   const data = useSelector((state) => selectListByUuid(state, uuid));
-  const post_uuids = useSelector((state) =>
-    selectPostUuidsByAddedTo(state, data)
-  );
-  const comment_uuids = useSelector((state) =>
-    selectCommentUuidsByRepliedTo(state, data)
-  );
 
-  const [state, setState] = React.useState({
-    drawerIsOpen: false,
-  });
+  const swrKey = `list/${uuid}`;
+  const swrFetcher = () => getList(uuid);
+  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const isError = response && response.error;
 
-  const toggleDrawer = (open) => () => {
-    setState({ ...state, drawerIsOpen: open });
-  };
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedOneList(response.data));
+  }, [isLoading]);
+
+  if (isError) return <ErrorPage statusCode={response.status} />;
+  if (data === undefined || isLoading) return <Loading fullScreen />;
 
   return (
     <Box className="flex flex-col place-items-center">
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <PostList data={data} post_uuids={post_uuids} />
+        <Posts data={data} />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer
-        uuids={comment_uuids}
+        repliedTo={data}
         toggleDrawer={toggleDrawer}
-        drawerIsOpen={state.drawerIsOpen}
+        drawerIsOpen={drawerIsOpen}
       />
     </Box>
   );
 }
 
-export async function getStaticProps({ params }) {
-  const response = await getList(params.uuid);
-  const posts_response = await getListPosts(params.uuid);
-  const comments_response = await getListComments(params.uuid);
-
-  return {
-    props: {
-      uuid: params.uuid,
-      response,
-      posts_response,
-      comments_response,
-    },
-  };
-}
+export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

@@ -6,7 +6,6 @@ import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
 import { selectCommentByUuid } from "src/_store";
 
-
 export default function CommentPreview({ uuid, className }) {
   const data = useSelector((state) => selectCommentByUuid(state, uuid));
   return (

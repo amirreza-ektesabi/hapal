@@ -1,11 +1,14 @@
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import ErrorPage from "src/pages/_error";
+import Loading from "src/components/loading";
+import HeaderImage from "src/components/objectRelated/headerImage";
+import HeaderIcons from "src/components/objectRelated/headerIcons";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import { PropertyList } from "src/components/post/propertyList";
 import CommentDrawer from "src/components/comment/drawer";
@@ -17,19 +20,13 @@ import {
   dateFormat,
   timeFormat,
 } from "src/_helpers";
+import { addedOnePost, selectPostByUuid } from "src/_store";
 import {
-  addedOnePost,
-  selectPostByUuid,
-  addedManyProperties,
-  selectpropertyPuuidsByPostUuid,
-  addedManyComments,
-  selectCommentUuidsByRepliedTo,
-} from "src/_store";
-import { getDefaultStaticPaths } from "src/components/routing";
-import { getPost, getPostComments, getPostProperties } from "api";
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
+import { getPost } from "api";
 import urls from "src/general/urls";
-import HeaderImage from "src/components/objectRelated/headerImage";
-import HeaderIcons from "src/components/objectRelated/headerIcons";
 
 function PostedIn({ data, className }) {
   const listHref = stringFormat(urls.list, data.added_to.uuid);
@@ -115,69 +112,42 @@ function Top({ data, className }) {
   );
 }
 
-export default function PostPage({
-  uuid,
-  response,
-  comments_response,
-  properties_response,
-}) {
-  const router = useRouter();
+export default function PostPage({ uuid }) {
   const dispatch = useDispatch();
 
-  if (!router.isFallback && response.error) {
-    return <ErrorPage statusCode={response.status} />;
-  }
-
-  dispatch(addedOnePost(response.data));
-  dispatch(addedManyComments(comments_response.data));
-  dispatch(addedManyProperties(properties_response.data));
+  const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
+  const toggleDrawer = (open) => () => setDrawerIsOpen(open);
 
   const data = useSelector((state) => selectPostByUuid(state, uuid));
-  const property_puuids = useSelector((state) =>
-    selectpropertyPuuidsByPostUuid(state, data)
-  );
-  const comment_uuids = useSelector((state) =>
-    selectCommentUuidsByRepliedTo(state, data)
-  );
 
-  const [state, setState] = React.useState({
-    drawerIsOpen: false,
-  });
+  const swrKey = `post/${uuid}`;
+  const swrFetcher = () => getPost(uuid);
+  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const isError = response && response.error;
 
-  const toggleDrawer = (open) => () => {
-    setState({ ...state, drawerIsOpen: open });
-  };
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedOnePost(response.data));
+  }, [isLoading]);
+
+  if (isError) return <ErrorPage statusCode={response.status} />;
+  if (data === undefined || isLoading) return <Loading fullScreen />;
 
   return (
     <Box className="flex flex-col place-items-center">
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <PropertyList data={data} puuis={property_puuids} className="px-4" />
+        <PropertyList postData={data} className="px-4" />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer
-        uuids={comment_uuids}
+        repliedTo={data}
         toggleDrawer={toggleDrawer}
-        drawerIsOpen={state.drawerIsOpen}
+        drawerIsOpen={drawerIsOpen}
       />
     </Box>
   );
 }
 
-export async function getStaticProps({ params }) {
-  const response = await getPost(params.uuid);
-  const comments_response = await getPostComments(params.uuid);
-  const properties_response = await getPostProperties(params.uuid);
-
-  return {
-    props: {
-      uuid: params.uuid,
-      response,
-      comments_response,
-      properties_response,
-    },
-  };
-}
-
+export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

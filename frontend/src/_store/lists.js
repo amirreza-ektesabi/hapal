@@ -6,7 +6,7 @@ import {
 
 const listsAdapter = createEntityAdapter({
   selectId: (obj) => obj.uuid,
-  sortComparer: (a, b) => a.created.localeCompare(b.created),
+  sortComparer: (a, b) => a.created < b.created,
 });
 
 const listsSlice = createSlice({

@@ -1,13 +1,23 @@
 import * as React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CloseRounded from "@mui/icons-material/CloseRounded";
+import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
 import CommentPreview from "src/components/comment/preview";
 import theme from "src/general/theme";
+import { getListComments, getPostComments } from "api";
+import { addedManyComments, selectCommentUuidsByRepliedTo } from "src/_store";
+
+const swrFetcherMap = {
+  list: getListComments,
+  post: getPostComments,
+};
 
 function getAnchor() {
   return typeof window === "undefined" || window.innerWidth > 640
@@ -71,26 +81,39 @@ function ReplyBox({
   );
 }
 
-function CommentList({ uuids }) {
+function CommentList({ uuids, isLoading, isError }) {
   return (
-    <ListItems
-      data={uuids}
-      itemKey="uuid"
-      component={CommentPreview}
-      itemComponentClassName="mx-4"
-      className="mt-2"
-    />
+    <React.StrictMode>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        ""
+      ) : (
+        <ListItems
+          data={uuids}
+          itemKey="uuid"
+          component={CommentPreview}
+          itemComponentClassName="mx-4"
+          className="mt-2"
+        />
+      )}
+    </React.StrictMode>
   );
 }
 
 export default function CommentDrawer({
-  uuids = [],
+  repliedTo,
   toggleDrawer,
   drawerIsOpen,
 }) {
+  const dispatch = useDispatch();
   const [anchor, setAnchor] = React.useState(getAnchor());
   const [replyButtonIsEnable, setReplyButtonIsEnable] = React.useState(false);
   const [textInputBody, setTextInputBody] = React.useState("");
+
+  let uuids = useSelector((state) =>
+    selectCommentUuidsByRepliedTo(state, repliedTo)
+  );
 
   const handleTextInputChange = (event) => {
     let text = event.target.value;
@@ -104,14 +127,21 @@ export default function CommentDrawer({
   };
 
   React.useEffect(() => {
-    function handleWindowResize() {
-      setAnchor(getAnchor());
-    }
+    if (!isLoading && !isError) dispatch(addedManyComments(response.data));
+  });
+
+  React.useEffect(() => {
+    const handleWindowResize = () => setAnchor(getAnchor());
     window.addEventListener("resize", handleWindowResize);
     return () => {
       window.removeEventListener("resize", handleWindowResize);
     };
-  }, []);
+  });
+
+  const swrKey = `comments/${repliedTo.type}/${repliedTo.uuid}`;
+  const swrFetcher = () => swrFetcherMap[repliedTo.type](repliedTo.uuid);
+  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const isError = response && response.error;
 
   return (
     <SwipeableDrawer
@@ -136,7 +166,7 @@ export default function CommentDrawer({
           handleTextInputChange={handleTextInputChange}
           handleClickOnReplyButton={handleClickOnReplyButton}
         />
-        <CommentList uuids={uuids} />
+        <CommentList uuids={uuids} isLoading={isLoading} isError={isError} />
       </Box>
     </SwipeableDrawer>
   );

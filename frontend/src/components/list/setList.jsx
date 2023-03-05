@@ -39,6 +39,10 @@ function InputFields({ data, className, setTitle, setDescription }) {
 export default function SetListPage({ data, className }) {
   const [formData, setFormData] = React.useState(data);
 
+  React.useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
   const setTitle = (event) => {
     setFormData({
       ...formData,

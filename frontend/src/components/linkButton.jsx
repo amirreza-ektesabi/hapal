@@ -8,7 +8,7 @@ export default function LinkButton({ href, name, className, textInput }) {
   href = href.includes("{0}")
     ? textInput
       ? stringFormat(href, textInput)
-      : "_404"
+      : "404"
     : href;
   return (
     <Link href={href} className={className} prefetch={false}>

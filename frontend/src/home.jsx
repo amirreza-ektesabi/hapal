@@ -6,7 +6,6 @@ import TextField from "@mui/material/TextField";
 import LinkButton from "src/components/linkButton";
 import LoginButton from "src/components/auth/loginButton";
 import LogoutButton from "src/components/auth/logoutButton";
-import { selectAuthUser } from "src/_store";
 import urls from "src/general/urls";
 
 function BoxOfLinks({ data, className = "space-x-3", textInput }) {
@@ -25,7 +24,6 @@ function BoxOfLinks({ data, className = "space-x-3", textInput }) {
 }
 
 export default function TemporaryHomePage() {
-  const authUser = useSelector(selectAuthUser);
   const [textInput, setTextInput] = React.useState("");
 
   const handleTextInputChange = (event) => setTextInput(event.target.value);

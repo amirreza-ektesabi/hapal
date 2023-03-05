@@ -1,7 +1,8 @@
 import * as React from "react";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import ErrorPage from "src/pages/_error";
+import Loading from "src/components/loading";
 import SetListPage from "src/components/list/setList";
 import { addedOneList, selectListByUuid } from "src/_store";
 import {
@@ -10,29 +11,25 @@ import {
 } from "src/components/routing";
 import { getList } from "api";
 
-export default function EditListPage({ uuid, response }) {
-  const router = useRouter();
+export default function EditListPage({ uuid }) {
   const dispatch = useDispatch();
 
-  if (!router.isFallback && response.error) {
-    return <ErrorPage statusCode={404} />;
-  }
+  let data = useSelector((state) => selectListByUuid(state, uuid));
 
-  dispatch(addedOneList(response.data));
+  const swrKey = `list/${uuid}`;
+  const swrFetcher = () => getList(uuid);
+  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const isError = response && response.error;
 
-  const data = useSelector((state) => selectListByUuid(state, uuid));
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedOneList(response.data));
+  }, [isLoading]);
+
+  if (isError) return <ErrorPage statusCode={response.status} />;
+  if (data === undefined || isLoading) return <Loading fullScreen />;
 
   return <SetListPage data={data} />;
 }
 
-export async function getStaticProps({ params }) {
-  const response = await getList(params.uuid);
-
-  return {
-    props: {
-      uuid: params.uuid,
-      response,
-    },
-  };
-}
+export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

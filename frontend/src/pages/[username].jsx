@@ -1,10 +1,11 @@
 import * as React from "react";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import ErrorPage from "src/pages/_error";
+import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
 import Statistic from "src/components/objectRelated/statistic";
 import Header from "src/components/objectRelated/header";
@@ -15,7 +16,10 @@ import {
   addedManyLists,
   selectListUuidsByCreatedBy,
 } from "src/_store";
-import { getDefaultStaticPaths } from "src/components/routing";
+import {
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
 import { getUser, getUserLists } from "api";
 import { pluralize } from "src/_helpers";
 
@@ -75,57 +79,80 @@ function Top({ data, className }) {
   );
 }
 
-export default function ProfilePage({ username, response, lists_response }) {
-  const router = useRouter();
+function ListList({ uuids, isLoading, isError, className }) {
+  return (
+    <React.StrictMode>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        ""
+      ) : (
+        <ListItems
+          data={uuids}
+          itemKey="uuid"
+          component={ListPreview}
+          itemComponentClassName="mx-4"
+        />
+      )}
+    </React.StrictMode>
+  );
+}
+
+function Lists({ data, className }) {
   const dispatch = useDispatch();
 
-  if (!router.isFallback && response.error) {
-    return <ErrorPage statusCode={response.status} />;
-  }
+  let uuids = useSelector((state) => selectListUuidsByCreatedBy(state, data));
 
-  dispatch(addedOneUser(response.data));
-  dispatch(addedManyLists(lists_response.data));
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedManyLists(response.data));
+  });
+
+  const { data: response, isLoading } = useSWR(
+    `lists/user/${data.username}`,
+    () => getUserLists(data.username)
+  );
+  const isError = response && response.error;
+
+  return (
+    <React.StrictMode>
+      <Typography
+        variant="body2"
+        className="font-normal ml-6"
+        children={`${data.lists_count} ${pluralize(data.lists_count, "list")}`}
+        paragraph={true}
+      />
+      <ListList uuids={uuids} isLoading={isLoading} isError={isError} />
+    </React.StrictMode>
+  );
+}
+
+export default function ProfilePage({ username }) {
+  const dispatch = useDispatch();
 
   const data = useSelector((state) => selectUserByUsername(state, username));
-  const list_uuids = useSelector((state) =>
-    selectListUuidsByCreatedBy(state, data)
-  );
+
+  const swrKey = `user/${username}`;
+  const swrFetcher = () => getUser(username);
+  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const isError = response && response.error;
+
+  React.useEffect(() => {
+    if (!isLoading && !isError) dispatch(addedOneUser(response.data));
+  }, [isLoading]);
+
+  if (isError) return <ErrorPage statusCode={response.status} />;
+  if (data === undefined || isLoading) return <Loading fullScreen />;
 
   return (
     <Box className="flex flex-col place-items-center">
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full my-2.5" />
-        <Typography
-          variant="body2"
-          className="font-normal ml-6"
-          children={`${data.lists_count} ${pluralize(
-            data.lists_count,
-            "list"
-          )}`}
-          paragraph={true}
-        />
-        <ListItems
-          data={list_uuids}
-          itemKey="uuid"
-          component={ListPreview}
-          itemComponentClassName="mx-4"
-        />
+        <Lists data={data} />
       </Box>
     </Box>
   );
 }
 
-export async function getStaticProps({ params }) {
-  const response = await getUser(params.username);
-  const lists_response = await getUserLists(params.username);
-
-  return {
-    props: {
-      username: params.username,
-      response,
-      lists_response,
-    },
-  };
-}
+export const getStaticProps = getDefaultStaticProps("username");
 export { getDefaultStaticPaths as getStaticPaths };

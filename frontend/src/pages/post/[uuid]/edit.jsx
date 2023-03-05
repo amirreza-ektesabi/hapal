@@ -1,7 +1,8 @@
 import * as React from "react";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import useSWR from "swr";
 import ErrorPage from "src/pages/_error";
+import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
 import {
   addedOnePost,
@@ -9,24 +10,59 @@ import {
   addedManyProperties,
   selectPropertiesByPostUuid,
 } from "src/_store";
-import { getDefaultStaticPaths } from "src/components/routing";
+import {
+  getDefaultStaticProps,
+  getDefaultStaticPaths,
+} from "src/components/routing";
 import { getPost, getPostProperties } from "api";
 
-export default function EditPostPage({ uuid, response, properties_response }) {
-  const router = useRouter();
+export default function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
 
-  if (!router.isFallback && response.error) {
-    return <ErrorPage statusCode={response.status} />;
-  }
-
-  dispatch(addedOnePost(response.data));
-  dispatch(addedManyProperties(properties_response.data));
-
-  const postData = useSelector((state) => selectPostByUuid(state, uuid));
-  const propertiesData = useSelector((state) =>
-    selectPropertiesByPostUuid(state, postData)
+  let postData = useSelector((state) => selectPostByUuid(state, uuid));
+  let propertiesData = useSelector((state) =>
+    selectPropertiesByPostUuid(state, uuid)
   );
+
+  const postSwrKey = `post/${uuid}`;
+  const postSwrFetcher = () => getPost(uuid);
+  const { data: postResponse, isLoading: postIsLoading } = useSWR(
+    postSwrKey,
+    postSwrFetcher
+  );
+  const postIsError = postResponse && postResponse.error;
+
+  const propertiesSwrKey = `properties/post/${uuid}`;
+  const propertiesSwrFetcher = () => getPostProperties(uuid);
+  const { data: propertiesResponse, isLoading: propertiesIsLoading } = useSWR(
+    propertiesSwrKey,
+    propertiesSwrFetcher
+  );
+  const propertiesIsError = propertiesResponse && propertiesResponse.error;
+
+  React.useEffect(() => {
+    if (!postIsLoading && !postIsError)
+      dispatch(addedOnePost(postResponse.data));
+  }, [postIsLoading]);
+
+  React.useEffect(() => {
+    if (!propertiesIsLoading && !propertiesIsError)
+      dispatch(addedManyProperties(propertiesResponse.data));
+  }, [propertiesIsLoading]);
+
+  if (
+    postData === undefined ||
+    postIsLoading ||
+    propertiesData === undefined ||
+    propertiesData.length === 0 ||
+    propertiesIsLoading
+  )
+    return <Loading fullScreen />;
+
+  if (postIsError) return <ErrorPage statusCode={postResponse.status} />;
+
+  if (propertiesIsError)
+    return <ErrorPage statusCode={propertiesResponse.status} />;
 
   const data = {
     title: postData.title,
@@ -39,16 +75,5 @@ export default function EditPostPage({ uuid, response, properties_response }) {
   return <SetPostPage data={data} />;
 }
 
-export async function getStaticProps({ params }) {
-  const response = await getPost(params.uuid);
-  const properties_response = await getPostProperties(params.uuid);
-
-  return {
-    props: {
-      uuid: params.uuid,
-      response,
-      properties_response,
-    },
-  };
-}
+export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

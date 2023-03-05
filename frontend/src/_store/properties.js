@@ -35,8 +35,8 @@ export const selectPropertyPuuids = createSelector(
 );
 
 export const selectPropertiesByPostUuid = createSelector(
-  [selectProperties, (state, post) => post],
-  (entities, post) => entities.filter((obj) => obj.post.uuid == post.uuid)
+  [selectProperties, (state, postUuid) => postUuid],
+  (entities, postUuid) => entities.filter((obj) => obj.post.uuid == postUuid)
 );
 
 export const selectpropertyPuuidsByPostUuid = createSelector(

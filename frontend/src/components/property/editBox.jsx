@@ -135,6 +135,7 @@ export default function EditPropertyBox({
         maxWidth="sm"
         fullWidth={true}
         sx={{ "& .MuiDialog-paper": { height: "70%" } }}
+        id="__next"
       >
         <Title title="Edit Property" handleClose={handleClose} />
         <Content

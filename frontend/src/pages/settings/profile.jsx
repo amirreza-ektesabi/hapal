@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import SaveButton from "src/components/objectRelated/saveButton";
-import { selectUserByUsername } from "src/_store";
+import { selectAuthUser, selectMe } from "src/_store";
 
 function Top({ data, className }) {
   return (
@@ -23,16 +23,36 @@ function Top({ data, className }) {
 function InputFields({ data, className }) {
   return (
     <Box className={className}>
-      <TextField label="Name" defaultValue={data.name} variant="standard" className="w-full" />
-      <TextField label="Username" defaultValue={data.username} variant="standard" className="w-full" />
-      <TextField multiline label="Bio" defaultValue={data.bio} variant="standard" className="w-full" />
+      <TextField
+        label="Name"
+        defaultValue={data.name}
+        variant="standard"
+        className="w-full"
+      />
+      <TextField
+        label="Username"
+        defaultValue={data.username}
+        variant="standard"
+        className="w-full"
+      />
+      <TextField
+        multiline
+        label="Bio"
+        defaultValue={data.bio}
+        variant="standard"
+        className="w-full"
+      />
     </Box>
   );
 }
 
 export default function EditProfilePage({ className }) {
-  const username = "amrez";
-  const data = useSelector((state) => selectUserByUsername(state, username));
+  const authUser = useSelector(selectAuthUser);
+
+  if (!authUser) return "";
+
+  const currentUser = useSelector(selectMe);
+  const data = currentUser;
 
   return (
     <Box className="flex flex-col place-items-center">

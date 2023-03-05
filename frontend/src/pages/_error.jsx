@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Error404 from "src/pages/_404";
+import Error404 from "src/pages/404";
 
 export default function Error({ statusCode }) {
   if (statusCode === 404) return <Error404 />;
