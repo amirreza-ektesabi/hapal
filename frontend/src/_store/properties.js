@@ -1,45 +1,66 @@
 import {
   createSlice,
   createSelector,
+  createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
 
-const propertiesAdapter = createEntityAdapter({
+const name = "properties";
+const adapter = createEntityAdapter({
   selectId: (obj) => obj.puuid,
+  sortComparer: (a, b) => a.order < b.order,
 });
+const initialState = createInitialState();
+const extraActions = createExtraActions();
+const selectors = createSelectors();
+const reducers = createReducers();
+const slice = createSlice({ name, initialState, reducers, extraReducers });
 
-const propertiesSlice = createSlice({
-  name: "properties",
-  initialState: propertiesAdapter.getInitialState({}),
-  reducers: {
-    addedOne: propertiesAdapter.addOne,
-    addedMany: propertiesAdapter.addMany,
-  },
-});
+export const propertiesReducer = slice.reducer;
+export const propertiesActions = { ...slice.actions, ...extraActions };
+export { selectors as propertiesSelectors };
 
-export const propertiesReducer = propertiesSlice.reducer;
+function createInitialState() {
+  return adapter.getInitialState({});
+}
 
-export const { addedOne: addedOneProperty, addedMany: addedManyProperties } =
-  propertiesSlice.actions;
+function createReducers() {
+  return {
+    addedOne: adapter.addOne,
+    addedMany: adapter.addMany,
+  };
+}
 
-export const {
-  selectAll: selectProperties,
-  selectById: selectPropertyByPuuid,
-} = propertiesAdapter.getSelectors((state) => state.properties);
+function extraReducers(builder) {}
 
-const selectPuuids = (entities) => entities.map((obj) => obj.puuid);
+function createExtraActions() {
+  return {};
+}
 
-export const selectPropertyPuuids = createSelector(
-  selectProperties,
-  selectPuuids
-);
+function createSelectors() {
+  const { selectAll, selectById: selectByPuuid } = adapter.getSelectors(
+    (state) => state[name]
+  );
 
-export const selectPropertiesByPostUuid = createSelector(
-  [selectProperties, (state, postUuid) => postUuid],
-  (entities, postUuid) => entities.filter((obj) => obj.post.uuid == postUuid)
-);
+  const selectAllPuuids = (entities) => entities.map(adapter.selectId);
 
-export const selectpropertyPuuidsByPostUuid = createSelector(
-  selectPropertiesByPostUuid,
-  selectPuuids
-);
+  const selectPuuids = createSelector(selectAll, selectAllPuuids);
+
+  const selectByPostUuid = createSelector(
+    [selectAll, (state, postUuid) => postUuid],
+    (entities, postUuid) => entities.filter((obj) => obj.post.uuid == postUuid)
+  );
+
+  const selectPuuidsByPostUuid = createSelector(
+    selectByPostUuid,
+    selectAllPuuids
+  );
+
+  return {
+    selectAll,
+    selectByPuuid,
+    selectPuuids,
+    selectByPostUuid,
+    selectPuuidsByPostUuid,
+  };
+}

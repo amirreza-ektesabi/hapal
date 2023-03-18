@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ListItems from "src/components/listItems";
-import { selectPropertyByPuuid } from "src/_store";
+import { propertiesSelectors } from "src/_store";
 import Pair from "src/components/pair/view";
 
 function Key({ data }) {
@@ -31,7 +31,9 @@ function Value({ data, className }) {
 }
 
 export default function Property({ puuid, className }) {
-  const data = useSelector((state) => selectPropertyByPuuid(state, puuid));
+  const data = useSelector((state) =>
+    propertiesSelectors.selectByPuuid(state, puuid)
+  );
 
   return (
     <Box className={className}>

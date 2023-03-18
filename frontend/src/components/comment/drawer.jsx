@@ -12,7 +12,7 @@ import ListItems from "src/components/listItems";
 import CommentPreview from "src/components/comment/preview";
 import theme from "src/general/theme";
 import { getListComments, getPostComments } from "api";
-import { addedManyComments, selectCommentUuidsByRepliedTo } from "src/_store";
+import { commentsActions, commentsSelectors, usersActions } from "src/_store";
 
 const swrFetcherMap = {
   list: getListComments,
@@ -112,7 +112,7 @@ export default function CommentDrawer({
   const [textInputBody, setTextInputBody] = React.useState("");
 
   let uuids = useSelector((state) =>
-    selectCommentUuidsByRepliedTo(state, repliedTo)
+    commentsSelectors.selectUuidsByRepliedTo(state, repliedTo)
   );
 
   const handleTextInputChange = (event) => {
@@ -127,7 +127,11 @@ export default function CommentDrawer({
   };
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedManyComments(response.data));
+    if (!isLoading && !isError) {
+      dispatch(commentsActions.addedMany(response.data));
+      const dataUsers = response.data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(dataUsers));
+    }
   });
 
   React.useEffect(() => {

@@ -6,10 +6,7 @@ import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
 import Property from "src/components/property/view";
 import EditProperty from "src/components/property/editView";
-import {
-  addedManyProperties,
-  selectpropertyPuuidsByPostUuid,
-} from "src/_store";
+import { propertiesActions, propertiesSelectors } from "src/_store";
 import { getPostProperties } from "api";
 
 export function PropertyEditList({
@@ -38,11 +35,12 @@ export function PropertyList({ postData, className }) {
   const dispatch = useDispatch();
 
   let puuids = useSelector((state) =>
-    selectpropertyPuuidsByPostUuid(state, postData.uuid)
+    propertiesSelectors.selectPuuidsByPostUuid(state, postData.uuid)
   );
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedManyProperties(response.data));
+    if (!isLoading && !isError)
+      dispatch(propertiesActions.addedMany(response.data));
   });
 
   const swrKey = `properties/post/${postData.uuid}`;

@@ -7,44 +7,14 @@ import { createToken, createUser, getCurrentUser } from "api/auth";
 
 const name = "auth";
 const initialState = createInitialState();
-const authSlice = createSlice({
-  name,
-  initialState,
-  reducers: {
-    logout(state) {
-      state.token = null;
-      state.user = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(login.fulfilled, (state, action) => {
-        const response = action.payload;
-        const data = response.data;
-        if (!response.error) {
-          localStorage.setItem("token", JSON.stringify(data));
-          state.token = data;
-        }
-      })
-      .addCase(signup.fulfilled, (state, action) => {
-        const response = action.payload;
-        const data = response.data;
-      })
-      .addCase(getMe.fulfilled, (state, action) => {
-        const response = action.payload;
-        const data = response.data;
-        if (!response.error) {
-          localStorage.setItem("user", JSON.stringify(data));
-          state.user = data;
-        }
-      });
-  },
-});
+const extraActions = createExtraActions();
+const selectors = createSelectors();
+const reducers = createReducers();
+const slice = createSlice({ name, initialState, reducers, extraReducers });
 
-export const authReducer = authSlice.reducer;
-export const { logout } = authSlice.actions;
+export const authReducer = slice.reducer;
+export const authActions = { ...slice.actions, ...extraActions };
+export { selectors as authSelectors };
 
 function createInitialState() {
   return {
@@ -59,28 +29,79 @@ function createInitialState() {
   };
 }
 
-const selectSelf = (state) => state;
-export const selectAuthUser = createSelector(
-  selectSelf,
-  (state) => state[name].token
-);
+function createReducers() {
+  return {
+    logout(state) {
+      state.token = null;
+      state.user = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    },
+  };
+}
 
-export const selectMe = createSelector(
-  selectSelf,
-  (state) => state[name].user
-);
+function extraReducers(builder) {
+  builder
+    .addCase(extraActions.login.fulfilled, (state, action) => {
+      const response = action.payload;
+      const data = response.data;
+      if (!response.error) {
+        localStorage.setItem("token", JSON.stringify(data));
+        state.token = data;
+      }
+    })
+    .addCase(extraActions.signup.fulfilled, (state, action) => {
+      const response = action.payload;
+      const data = response.data;
+    })
+    .addCase(extraActions.getMe.fulfilled, (state, action) => {
+      const response = action.payload;
+      const data = response.data;
+      if (!response.error) {
+        localStorage.setItem("user", JSON.stringify(data));
+        state.user = data;
+      }
+    });
+}
 
-export const login = createAsyncThunk(`${name}/login`, async (data) => {
-  const response = await createToken(data);
-  return response;
-});
+function createExtraActions() {
+  return {
+    login: login(),
+    signup: signup(),
+    getMe: getMe(),
+  };
 
-export const signup = createAsyncThunk(`${name}/signup`, async (data) => {
-  const response = await createUser(data);
-  return response;
-});
+  function login() {
+    return createAsyncThunk(`${name}/login`, async (data) => {
+      const response = await createToken(data);
+      return response;
+    });
+  }
 
-export const getMe = createAsyncThunk(`${name}/getMe`, async (data) => {
-  const response = await getCurrentUser(data);
-  return response;
-});
+  function signup() {
+    return createAsyncThunk(`${name}/signup`, async (data) => {
+      const response = await createUser(data);
+      return response;
+    });
+  }
+
+  function getMe() {
+    return createAsyncThunk(`${name}/getMe`, async (data) => {
+      const response = await getCurrentUser(data);
+      return response;
+    });
+  }
+}
+
+function createSelectors() {
+  const selectSelf = (state) => state;
+
+  const selectUser = createSelector(selectSelf, (state) => state[name].token);
+
+  const selectMe = createSelector(selectSelf, (state) => state[name].user);
+
+  return {
+    selectUser,
+    selectMe,
+  };
+}

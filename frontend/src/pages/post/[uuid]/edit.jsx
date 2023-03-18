@@ -5,10 +5,11 @@ import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
 import {
-  addedOnePost,
-  selectPostByUuid,
-  addedManyProperties,
-  selectPropertiesByPostUuid,
+  postsActions,
+  postsSelectors,
+  propertiesActions,
+  propertiesSelectors,
+  usersActions,
 } from "src/_store";
 import {
   getDefaultStaticProps,
@@ -19,9 +20,11 @@ import { getPost, getPostProperties } from "api";
 export default function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
 
-  let postData = useSelector((state) => selectPostByUuid(state, uuid));
+  let postData = useSelector((state) =>
+    postsSelectors.selectByUuid(state, uuid)
+  );
   let propertiesData = useSelector((state) =>
-    selectPropertiesByPostUuid(state, uuid)
+    propertiesSelectors.selectByPostUuid(state, uuid)
   );
 
   const postSwrKey = `post/${uuid}`;
@@ -41,20 +44,21 @@ export default function EditPostPage({ uuid }) {
   const propertiesIsError = propertiesResponse && propertiesResponse.error;
 
   React.useEffect(() => {
-    if (!postIsLoading && !postIsError)
-      dispatch(addedOnePost(postResponse.data));
+    if (!postIsLoading && !postIsError) {
+      dispatch(postsActions.addedOne(postResponse.data));
+      dispatch(usersActions.addedOne(postResponse.data.user));
+    }
   }, [postIsLoading]);
 
   React.useEffect(() => {
     if (!propertiesIsLoading && !propertiesIsError)
-      dispatch(addedManyProperties(propertiesResponse.data));
+      dispatch(propertiesActions.addedMany(propertiesResponse.data));
   }, [propertiesIsLoading]);
 
   if (
     postData === undefined ||
     postIsLoading ||
     propertiesData === undefined ||
-    propertiesData.length === 0 ||
     propertiesIsLoading
   )
     return <Loading fullScreen />;

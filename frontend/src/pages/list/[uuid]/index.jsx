@@ -19,10 +19,11 @@ import {
   getDefaultStaticPaths,
 } from "src/components/routing";
 import {
-  addedManyPosts,
-  addedOneList,
-  selectListByUuid,
-  selectPostUuidsByAddedTo,
+  listsActions,
+  listsSelectors,
+  postsActions,
+  postsSelectors,
+  usersActions,
 } from "src/_store";
 import { getList, getListPosts } from "api";
 
@@ -102,10 +103,16 @@ function PostList({ uuids, isLoading, isError, className }) {
 function Posts({ data, className }) {
   const dispatch = useDispatch();
 
-  let uuids = useSelector((state) => selectPostUuidsByAddedTo(state, data));
+  let uuids = useSelector((state) =>
+    postsSelectors.selectUuidsByAddedTo(state, data)
+  );
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedManyPosts(response.data));
+    if (!isLoading && !isError) {
+      dispatch(postsActions.addedMany(response.data));
+      const dataUsers = response.data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(dataUsers));
+    }
   });
 
   const { data: response, isLoading } = useSWR(
@@ -133,7 +140,7 @@ export default function ListPage({ uuid }) {
   const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
   const toggleDrawer = (open) => () => setDrawerIsOpen(open);
 
-  const data = useSelector((state) => selectListByUuid(state, uuid));
+  const data = useSelector((state) => listsSelectors.selectByUuid(state, uuid));
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
@@ -141,7 +148,10 @@ export default function ListPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedOneList(response.data));
+    if (!isLoading && !isError) {
+      dispatch(listsActions.addedOne(response.data));
+      dispatch(usersActions.addedOne(response.data.user));
+    }
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

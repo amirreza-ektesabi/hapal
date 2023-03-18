@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
-import { selectCommentByUuid } from "src/_store";
+import { commentsSelectors } from "src/_store";
 
 export default function CommentPreview({ uuid, className }) {
-  const data = useSelector((state) => selectCommentByUuid(state, uuid));
+  const data = useSelector((state) => commentsSelectors.selectByUuid(state, uuid));
   return (
     <Box className={className}>
       <CardTop data={data} className="mb-2" />

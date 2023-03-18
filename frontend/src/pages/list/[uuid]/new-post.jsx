@@ -8,13 +8,15 @@ import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
 } from "src/components/routing";
-import { addedOneList, selectListByUuid } from "src/_store";
+import { listsActions, listsSelectors, usersActions } from "src/_store";
 import { getList } from "api";
 
 export default function NewPostPage({ uuid }) {
   const dispatch = useDispatch();
 
-  let listData = useSelector((state) => selectListByUuid(state, uuid));
+  let listData = useSelector((state) =>
+    listsSelectors.selectByUuid(state, uuid)
+  );
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
@@ -22,7 +24,10 @@ export default function NewPostPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedOneList(response.data));
+    if (!isLoading && !isError) {
+      dispatch(listsActions.addedOne(response.data));
+      dispatch(usersActions.addedOne(response.data.user));
+    }
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
 import { stringFormat, stringToColor } from "src/_helpers";
-import { selectPostByUuid } from "src/_store";
+import { postsSelectors } from "src/_store";
 import urls from "src/general/urls";
 
 function Media({ data, className }) {
@@ -32,7 +32,7 @@ function Content({ data, className }) {
 }
 
 export default function PostPreview({ uuid, className }) {
-  const data = useSelector((state) => selectPostByUuid(state, uuid));
+  const data = useSelector((state) => postsSelectors.selectByUuid(state, uuid));
   const postHref = stringFormat(urls.post, data.uuid);
 
   return (

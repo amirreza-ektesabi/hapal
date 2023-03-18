@@ -20,7 +20,7 @@ import {
   dateFormat,
   timeFormat,
 } from "src/_helpers";
-import { addedOnePost, selectPostByUuid } from "src/_store";
+import { postsActions, postsSelectors, usersActions } from "src/_store";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -118,7 +118,7 @@ export default function PostPage({ uuid }) {
   const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
   const toggleDrawer = (open) => () => setDrawerIsOpen(open);
 
-  const data = useSelector((state) => selectPostByUuid(state, uuid));
+  const data = useSelector((state) => postsSelectors.selectByUuid(state, uuid));
 
   const swrKey = `post/${uuid}`;
   const swrFetcher = () => getPost(uuid);
@@ -126,7 +126,10 @@ export default function PostPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedOnePost(response.data));
+    if (!isLoading && !isError) {
+      dispatch(postsActions.addedOne(response.data));
+      dispatch(usersActions.addedOne(response.data.user));
+    }
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

@@ -1,61 +1,126 @@
 import {
-    createSlice,
-    createSelector,
-    createEntityAdapter,
+  createSlice,
+  createSelector,
+  createAsyncThunk,
+  createEntityAdapter,
 } from "@reduxjs/toolkit";
+import { likeComment, unlikeComment } from "api";
+import { usersActions } from "./users";
 
-const commentsAdapter = createEntityAdapter({
-    selectId: (obj) => obj.uuid,
-    sortComparer: (a, b) => a.created < b.created,
+const name = "comments";
+const adapter = createEntityAdapter({
+  selectId: (obj) => obj.uuid,
+  sortComparer: (a, b) => a.created < b.created,
 });
+const initialState = createInitialState();
+const extraActions = createExtraActions();
+const selectors = createSelectors();
+const reducers = createReducers();
+const slice = createSlice({ name, initialState, reducers, extraReducers });
 
-const commentsSlice = createSlice({
-    name: "comments",
-    initialState: commentsAdapter.getInitialState({}),
-    reducers: {
-        liked(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.likes_count += obj.is_liked ? -1 : +1;
-            obj.is_liked = !obj.is_liked;
-        },
-        userFollowed(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.user.is_followed = !obj.user.is_followed;
-        },
-        addedOne: commentsAdapter.addOne,
-        addedMany: commentsAdapter.addMany,
-    },
-});
+export const commentsReducer = slice.reducer;
+export const commentsActions = { ...slice.actions, ...extraActions };
+export { selectors as commentsSelectors };
 
-export const commentsReducer = commentsSlice.reducer;
+function getObjFromArg(state, action) {
+  const response = action.payload;
+  const arg = action.meta.arg;
+  const obj = !response.error ? state.entities[arg] : null;
+  return obj;
+}
 
-export const {
-    liked: commentLiked,
-    userFollowed: commentUserFollowed,
-    addedOne: addedOneComment,
-    addedMany: addedManyComments,
-} = commentsSlice.actions;
+function createInitialState() {
+  return adapter.getInitialState({});
+}
 
-export const { selectAll: selectComments, selectById: selectCommentByUuid } =
-commentsAdapter.getSelectors((state) => state.comments);
+function createReducers() {
+  return {
+    addedOne: adapter.addOne,
+    addedMany: adapter.addMany,
+  };
+}
 
-const selectUuids = (entities) => entities.map((obj) => obj.uuid);
+function extraReducers(builder) {
+  builder
+    .addCase(extraActions.liked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count += 1;
+        obj.is_liked = true;
+      }
+    })
+    .addCase(extraActions.unliked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count -= 1;
+        obj.is_liked = false;
+      }
+    });
+}
 
-export const selectCommentUuids = createSelector(selectComments, selectUuids);
+function createExtraActions() {
+  return {
+    liked: liked(),
+    unliked: unliked(),
+  };
 
-export const selectCommentsByRepliedTo = createSelector(
-    [selectComments, (state, repliedTo) => repliedTo],
+  function liked() {
+    return createAsyncThunk(
+      `${name}/liked`,
+      async (uuid) => await likeComment(uuid)
+    );
+  }
+
+  function unliked() {
+    return createAsyncThunk(
+      `${name}/unliked`,
+      async (uuid) => await unlikeComment(uuid)
+    );
+  }
+}
+
+function createSelectors() {
+  const { selectAll, selectById: selectByUuid } = adapter.getSelectors(
+    (state) => state[name]
+  );
+
+  const selectAllUuids = (entities) => entities.map(adapter.selectId);
+
+  const selectUuids = createSelector(selectAll, selectAllUuids);
+
+  const selectByCreatedBy = createSelector(
+    [selectAll, (state, createdBy) => createdBy],
+    (entities, createdBy) =>
+      entities.filter((obj) => obj.user.username == createdBy.username)
+  );
+
+  const selectUuidsByCreatedBy = createSelector(
+    selectByCreatedBy,
+    selectAllUuids
+  );
+
+  const selectByRepliedTo = createSelector(
+    [selectAll, (state, repliedTo) => repliedTo],
     (entities, repliedTo) =>
-    entities.filter(
+      entities.filter(
         (obj) =>
-        obj.replied_to.uuid == repliedTo.uuid &&
-        obj.replied_to.type == repliedTo.type
-    )
-);
+          obj.replied_to.uuid == repliedTo.uuid &&
+          obj.replied_to.type == repliedTo.type
+      )
+  );
 
-export const selectCommentUuidsByRepliedTo = createSelector(
-    selectCommentsByRepliedTo,
-    selectUuids
-);
+  const selectUuidsByRepliedTo = createSelector(
+    selectByRepliedTo,
+    selectAllUuids
+  );
+
+  return {
+    selectAll,
+    selectByUuid,
+    selectUuids,
+    selectByCreatedBy,
+    selectUuidsByCreatedBy,
+    selectByRepliedTo,
+    selectUuidsByRepliedTo,
+  };
+}

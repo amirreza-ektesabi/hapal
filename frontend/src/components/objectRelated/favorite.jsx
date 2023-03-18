@@ -4,19 +4,27 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { numberFormat } from "src/_helpers";
-import { listLiked, postLiked, commentLiked } from "src/_store";
+import { listsActions, postsActions, commentsActions } from "src/_store";
 
 const likedReducers = {
-  list: listLiked,
-  post: postLiked,
-  comment: commentLiked,
+  list: listsActions.liked,
+  post: postsActions.liked,
+  comment: commentsActions.liked,
+};
+
+const unlikedReducers = {
+  list: listsActions.unliked,
+  post: postsActions.unliked,
+  comment: commentsActions.unliked,
 };
 
 export default function Favorite({ data, className }) {
   const dispatch = useDispatch();
 
   const handleOnClick = (event) => {
-    const reducer = likedReducers[data.type];
+    const reducer = data.is_liked
+      ? unlikedReducers[data.type]
+      : likedReducers[data.type];
     dispatch(reducer(data.uuid));
   };
 

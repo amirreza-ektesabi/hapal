@@ -11,10 +11,10 @@ import Statistic from "src/components/objectRelated/statistic";
 import Header from "src/components/objectRelated/header";
 import ListPreview from "src/components/list/preview";
 import {
-  addedOneUser,
-  selectUserByUsername,
-  addedManyLists,
-  selectListUuidsByCreatedBy,
+  usersActions,
+  usersSelectors,
+  listsActions,
+  listsSelectors,
 } from "src/_store";
 import {
   getDefaultStaticProps,
@@ -101,10 +101,16 @@ function ListList({ uuids, isLoading, isError, className }) {
 function Lists({ data, className }) {
   const dispatch = useDispatch();
 
-  let uuids = useSelector((state) => selectListUuidsByCreatedBy(state, data));
+  let uuids = useSelector((state) =>
+    listsSelectors.selectUuidsByCreatedBy(state, data)
+  );
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedManyLists(response.data));
+    if (!isLoading && !isError) {
+      dispatch(listsActions.addedMany(response.data));
+      const dataUsers = response.data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(dataUsers));
+    }
   });
 
   const { data: response, isLoading } = useSWR(
@@ -129,7 +135,9 @@ function Lists({ data, className }) {
 export default function ProfilePage({ username }) {
   const dispatch = useDispatch();
 
-  const data = useSelector((state) => selectUserByUsername(state, username));
+  const data = useSelector((state) =>
+    usersSelectors.selectByUsername(state, username)
+  );
 
   const swrKey = `user/${username}`;
   const swrFetcher = () => getUser(username);
@@ -137,7 +145,7 @@ export default function ProfilePage({ username }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedOneUser(response.data));
+    if (!isLoading && !isError) dispatch(usersActions.addedOne(response.data));
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

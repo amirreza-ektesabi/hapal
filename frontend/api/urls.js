@@ -8,6 +8,8 @@ const apiUrls = {
   posts: `${hostUrl}/{0}/{1}/posts/`,
   comments: `${hostUrl}/{0}/{1}/comments/`,
   properties: `${hostUrl}/post/{0}/properties/`,
+  likes: `${hostUrl}/{0}/{1}/likes/`,
+  follows: `${hostUrl}/{0}/{1}/followers/`,
 
   // auth
   createToken: `${hostUrl}/auth/jwt/create/`,

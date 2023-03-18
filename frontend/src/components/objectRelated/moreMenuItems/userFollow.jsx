@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
@@ -7,27 +7,33 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import PersonRemoveAlt1RoundedIcon from "@mui/icons-material/PersonRemoveAlt1Rounded";
-import { listUserFollowed, postUserFollowed, commentUserFollowed } from "src/_store";
+import { authSelectors, usersActions, usersSelectors } from "src/_store";
 
-const reducerMap = {
-  list: listUserFollowed,
-  post: postUserFollowed,
-  comment: commentUserFollowed,
-};
+export function UserFollowItemConditions(data) {
+  const currentUser = useSelector(authSelectors.selectMe);
+
+  return currentUser.username != data.user.username;
+}
 
 export default function UserFollowItem({ data, handleMenuClose }) {
+  const user = useSelector((state) =>
+    usersSelectors.selectByUsername(state, data.user.username)
+  );
+  console.log(user, data, data.user.username);
   const dispatch = useDispatch();
 
   const handleOnClick = () => {
-    const reducer = reducerMap[data.type];
-    dispatch(reducer(data.uuid));
+    const reducer = user.is_followed
+      ? usersActions.unfollowed
+      : usersActions.followed;
+    dispatch(reducer(user.username));
     handleMenuClose();
   };
 
   return (
     <MenuItem onClick={handleOnClick} className="text-sm">
       <ListItemIcon>
-        {data.user.is_followed ? (
+        {user.is_followed ? (
           <PersonRemoveAlt1RoundedIcon fontSize="small" />
         ) : (
           <PersonAddAlt1RoundedIcon fontSize="small" />
@@ -35,10 +41,8 @@ export default function UserFollowItem({ data, handleMenuClose }) {
       </ListItemIcon>
       <ListItemText>
         <Box className="flex space-x-1">
-          <Typography
-            children={data.user.is_followed ? "Unfollow" : "Follow"}
-          />
-          <Typography className="font-bold" children={data.user.name} />
+          <Typography children={user.is_followed ? "Unfollow" : "Follow"} />
+          <Typography className="font-bold" children={user.name} />
         </Box>
       </ListItemText>
     </MenuItem>

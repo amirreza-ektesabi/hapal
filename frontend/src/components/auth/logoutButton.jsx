@@ -2,14 +2,14 @@ import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import { logout, selectAuthUser } from "src/_store";
+import { authSelectors, authActions } from "src/_store";
 
 export default function LogoutButton({ className }) {
   const dispatch = useDispatch();
-  const authUser = useSelector(selectAuthUser);
+  const authUser = useSelector(authSelectors.selectUser);
 
   const handleOnClick = () => {
-    dispatch(logout());
+    dispatch(authActions.logout());
   };
 
   return (

@@ -13,7 +13,7 @@ import PasswordTextField from "src/components/auth/passwordTextField";
 import Alert from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
-import { login, getMe } from "src/_store";
+import { authActions } from "src/_store";
 
 function UsernameTextField({ className, setFieldText }) {
   return (
@@ -133,9 +133,9 @@ export default function LoginDialog({
     setSubmitButtonEnable(checkNoEmptyField(newFormData));
   };
   const handleOnSubmit = async () => {
-    const response = await dispatch(login(formData));
+    const response = await dispatch(authActions.login(formData));
     if (!response.payload.error) {
-      dispatch(getMe());
+      dispatch(authActions.getMe());
       handleCloseBox();
       setOpenSuccessfulAlert(true);
     } else {

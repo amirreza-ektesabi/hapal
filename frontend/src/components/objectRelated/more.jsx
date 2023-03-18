@@ -3,11 +3,13 @@ import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import CircleIcon from "src/components/circleIcon";
-import UserFollowItem from "src/components/objectRelated/moreMenuItems/userFollow";
+import UserFollowItem, { UserFollowItemConditions } from "src/components/objectRelated/moreMenuItems/userFollow";
 import EditItem, {
   editItemConditions,
 } from "src/components/objectRelated/moreMenuItems/edit";
-import DeleteItem from "src/components/objectRelated/moreMenuItems/delete";
+import DeleteItem, {
+  deleteItemConditions,
+} from "src/components/objectRelated/moreMenuItems/delete";
 
 function MoreMenu({ data, menuIsOpen, anchorEl, handleClose }) {
   return (
@@ -21,8 +23,12 @@ function MoreMenu({ data, menuIsOpen, anchorEl, handleClose }) {
       {editItemConditions(data) && (
         <EditItem data={data} handleMenuClose={handleClose} />
       )}
-      <DeleteItem data={data} handleMenuClose={handleClose} />
-      <UserFollowItem data={data} handleMenuClose={handleClose} />
+      {deleteItemConditions(data) && (
+        <DeleteItem data={data} handleMenuClose={handleClose} />
+      )}
+      {UserFollowItemConditions(data) && (
+        <UserFollowItem data={data} handleMenuClose={handleClose} />
+      )}
     </Menu>
   );
 }

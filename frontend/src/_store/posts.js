@@ -1,60 +1,122 @@
 import {
-    createSlice,
-    createSelector,
-    createEntityAdapter,
+  createSlice,
+  createSelector,
+  createAsyncThunk,
+  createEntityAdapter,
 } from "@reduxjs/toolkit";
+import { likePost, unlikePost } from "api";
+import { usersActions } from "./users";
 
-const postsAdapter = createEntityAdapter({
-    selectId: (obj) => obj.uuid,
-    sortComparer: (a, b) => a.created < b.created,
+const name = "posts";
+const adapter = createEntityAdapter({
+  selectId: (obj) => obj.uuid,
+  sortComparer: (a, b) => a.created < b.created,
 });
+const initialState = createInitialState();
+const extraActions = createExtraActions();
+const selectors = createSelectors();
+const reducers = createReducers();
+const slice = createSlice({ name, initialState, reducers, extraReducers });
 
-const postsSlice = createSlice({
-    name: "posts",
-    initialState: postsAdapter.getInitialState({}),
-    reducers: {
-        liked(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.likes_count += obj.is_liked ? -1 : +1;
-            obj.is_liked = !obj.is_liked;
-        },
-        userFollowed(state, action) {
-            const uuid = action.payload;
-            const obj = state.entities[uuid];
-            obj.user.is_followed = !obj.user.is_followed;
-        },
-        addedOne: postsAdapter.addOne,
-        addedMany: postsAdapter.addMany,
-    },
-});
+export const postsReducer = slice.reducer;
+export const postsActions = { ...slice.actions, ...extraActions };
+export { selectors as postsSelectors };
 
-export const postsReducer = postsSlice.reducer;
+function getObjFromArg(state, action) {
+  const response = action.payload;
+  const arg = action.meta.arg;
+  const obj = !response.error ? state.entities[arg] : null;
+  return obj;
+}
 
-export const {
-    liked: postLiked,
-    userFollowed: postUserFollowed,
-    addedOne: addedOnePost,
-    addedMany: addedManyPosts,
-} = postsSlice.actions;
+function createInitialState() {
+  return adapter.getInitialState({});
+}
 
-export const { selectAll: selectPosts, selectById: selectPostByUuid } =
-postsAdapter.getSelectors((state) => state.posts);
+function createReducers() {
+  return {
+    addedOne: adapter.addOne,
+    addedMany: adapter.addMany,
+  };
+}
 
-const selectUuids = (entities) => entities.map((obj) => obj.uuid);
+function extraReducers(builder) {
+  builder
+    .addCase(extraActions.liked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count += 1;
+        obj.is_liked = true;
+      }
+    })
+    .addCase(extraActions.unliked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count -= 1;
+        obj.is_liked = false;
+      }
+    });
+}
 
-export const selectPostUuids = createSelector(selectPosts, selectUuids);
+function createExtraActions() {
+  return {
+    liked: liked(),
+    unliked: unliked(),
+  };
 
-export const selectPostsByAddedTo = createSelector(
-    [selectPosts, (state, addedTo) => addedTo],
+  function liked() {
+    return createAsyncThunk(
+      `${name}/liked`,
+      async (uuid) => await likePost(uuid)
+    );
+  }
+
+  function unliked() {
+    return createAsyncThunk(
+      `${name}/unliked`,
+      async (uuid) => await unlikePost(uuid)
+    );
+  }
+}
+
+function createSelectors() {
+  const { selectAll, selectById: selectByUuid } = adapter.getSelectors(
+    (state) => state[name]
+  );
+
+  const selectAllUuids = (entities) => entities.map(adapter.selectId);
+
+  const selectUuids = createSelector(selectAll, selectAllUuids);
+
+  const selectByCreatedBy = createSelector(
+    [selectAll, (state, createdBy) => createdBy],
+    (entities, createdBy) =>
+      entities.filter((obj) => obj.user.username == createdBy.username)
+  );
+
+  const selectUuidsByCreatedBy = createSelector(
+    selectByCreatedBy,
+    selectAllUuids
+  );
+
+  const selectByAddedTo = createSelector(
+    [selectAll, (state, addedTo) => addedTo],
     (entities, addedTo) =>
-    entities.filter(
+      entities.filter(
         (obj) =>
-        obj.added_to.uuid == addedTo.uuid && obj.added_to.type == addedTo.type
-    )
-);
+          obj.added_to.uuid == addedTo.uuid && obj.added_to.type == addedTo.type
+      )
+  );
 
-export const selectPostUuidsByAddedTo = createSelector(
-    selectPostsByAddedTo,
-    selectUuids
-);
+  const selectUuidsByAddedTo = createSelector(selectByAddedTo, selectAllUuids);
+
+  return {
+    selectAll,
+    selectByUuid,
+    selectUuids,
+    selectByCreatedBy,
+    selectUuidsByCreatedBy,
+    selectByAddedTo,
+    selectUuidsByAddedTo,
+  };
+}

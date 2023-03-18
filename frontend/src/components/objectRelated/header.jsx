@@ -1,15 +1,19 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import FollowButton from "src/components/objectRelated/followButton";
+import EditProfileButton from "src/components/objectRelated/editProfileButton";
 import HeaderIcons from "src/components/objectRelated/headerIcons";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import ProfileAvatar from "src/components/objectRelated/profileAvatar";
+import { useSelector } from "react-redux";
+import { authSelectors } from "src/_store";
 
 function BottomEdge({
   data,
   className,
   includeProfileAvatar = false,
   includeFollowButton = false,
+  includeEditProfileButton = false,
   forEdit = false,
 }) {
   return (
@@ -21,6 +25,7 @@ function BottomEdge({
     >
       {includeProfileAvatar && <ProfileAvatar data={data} forEdit={forEdit} />}
       {includeFollowButton && <FollowButton data={data} className="ml-auto" />}
+      {includeEditProfileButton && <EditProfileButton data={data} className="ml-auto" />}
     </Box>
   );
 }
@@ -50,6 +55,11 @@ export default function Header({
   includeMoreIcon = false,
   includeProfileAvatar = false,
 }) {
+  const currentUser = useSelector(authSelectors.selectMe);
+  const includeEditProfileButton =
+    data.type == "account" && currentUser.username == data.username;
+  const includeFollowButton = !includeEditProfileButton;
+
   return (
     <Box className="relative">
       <HeaderImage data={data} colorDecider={colorDecider} />
@@ -61,7 +71,8 @@ export default function Header({
       <BottomEdge
         data={data}
         includeProfileAvatar={includeProfileAvatar}
-        includeFollowButton={true}
+        includeFollowButton={includeFollowButton}
+        includeEditProfileButton={includeEditProfileButton}
       />
     </Box>
   );

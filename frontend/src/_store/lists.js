@@ -1,64 +1,138 @@
 import {
   createSlice,
   createSelector,
+  createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
+import { followList, likeList, unfollowList, unlikeList } from "api";
 
-const listsAdapter = createEntityAdapter({
+const name = "lists";
+const adapter = createEntityAdapter({
   selectId: (obj) => obj.uuid,
   sortComparer: (a, b) => a.created < b.created,
 });
+const initialState = createInitialState();
+const extraActions = createExtraActions();
+const selectors = createSelectors();
+const reducers = createReducers();
+const slice = createSlice({ name, initialState, reducers, extraReducers });
 
-const listsSlice = createSlice({
-  name: "lists",
-  initialState: listsAdapter.getInitialState({}),
-  reducers: {
-    liked(state, action) {
-      const uuid = action.payload;
-      const obj = state.entities[uuid];
-      obj.likes_count += obj.is_liked ? -1 : +1;
-      obj.is_liked = !obj.is_liked;
-    },
-    followed(state, action) {
-      const uuid = action.payload;
-      const obj = state.entities[uuid];
-      obj.followers_count += obj.is_followed ? -1 : +1;
-      obj.is_followed = !obj.is_followed;
-    },
-    userFollowed(state, action) {
-      const uuid = action.payload;
-      const obj = state.entities[uuid];
-      obj.user.is_followed = !obj.user.is_followed;
-    },
-    addedOne: listsAdapter.addOne,
-    addedMany: listsAdapter.addMany,
-  },
-});
+export const listsReducer = slice.reducer;
+export const listsActions = { ...slice.actions, ...extraActions };
+export { selectors as listsSelectors };
 
-export const listsReducer = listsSlice.reducer;
+function getObjFromArg(state, action) {
+  const response = action.payload;
+  const arg = action.meta.arg;
+  const obj = !response.error ? state.entities[arg] : null;
+  return obj;
+}
 
-export const {
-  liked: listLiked,
-  followed: listFollowed,
-  userFollowed: listUserFollowed,
-  addedOne: addedOneList,
-  addedMany: addedManyLists,
-} = listsSlice.actions;
+function createInitialState() {
+  return adapter.getInitialState({});
+}
 
-export const { selectAll: selectLists, selectById: selectListByUuid } =
-  listsAdapter.getSelectors((state) => state.lists);
+function createReducers() {
+  return {
+    addedOne: adapter.addOne,
+    addedMany: adapter.addMany,
+  };
+}
 
-const selectUuids = (entities) => entities.map((obj) => obj.uuid);
+function extraReducers(builder) {
+  builder
+    .addCase(extraActions.followed.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.followers_count += 1;
+        obj.is_followed = true;
+      }
+    })
+    .addCase(extraActions.unfollowed.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.followers_count -= 1;
+        obj.is_followed = false;
+      }
+    })
+    .addCase(extraActions.liked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count += 1;
+        obj.is_liked = true;
+      }
+    })
+    .addCase(extraActions.unliked.fulfilled, (state, action) => {
+      const obj = getObjFromArg(state, action);
+      if (obj !== null) {
+        obj.likes_count -= 1;
+        obj.is_liked = false;
+      }
+    });
+}
 
-export const selectListUuids = createSelector(selectLists, selectUuids);
+function createExtraActions() {
+  return {
+    followed: followed(),
+    unfollowed: unfollowed(),
+    liked: liked(),
+    unliked: unliked(),
+  };
 
-export const selectListsByCreatedBy = createSelector(
-  [selectLists, (state, createdBy) => createdBy],
-  (entities, createdBy) =>
-    entities.filter((obj) => obj.user.username == createdBy.username)
-);
+  function followed() {
+    return createAsyncThunk(
+      `${name}/followed`,
+      async (uuid) => await followList(uuid)
+    );
+  }
 
-export const selectListUuidsByCreatedBy = createSelector(
-  selectListsByCreatedBy,
-  selectUuids
-);
+  function unfollowed() {
+    return createAsyncThunk(
+      `${name}/unfollowed`,
+      async (uuid) => await unfollowList(uuid)
+    );
+  }
+
+  function liked() {
+    return createAsyncThunk(
+      `${name}/liked`,
+      async (uuid) => await likeList(uuid)
+    );
+  }
+
+  function unliked() {
+    return createAsyncThunk(
+      `${name}/unliked`,
+      async (uuid) => await unlikeList(uuid)
+    );
+  }
+}
+
+function createSelectors() {
+  const { selectAll, selectById: selectByUuid } = adapter.getSelectors(
+    (state) => state[name]
+  );
+
+  const selectAllUuids = (entities) => entities.map(adapter.selectId);
+
+  const selectUuids = createSelector(selectAll, selectAllUuids);
+
+  const selectByCreatedBy = createSelector(
+    [selectAll, (state, createdBy) => createdBy],
+    (entities, createdBy) =>
+      entities.filter((obj) => obj.user.username == createdBy.username)
+  );
+
+  const selectUuidsByCreatedBy = createSelector(
+    selectByCreatedBy,
+    selectAllUuids
+  );
+
+  return {
+    selectAll,
+    selectByUuid,
+    selectUuids,
+    selectByCreatedBy,
+    selectUuidsByCreatedBy,
+  };
+}

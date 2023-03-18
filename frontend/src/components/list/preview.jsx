@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import CardIcons from "src/components/cardRelated/icons";
 import CardTop from "src/components/cardRelated/top";
 import { stringFormat, stringToColor } from "src/_helpers";
-import { selectListByUuid } from "src/_store";
+import { listsSelectors } from "src/_store";
 import urls from "src/general/urls";
 
 function Media({ data, className }) {
@@ -40,7 +40,7 @@ function Content({ data, className }) {
 }
 
 export default function ListPreview({ uuid, className }) {
-  const data = useSelector((state) => selectListByUuid(state, uuid));
+  const data = useSelector((state) => listsSelectors.selectByUuid(state, uuid));
   const listHref = stringFormat(urls.list, data.uuid);
 
   return (

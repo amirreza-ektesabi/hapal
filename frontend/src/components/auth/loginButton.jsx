@@ -2,12 +2,12 @@ import * as React from "react";
 import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import { selectAuthUser } from "src/_store";
+import { authSelectors } from "src/_store";
 import LoginDialog from "src/components/auth/loginDialog";
 import SignupDialog from "./signupDialog";
 
 export default function LoginButton({ className }) {
-  const authUser = useSelector(selectAuthUser);
+  const authUser = useSelector(authSelectors.selectUser);
   const [openLoginBox, setOpenLoginBox] = React.useState(false);
   const [openSignupBox, setOpenSignupBox] = React.useState(false);
 

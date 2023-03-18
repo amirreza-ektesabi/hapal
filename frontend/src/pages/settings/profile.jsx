@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import SaveButton from "src/components/objectRelated/saveButton";
-import { selectAuthUser, selectMe } from "src/_store";
+import { authSelectors } from "src/_store";
 
 function Top({ data, className }) {
   return (
@@ -47,11 +47,11 @@ function InputFields({ data, className }) {
 }
 
 export default function EditProfilePage({ className }) {
-  const authUser = useSelector(selectAuthUser);
+  const authUser = useSelector(authSelectors.selectUser);
 
   if (!authUser) return "";
 
-  const currentUser = useSelector(selectMe);
+  const currentUser = useSelector(authSelectors.selectMe);
   const data = currentUser;
 
   return (

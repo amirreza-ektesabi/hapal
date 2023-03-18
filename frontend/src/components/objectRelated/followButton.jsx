@@ -2,11 +2,16 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import { userFollowed, listFollowed } from "src/_store";
+import { listsActions, usersActions } from "src/_store";
 
 const followedReducers = {
-  account: userFollowed,
-  list: listFollowed,
+  account: usersActions.followed,
+  list: listsActions.followed,
+};
+
+const unfollowedReducers = {
+  account: usersActions.unfollowed,
+  list: listsActions.unfollowed,
 };
 
 function Following({ className, onClick }) {
@@ -47,14 +52,19 @@ export default function FollowButton({ data, className }) {
   className += " rounded-full w-28 h-10 border-1 font-bold";
   const dispatch = useDispatch();
 
-  const handleOnClick = (event) => {
+  const handleOnFollow = () => {
     const reducer = followedReducers[data.type];
-    dispatch(reducer(data.type == "list" ? data.uuid : data.username ));
+    dispatch(reducer(data.type == "list" ? data.uuid : data.username));
+  };
+
+  const handleOnUnfollow = () => {
+    const reducer = unfollowedReducers[data.type];
+    dispatch(reducer(data.type == "list" ? data.uuid : data.username));
   };
 
   return data.is_followed ? (
-    <Following onClick={handleOnClick} className={className} />
+    <Following onClick={handleOnUnfollow} className={className} />
   ) : (
-    <Follow onClick={handleOnClick} className={className} />
+    <Follow onClick={handleOnFollow} className={className} />
   );
 }

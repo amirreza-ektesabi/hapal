@@ -14,7 +14,7 @@ import PasswordTextField from "src/components/auth/passwordTextField";
 import Alert from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
-import { signup } from "src/_store";
+import { authActions } from "src/_store";
 import { validateSignupForm } from "src/_helpers/validators";
 
 function UsernameTextField({ className, setFieldText }) {
@@ -159,7 +159,7 @@ export default function SignupDialog({
   const handleOnSubmit = async () => {
     const { error, msg } = validateSignupForm(formData);
     if (!error) {
-      const response = await dispatch(signup(formData));
+      const response = await dispatch(authActions.signup(formData));
       if (!response.payload.error) {
         handleCloseBox();
         setOpenSuccessfulAlert(true);

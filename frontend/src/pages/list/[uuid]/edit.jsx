@@ -4,7 +4,7 @@ import useSWR from "swr";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetListPage from "src/components/list/setList";
-import { addedOneList, selectListByUuid } from "src/_store";
+import { listsActions, listsSelectors, usersActions } from "src/_store";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -14,7 +14,7 @@ import { getList } from "api";
 export default function EditListPage({ uuid }) {
   const dispatch = useDispatch();
 
-  let data = useSelector((state) => selectListByUuid(state, uuid));
+  let data = useSelector((state) => listsSelectors.selectByUuid(state, uuid));
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
@@ -22,7 +22,10 @@ export default function EditListPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) dispatch(addedOneList(response.data));
+    if (!isLoading && !isError) {
+      dispatch(listsActions.addedOne(response.data));
+      dispatch(usersActions.addedOne(response.data.user));
+    }
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
