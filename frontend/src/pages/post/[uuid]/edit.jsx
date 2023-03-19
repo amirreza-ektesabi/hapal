@@ -16,9 +16,12 @@ import {
   getDefaultStaticPaths,
 } from "src/components/routing";
 import { getPost, getPostProperties } from "api";
+import withAuth from "src/components/auth/withAuth";
+import AuthContext from "src/components/auth/authContext";
 
-export default function EditPostPage({ uuid }) {
+export default withAuth(function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
+  const { currentUser } = React.useContext(AuthContext);
 
   let postData = useSelector((state) =>
     postsSelectors.selectByUuid(state, uuid)
@@ -64,6 +67,8 @@ export default function EditPostPage({ uuid }) {
     return <Loading fullScreen />;
 
   if (postIsError) return <ErrorPage statusCode={postResponse.status} />;
+  if (currentUser?.username !== postData.user.username)
+    return <ErrorPage statusCode={404} />;
 
   if (propertiesIsError)
     return <ErrorPage statusCode={propertiesResponse.status} />;
@@ -77,7 +82,7 @@ export default function EditPostPage({ uuid }) {
   };
 
   return <SetPostPage data={data} />;
-}
+});
 
 export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

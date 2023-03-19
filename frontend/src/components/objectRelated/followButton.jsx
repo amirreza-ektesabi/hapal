@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
 import { listsActions, usersActions } from "src/_store";
+import { withAuthFunction } from "src/components/auth/withAuth";
 
 const followedReducers = {
   account: usersActions.followed,
@@ -52,15 +53,15 @@ export default function FollowButton({ data, className }) {
   className += " rounded-full w-28 h-10 border-1 font-bold";
   const dispatch = useDispatch();
 
-  const handleOnFollow = () => {
+  const handleOnFollow = withAuthFunction(() => {
     const reducer = followedReducers[data.type];
     dispatch(reducer(data.type == "list" ? data.uuid : data.username));
-  };
+  });
 
-  const handleOnUnfollow = () => {
+  const handleOnUnfollow = withAuthFunction(() => {
     const reducer = unfollowedReducers[data.type];
     dispatch(reducer(data.type == "list" ? data.uuid : data.username));
-  };
+  });
 
   return data.is_followed ? (
     <Following onClick={handleOnUnfollow} className={className} />

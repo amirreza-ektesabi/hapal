@@ -6,13 +6,15 @@ import { authSelectors } from "src/_store";
 import LoginDialog from "src/components/auth/loginDialog";
 import SignupDialog from "./signupDialog";
 
-export default function LoginButton({ className }) {
+export default function LoginButton({
+  className,
+  openLoginBox,
+  handleOpenLoginBox,
+  handleCloseLoginBox,
+}) {
   const authUser = useSelector(authSelectors.selectUser);
-  const [openLoginBox, setOpenLoginBox] = React.useState(false);
   const [openSignupBox, setOpenSignupBox] = React.useState(false);
 
-  const handleOpenLoginBox = () => setOpenLoginBox(true);
-  const handleCloseLoginBox = () => setOpenLoginBox(false);
   const handleOpenSignupBox = () => setOpenSignupBox(true);
   const handleCloseSignupBox = () => setOpenSignupBox(false);
 

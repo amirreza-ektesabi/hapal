@@ -1,14 +1,13 @@
 import * as React from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { stringFormat } from "src/_helpers";
-import { authSelectors } from "src/_store";
 import urls from "src/general/urls";
+import AuthContext from "src/components/auth/authContext";
 
 const urlMap = {
   list: urls.listEdit,
@@ -16,10 +15,10 @@ const urlMap = {
 };
 
 export function editItemConditions(data) {
-  const currentUser = useSelector(authSelectors.selectMe);
+  const { currentUser } = React.useContext(AuthContext);
 
   return (
-    currentUser.username == data.user.username &&
+    currentUser?.username == data.user.username &&
     Object.keys(urlMap).includes(data.type)
   );
 }

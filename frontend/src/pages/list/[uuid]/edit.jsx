@@ -10,9 +10,12 @@ import {
   getDefaultStaticPaths,
 } from "src/components/routing";
 import { getList } from "api";
+import withAuth from "src/components/auth/withAuth";
+import AuthContext from "src/components/auth/authContext";
 
-export default function EditListPage({ uuid }) {
+export default withAuth(function EditListPage({ uuid }) {
   const dispatch = useDispatch();
+  const { currentUser } = React.useContext(AuthContext);
 
   let data = useSelector((state) => listsSelectors.selectByUuid(state, uuid));
 
@@ -30,9 +33,11 @@ export default function EditListPage({ uuid }) {
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (data === undefined || isLoading) return <Loading fullScreen />;
+  if (currentUser?.username !== data.user.username)
+    return <ErrorPage statusCode={404} />;
 
   return <SetListPage data={data} />;
-}
+});
 
 export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

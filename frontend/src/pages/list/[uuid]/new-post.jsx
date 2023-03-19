@@ -10,9 +10,12 @@ import {
 } from "src/components/routing";
 import { listsActions, listsSelectors, usersActions } from "src/_store";
 import { getList } from "api";
+import withAuth from "src/components/auth/withAuth";
+import AuthContext from "src/components/auth/authContext";
 
-export default function NewPostPage({ uuid }) {
+export default withAuth(function NewPostPage({ uuid }) {
   const dispatch = useDispatch();
+  const { currentUser } = React.useContext(AuthContextt);
 
   let listData = useSelector((state) =>
     listsSelectors.selectByUuid(state, uuid)
@@ -32,11 +35,13 @@ export default function NewPostPage({ uuid }) {
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (listData === undefined || isLoading) return <Loading fullScreen />;
+  if (currentUser?.username !== listData.user.username)
+    return <ErrorPage statusCode={404} />;
 
   const data = { title: "", properties: [] };
 
   return <SetPostPage data={data} />;
-}
+});
 
 export const getStaticProps = getDefaultStaticProps("uuid");
 export { getDefaultStaticPaths as getStaticPaths };

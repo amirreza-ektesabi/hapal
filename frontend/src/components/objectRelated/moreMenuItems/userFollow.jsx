@@ -7,31 +7,37 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import PersonRemoveAlt1RoundedIcon from "@mui/icons-material/PersonRemoveAlt1Rounded";
-import { authSelectors, usersActions, usersSelectors } from "src/_store";
+import { usersActions, usersSelectors } from "src/_store";
+import { withAuthFunction } from "src/components/auth/withAuth";
+import AuthContext from "src/components/auth/authContext";
 
 export function UserFollowItemConditions(data) {
-  const currentUser = useSelector(authSelectors.selectMe);
+  const { currentUser } = React.useContext(AuthContext);
 
-  return currentUser.username != data.user.username;
+  return currentUser?.username != data.user.username;
 }
 
 export default function UserFollowItem({ data, handleMenuClose }) {
   const user = useSelector((state) =>
     usersSelectors.selectByUsername(state, data.user.username)
   );
-  console.log(user, data, data.user.username);
   const dispatch = useDispatch();
 
-  const handleOnClick = () => {
+  const handleOnClick = withAuthFunction(() => {
     const reducer = user.is_followed
       ? usersActions.unfollowed
       : usersActions.followed;
     dispatch(reducer(user.username));
-    handleMenuClose();
-  };
+  });
 
   return (
-    <MenuItem onClick={handleOnClick} className="text-sm">
+    <MenuItem
+      onClick={() => {
+        handleOnClick();
+        handleMenuClose();
+      }}
+      className="text-sm"
+    >
       <ListItemIcon>
         {user.is_followed ? (
           <PersonRemoveAlt1RoundedIcon fontSize="small" />

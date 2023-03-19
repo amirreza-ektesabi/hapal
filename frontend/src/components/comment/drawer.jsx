@@ -13,6 +13,7 @@ import CommentPreview from "src/components/comment/preview";
 import theme from "src/general/theme";
 import { getListComments, getPostComments } from "api";
 import { commentsActions, commentsSelectors, usersActions } from "src/_store";
+import { withAuthFunction } from "src/components/auth/withAuth";
 
 const swrFetcherMap = {
   list: getListComments,
@@ -121,10 +122,10 @@ export default function CommentDrawer({
     setReplyButtonIsEnable(text.trim().length !== 0);
   };
 
-  const handleClickOnReplyButton = (event) => {
+  const handleClickOnReplyButton = withAuthFunction((event) => {
     setTextInputBody("");
     setReplyButtonIsEnable(false);
-  };
+  });
 
   React.useEffect(() => {
     if (!isLoading && !isError) {

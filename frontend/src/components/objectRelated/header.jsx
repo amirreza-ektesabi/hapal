@@ -11,6 +11,7 @@ import { authSelectors } from "src/_store";
 function BottomEdge({
   data,
   className,
+  openLoginBox,
   includeProfileAvatar = false,
   includeFollowButton = false,
   includeEditProfileButton = false,
@@ -24,8 +25,20 @@ function BottomEdge({
       }
     >
       {includeProfileAvatar && <ProfileAvatar data={data} forEdit={forEdit} />}
-      {includeFollowButton && <FollowButton data={data} className="ml-auto" />}
-      {includeEditProfileButton && <EditProfileButton data={data} className="ml-auto" />}
+      {includeFollowButton && (
+        <FollowButton
+          data={data}
+          openLoginBox={openLoginBox}
+          className="ml-auto"
+        />
+      )}
+      {includeEditProfileButton && (
+        <EditProfileButton
+          data={data}
+          openLoginBox={openLoginBox}
+          className="ml-auto"
+        />
+      )}
     </Box>
   );
 }
@@ -52,12 +65,13 @@ export default function Header({
   data,
   className,
   colorDecider,
+  openLoginBox,
   includeMoreIcon = false,
   includeProfileAvatar = false,
 }) {
   const currentUser = useSelector(authSelectors.selectMe);
   const includeEditProfileButton =
-    data.type == "account" && currentUser.username == data.username;
+    data.type == "account" && currentUser?.username == data.username;
   const includeFollowButton = !includeEditProfileButton;
 
   return (
@@ -70,6 +84,7 @@ export default function Header({
       />
       <BottomEdge
         data={data}
+        openLoginBox={openLoginBox}
         includeProfileAvatar={includeProfileAvatar}
         includeFollowButton={includeFollowButton}
         includeEditProfileButton={includeEditProfileButton}

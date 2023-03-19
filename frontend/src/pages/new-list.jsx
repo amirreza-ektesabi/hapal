@@ -1,7 +1,8 @@
 import * as React from "react";
 import SetListPage from "src/components/list/setList";
+import withAuth from "src/components/auth/withAuth";
 
-export default function NewListPage({ className }) {
+export default withAuth(function NewListPage({ className }) {
   const data = {
     title: "",
     description: "",
@@ -9,4 +10,4 @@ export default function NewListPage({ className }) {
   };
 
   return <SetListPage data={data} />;
-}
+});

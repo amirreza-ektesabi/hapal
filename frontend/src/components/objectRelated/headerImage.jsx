@@ -25,7 +25,7 @@ function EditOverlay({ data, className }) {
   return (
     <Box className={className + " flex place-items-center"}>
       <Box className="m-auto space-x-4">
-        <ImportPhoto />
+        {/* <ImportPhoto /> */}
         {data.header && <DeletePhoto />}
       </Box>
     </Box>

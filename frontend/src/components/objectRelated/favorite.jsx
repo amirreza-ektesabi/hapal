@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { numberFormat } from "src/_helpers";
 import { listsActions, postsActions, commentsActions } from "src/_store";
+import { withAuthFunction } from "src/components/auth/withAuth";
 
 const likedReducers = {
   list: listsActions.liked,
@@ -21,12 +22,12 @@ const unlikedReducers = {
 export default function Favorite({ data, className }) {
   const dispatch = useDispatch();
 
-  const handleOnClick = (event) => {
+  const handleOnClick = withAuthFunction((event) => {
     const reducer = data.is_liked
       ? unlikedReducers[data.type]
       : likedReducers[data.type];
     dispatch(reducer(data.uuid));
-  };
+  });
 
   const colorClassName = data.is_liked
     ? "fill-redZ"

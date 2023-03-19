@@ -4,8 +4,6 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import TextField from "@mui/material/TextField";
 import LinkButton from "src/components/linkButton";
-import LoginButton from "src/components/auth/loginButton";
-import LogoutButton from "src/components/auth/logoutButton";
 import urls from "src/general/urls";
 
 function BoxOfLinks({ data, className = "space-x-3", textInput }) {
@@ -35,8 +33,8 @@ export default function TemporaryHomePage() {
         src="/sample_data/images/Space.jpg"
         className="w-screen h-screen object-cover"
       />
-      <LoginButton className="absolute top-4 right-4" />
-      <LogoutButton className="absolute top-4 right-4" />
+      {/* <LoginButton className="absolute top-4 right-4" />
+      <LogoutButton className="absolute top-4 right-4" /> */}
       <Box className="absolute top-44 flex w-full">
         <Box
           component="img"

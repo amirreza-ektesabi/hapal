@@ -14,6 +14,7 @@ import Alert from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
 import { authActions } from "src/_store";
+import { useRouter } from "next/router";
 
 function UsernameTextField({ className, setFieldText }) {
   return (
@@ -106,6 +107,7 @@ export default function LoginDialog({
   handleClose,
   handleOpenSignupBox,
 }) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const initialFormData = { username: "", password: "" };
   const [formData, setFormData] = React.useState(initialFormData);
@@ -138,6 +140,7 @@ export default function LoginDialog({
       dispatch(authActions.getMe());
       handleCloseBox();
       setOpenSuccessfulAlert(true);
+      router.reload();
     } else {
       setTextErrorAlert(messages.wrongDataOnLogin);
       setOpenErrorAlert(true);
