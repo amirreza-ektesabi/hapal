@@ -40,17 +40,13 @@ export default withAuth(function EditPostPage({ uuid }) {
 
   const propertiesSwrKey = `properties/post/${uuid}`;
   const propertiesSwrFetcher = () => getPostProperties(uuid);
-  const { data: propertiesResponse, isLoading: propertiesIsLoading } = useSWRImmutable(
-    propertiesSwrKey,
-    propertiesSwrFetcher
-  );
+  const { data: propertiesResponse, isLoading: propertiesIsLoading } =
+    useSWRImmutable(propertiesSwrKey, propertiesSwrFetcher);
   const propertiesIsError = propertiesResponse && propertiesResponse.error;
 
   React.useEffect(() => {
-    if (!postIsLoading && !postIsError) {
-      dispatch(postsActions.addedOne(postResponse.data));
-      dispatch(usersActions.addedOne(postResponse.data.user));
-    }
+    if (!postIsLoading && !postIsError)
+      dispatch(postsActions.retrieved(postResponse.data));
   }, [postIsLoading]);
 
   React.useEffect(() => {

@@ -8,6 +8,7 @@ import { deleteComment, likeComment, unlikeComment } from "api";
 import { getObjFromAction } from "src/_helpers";
 import { listsActions } from "./lists";
 import { postsActions } from "./posts";
+import { usersActions } from "./users";
 
 const name = "comments";
 const adapter = createEntityAdapter({
@@ -68,10 +69,19 @@ const repliedToActionsMap = {
 
 function createExtraActions() {
   return {
+    retrievedList: retrievedList(),
     deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function retrievedList() {
+    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+      dispatch(commentsActions.addedMany(data));
+      const users = data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(users));
+    });
+  }
 
   function deleted() {
     return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>

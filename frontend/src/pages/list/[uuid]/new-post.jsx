@@ -27,10 +27,7 @@ export default withAuth(function NewPostPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(listsActions.addedOne(response.data));
-      dispatch(usersActions.addedOne(response.data.user));
-    }
+    if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

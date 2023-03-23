@@ -114,11 +114,8 @@ function Posts({ data, className }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(postsActions.addedMany(response.data));
-      const dataUsers = response.data.map((entity) => entity.user);
-      dispatch(usersActions.addedMany(dataUsers));
-    }
+    if (!isLoading && !isError)
+      dispatch(postsActions.retrievedList(response.data));
   }, [isLoading]);
 
   return (
@@ -148,10 +145,7 @@ export default function ListPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(listsActions.addedOne(response.data));
-      dispatch(usersActions.addedOne(response.data.user));
-    }
+    if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

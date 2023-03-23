@@ -7,6 +7,7 @@ import {
 import { deletePost, likePost, unlikePost } from "api";
 import { getObjFromAction } from "src/_helpers";
 import { listsActions } from "./lists";
+import { usersActions } from "./users";
 
 const name = "posts";
 const adapter = createEntityAdapter({
@@ -61,10 +62,27 @@ function extraReducers(builder) {
 
 function createExtraActions() {
   return {
+    retrieved: retrieved(),
+    retrievedList: retrievedList(),
     deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function retrieved() {
+    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+      dispatch(postsActions.addedOne(data));
+      dispatch(usersActions.addedOne(data.user));
+    });
+  }
+
+  function retrievedList() {
+    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+      dispatch(postsActions.addedMany(data));
+      const users = data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(users));
+    });
+  }
 
   function deleted() {
     return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>

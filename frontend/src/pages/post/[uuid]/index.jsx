@@ -126,10 +126,7 @@ export default function PostPage({ uuid }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(postsActions.addedOne(response.data));
-      dispatch(usersActions.addedOne(response.data.user));
-    }
+    if (!isLoading && !isError) dispatch(postsActions.retrieved(response.data));
   }, [isLoading]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;

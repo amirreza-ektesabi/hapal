@@ -133,11 +133,8 @@ export default function CommentDrawer({
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(commentsActions.addedMany(response.data));
-      const dataUsers = response.data.map((entity) => entity.user);
-      dispatch(usersActions.addedMany(dataUsers));
-    }
+    if (!isLoading && !isError)
+      dispatch(commentsActions.retrievedList(response.data));
   }, [isLoading]);
 
   React.useEffect(() => {

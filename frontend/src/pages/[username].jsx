@@ -112,11 +112,8 @@ function Lists({ data, className }) {
   const isError = response && response.error;
 
   React.useEffect(() => {
-    if (!isLoading && !isError) {
-      dispatch(listsActions.addedMany(response.data));
-      const dataUsers = response.data.map((entity) => entity.user);
-      dispatch(usersActions.addedMany(dataUsers));
-    }
+    if (!isLoading && !isError)
+      dispatch(listsActions.retrievedList(response.data));
   }, [isLoading]);
 
   return (

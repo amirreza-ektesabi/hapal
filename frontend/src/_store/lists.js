@@ -88,12 +88,29 @@ function extraReducers(builder) {
 
 function createExtraActions() {
   return {
+    retrieved: retrieved(),
+    retrievedList: retrievedList(),
     deleted: deleted(),
     followed: followed(),
     unfollowed: unfollowed(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function retrieved() {
+    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+      dispatch(listsActions.addedOne(data));
+      dispatch(usersActions.addedOne(data.user));
+    });
+  }
+
+  function retrievedList() {
+    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+      dispatch(listsActions.addedMany(data));
+      const users = data.map((entity) => entity.user);
+      dispatch(usersActions.addedMany(users));
+    });
+  }
 
   function deleted() {
     return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>
