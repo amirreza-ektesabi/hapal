@@ -4,8 +4,9 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { likePost, unlikePost } from "api";
-import { usersActions } from "./users";
+import { deletePost, likePost, unlikePost } from "api";
+import { getObjFromAction } from "src/_helpers";
+import { listsActions } from "./lists";
 
 const name = "posts";
 const adapter = createEntityAdapter({
@@ -22,13 +23,6 @@ export const postsReducer = slice.reducer;
 export const postsActions = { ...slice.actions, ...extraActions };
 export { selectors as postsSelectors };
 
-function getObjFromArg(state, action) {
-  const response = action.payload;
-  const arg = action.meta.arg;
-  const obj = !response.error ? state.entities[arg] : null;
-  return obj;
-}
-
 function createInitialState() {
   return adapter.getInitialState({});
 }
@@ -37,20 +31,27 @@ function createReducers() {
   return {
     addedOne: adapter.addOne,
     addedMany: adapter.addMany,
+    removedOne: adapter.removeOne,
+    removedOneComment(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.comments_count -= 1;
+      }
+    },
   };
 }
 
 function extraReducers(builder) {
   builder
     .addCase(extraActions.liked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count += 1;
         obj.is_liked = true;
       }
     })
     .addCase(extraActions.unliked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count -= 1;
         obj.is_liked = false;
@@ -60,9 +61,20 @@ function extraReducers(builder) {
 
 function createExtraActions() {
   return {
+    deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function deleted() {
+    return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>
+      deletePost(data.uuid).then((response) => {
+        dispatch(postsActions.removedOne(data.uuid));
+
+        dispatch(listsActions.removedOnePost(data.added_to.uuid));
+      })
+    );
+  }
 
   function liked() {
     return createAsyncThunk(

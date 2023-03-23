@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -122,7 +122,7 @@ export default function PostPage({ uuid }) {
 
   const swrKey = `post/${uuid}`;
   const swrFetcher = () => getPost(uuid);
-  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

@@ -13,7 +13,7 @@ export default function LinkButton({ href, name, className, textInput }) {
   return (
     <Link href={href} className={className} prefetch={false}>
       <Button
-        className=" px-4 font-black shadow-orange-500"
+        className=" px-4 font-black shadow-orange-500 rounded-full"
         style={{
           background: "white",
           color: theme.palette.blackZ,

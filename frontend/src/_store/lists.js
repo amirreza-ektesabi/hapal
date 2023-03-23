@@ -4,7 +4,15 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { followList, likeList, unfollowList, unlikeList } from "api";
+import {
+  deleteList,
+  followList,
+  likeList,
+  unfollowList,
+  unlikeList,
+} from "api";
+import { getObjFromAction } from "src/_helpers";
+import { usersActions } from "./users";
 
 const name = "lists";
 const adapter = createEntityAdapter({
@@ -21,13 +29,6 @@ export const listsReducer = slice.reducer;
 export const listsActions = { ...slice.actions, ...extraActions };
 export { selectors as listsSelectors };
 
-function getObjFromArg(state, action) {
-  const response = action.payload;
-  const arg = action.meta.arg;
-  const obj = !response.error ? state.entities[arg] : null;
-  return obj;
-}
-
 function createInitialState() {
   return adapter.getInitialState({});
 }
@@ -36,34 +37,48 @@ function createReducers() {
   return {
     addedOne: adapter.addOne,
     addedMany: adapter.addMany,
+    removedOne: adapter.removeOne,
+    removedOneComment(state, action) {
+      console.log("removedOneComment");
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.comments_count -= 1;
+      }
+    },
+    removedOnePost(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.posts_count -= 1;
+      }
+    },
   };
 }
 
 function extraReducers(builder) {
   builder
     .addCase(extraActions.followed.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.followers_count += 1;
         obj.is_followed = true;
       }
     })
     .addCase(extraActions.unfollowed.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.followers_count -= 1;
         obj.is_followed = false;
       }
     })
     .addCase(extraActions.liked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count += 1;
         obj.is_liked = true;
       }
     })
     .addCase(extraActions.unliked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count -= 1;
         obj.is_liked = false;
@@ -73,11 +88,22 @@ function extraReducers(builder) {
 
 function createExtraActions() {
   return {
+    deleted: deleted(),
     followed: followed(),
     unfollowed: unfollowed(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function deleted() {
+    return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>
+      deleteList(data.uuid).then((response) => {
+        dispatch(listsActions.removedOne(data.uuid));
+
+        dispatch(usersActions.removedOneList(data.user.username));
+      })
+    );
+  }
 
   function followed() {
     return createAsyncThunk(

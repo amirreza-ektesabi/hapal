@@ -27,7 +27,7 @@ export default function LoginButton({
             background: "white",
             color: theme.palette.blackZ,
           }}
-          className={className + " px-4 font-black"}
+          className={className + " px-4 font-black rounded-full"}
           onClick={handleOpenLoginBox}
           children="Log in"
         />

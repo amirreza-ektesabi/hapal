@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
@@ -45,7 +45,7 @@ export function PropertyList({ postData, className }) {
 
   const swrKey = `properties/post/${postData.uuid}`;
   const swrFetcher = () => getPostProperties(postData.uuid);
-  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
   const isError = response && response.error;
 
   return (

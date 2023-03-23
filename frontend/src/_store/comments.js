@@ -4,8 +4,10 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { likeComment, unlikeComment } from "api";
-import { usersActions } from "./users";
+import { deleteComment, likeComment, unlikeComment } from "api";
+import { getObjFromAction } from "src/_helpers";
+import { listsActions } from "./lists";
+import { postsActions } from "./posts";
 
 const name = "comments";
 const adapter = createEntityAdapter({
@@ -22,13 +24,6 @@ export const commentsReducer = slice.reducer;
 export const commentsActions = { ...slice.actions, ...extraActions };
 export { selectors as commentsSelectors };
 
-function getObjFromArg(state, action) {
-  const response = action.payload;
-  const arg = action.meta.arg;
-  const obj = !response.error ? state.entities[arg] : null;
-  return obj;
-}
-
 function createInitialState() {
   return adapter.getInitialState({});
 }
@@ -37,20 +32,27 @@ function createReducers() {
   return {
     addedOne: adapter.addOne,
     addedMany: adapter.addMany,
+    removedOne: adapter.removeOne,
+    removedOneComment(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.comments_count -= 1;
+      }
+    },
   };
 }
 
 function extraReducers(builder) {
   builder
     .addCase(extraActions.liked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count += 1;
         obj.is_liked = true;
       }
     })
     .addCase(extraActions.unliked.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.likes_count -= 1;
         obj.is_liked = false;
@@ -58,11 +60,30 @@ function extraReducers(builder) {
     });
 }
 
+const repliedToActionsMap = {
+  list: listsActions,
+  post: postsActions,
+  comment: commentsActions,
+};
+
 function createExtraActions() {
   return {
+    deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
   };
+
+  function deleted() {
+    return createAsyncThunk(`${name}/deleted`, (data, { dispatch }) =>
+      deleteComment(data.uuid).then((response) => {
+        dispatch(commentsActions.removedOne(data.uuid));
+
+        const repliedToActions = repliedToActionsMap[data.replied_to.type];
+        const removedOneCommentReducer = repliedToActions.removedOneComment;
+        dispatch(removedOneCommentReducer(data.replied_to.uuid));
+      })
+    );
+  }
 
   function liked() {
     return createAsyncThunk(

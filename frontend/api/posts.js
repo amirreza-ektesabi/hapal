@@ -10,17 +10,22 @@ export async function getPost(uuid) {
   return await responseApi(url, "get");
 }
 
-export async function getPostComments(uuid) {
-  return await getComments("post", uuid);
+export async function getPosts(type, uuid) {
+  const url = stringFormat(apiUrls.posts, type, uuid);
+  return await responseApi(url, "get");
+}
+
+export async function deletePost(uuid) {
+  const url = stringFormat(apiUrls.post, uuid);
+  return await responseApi(url, "delete");
 }
 
 export async function getPostProperties(uuid) {
   return await getProperties(uuid);
 }
 
-export async function getPosts(type, uuid) {
-  const url = stringFormat(apiUrls.posts, type, uuid);
-  return await responseApi(url, "get");
+export async function getPostComments(uuid) {
+  return await getComments("post", uuid);
 }
 
 export async function likePost(uuid) {

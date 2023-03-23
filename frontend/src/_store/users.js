@@ -5,6 +5,7 @@ import {
   createEntityAdapter,
 } from "@reduxjs/toolkit";
 import { followUser, unfollowUser } from "api";
+import { getObjFromAction } from "src/_helpers";
 
 const name = "users";
 const adapter = createEntityAdapter({
@@ -21,12 +22,6 @@ export const usersReducer = slice.reducer;
 export const usersActions = { ...slice.actions, ...extraActions };
 export { selectors as usersSelectors };
 
-function getObjFromArg(state, action) {
-  const response = action.payload;
-  const arg = action.meta.arg;
-  return !response.error ? state.entities[arg] : null;
-}
-
 function createInitialState() {
   return adapter.getInitialState({});
 }
@@ -35,20 +30,26 @@ function createReducers() {
   return {
     addedOne: adapter.addOne,
     addedMany: adapter.addMany,
+    removedOneList(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.lists_count -= 1;
+      }
+    },
   };
 }
 
 function extraReducers(builder) {
   builder
     .addCase(extraActions.followed.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         if (obj.followers_count !== undefined) obj.followers_count += 1;
         obj.is_followed = true;
       }
     })
     .addCase(extraActions.unfollowed.fulfilled, (state, action) => {
-      const obj = getObjFromArg(state, action);
+      const obj = getObjFromAction(state, action);
       if (obj !== null) {
         if (obj.followers_count !== undefined) obj.followers_count -= 1;
         obj.is_followed = false;

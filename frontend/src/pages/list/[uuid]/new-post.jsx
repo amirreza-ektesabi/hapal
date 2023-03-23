@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
@@ -23,7 +23,7 @@ export default withAuth(function NewPostPage({ uuid }) {
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
-  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

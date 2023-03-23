@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -127,13 +127,18 @@ export default function CommentDrawer({
     setReplyButtonIsEnable(false);
   });
 
+  const swrKey = `comments/${repliedTo.type}/${repliedTo.uuid}`;
+  const swrFetcher = () => swrFetcherMap[repliedTo.type](repliedTo.uuid);
+  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const isError = response && response.error;
+
   React.useEffect(() => {
     if (!isLoading && !isError) {
       dispatch(commentsActions.addedMany(response.data));
       const dataUsers = response.data.map((entity) => entity.user);
       dispatch(usersActions.addedMany(dataUsers));
     }
-  });
+  }, [isLoading]);
 
   React.useEffect(() => {
     const handleWindowResize = () => setAnchor(getAnchor());
@@ -142,11 +147,6 @@ export default function CommentDrawer({
       window.removeEventListener("resize", handleWindowResize);
     };
   });
-
-  const swrKey = `comments/${repliedTo.type}/${repliedTo.uuid}`;
-  const swrFetcher = () => swrFetcherMap[repliedTo.type](repliedTo.uuid);
-  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
-  const isError = response && response.error;
 
   return (
     <SwipeableDrawer

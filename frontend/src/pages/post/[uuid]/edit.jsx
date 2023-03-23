@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
@@ -32,7 +32,7 @@ export default withAuth(function EditPostPage({ uuid }) {
 
   const postSwrKey = `post/${uuid}`;
   const postSwrFetcher = () => getPost(uuid);
-  const { data: postResponse, isLoading: postIsLoading } = useSWR(
+  const { data: postResponse, isLoading: postIsLoading } = useSWRImmutable(
     postSwrKey,
     postSwrFetcher
   );
@@ -40,7 +40,7 @@ export default withAuth(function EditPostPage({ uuid }) {
 
   const propertiesSwrKey = `properties/post/${uuid}`;
   const propertiesSwrFetcher = () => getPostProperties(uuid);
-  const { data: propertiesResponse, isLoading: propertiesIsLoading } = useSWR(
+  const { data: propertiesResponse, isLoading: propertiesIsLoading } = useSWRImmutable(
     propertiesSwrKey,
     propertiesSwrFetcher
   );

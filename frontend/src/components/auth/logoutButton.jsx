@@ -24,7 +24,7 @@ export default function LogoutButton({ className }) {
             background: "white",
             color: theme.palette.blackZ,
           }}
-          className={className + " px-4 font-black"}
+          className={className + " px-4 font-black rounded-full"}
           onClick={handleOnClick}
           children="Log out"
         />

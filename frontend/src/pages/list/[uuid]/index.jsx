@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -107,19 +107,19 @@ function Posts({ data, className }) {
     postsSelectors.selectUuidsByAddedTo(state, data)
   );
 
+  const { data: response, isLoading } = useSWRImmutable(
+    `posts/${data.type}/${data.uuid}`,
+    () => getListPosts(data.uuid)
+  );
+  const isError = response && response.error;
+
   React.useEffect(() => {
     if (!isLoading && !isError) {
       dispatch(postsActions.addedMany(response.data));
       const dataUsers = response.data.map((entity) => entity.user);
       dispatch(usersActions.addedMany(dataUsers));
     }
-  });
-
-  const { data: response, isLoading } = useSWR(
-    `posts/${data.type}/${data.uuid}`,
-    () => getListPosts(data.uuid)
-  );
-  const isError = response && response.error;
+  }, [isLoading]);
 
   return (
     <React.StrictMode>
@@ -144,7 +144,7 @@ export default function ListPage({ uuid }) {
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
-  const { data: response, isLoading } = useSWR(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

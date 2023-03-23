@@ -8,6 +8,11 @@ export async function getComments(type, uuid) {
   return await responseApi(url, "get");
 }
 
+export async function deleteComment(uuid) {
+  const url = stringFormat(apiUrls.comment, uuid);
+  return await responseApi(url, "delete");
+}
+
 export async function likeComment(uuid) {
   return await like("comment", uuid);
 }
