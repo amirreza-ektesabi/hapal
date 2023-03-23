@@ -26,7 +26,7 @@ export function timeAgo(datetime) {
   let diff = (now - obj) / 1000;
 
   if (diff < 0) return "from the future!";
-  else if (diff < 60) return `${~~diff}s`;
+  else if (diff < 60) return "just now";
   else if (diff < 3600) return `${~~(diff / 60)}m`;
   else if (diff < 86400) return `${~~(diff / 3600)}h`;
   else if (diff < 604800) return `${~~(diff / 86400)}d`;

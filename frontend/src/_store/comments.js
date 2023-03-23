@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { deleteComment, likeComment, unlikeComment } from "api";
+import { createComment, deleteComment, likeComment, unlikeComment } from "api";
 import { getObjFromAction } from "src/_helpers";
 import { listsActions } from "./lists";
 import { postsActions } from "./posts";
@@ -13,7 +13,7 @@ import { usersActions } from "./users";
 const name = "comments";
 const adapter = createEntityAdapter({
   selectId: (obj) => obj.uuid,
-  sortComparer: (a, b) => a.created < b.created,
+  sortComparer: (a, b) => b.created.localeCompare(a.created),
 });
 const initialState = createInitialState();
 const extraActions = createExtraActions();
@@ -38,6 +38,12 @@ function createReducers() {
       const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.comments_count -= 1;
+      }
+    },
+    addedOneComment(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.comments_count += 1;
       }
     },
   };
@@ -70,17 +76,31 @@ const repliedToActionsMap = {
 function createExtraActions() {
   return {
     retrievedList: retrievedList(),
+    created: created(),
     deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
   };
 
   function retrievedList() {
-    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+    return createAsyncThunk(`${name}/retrievedList`, (data, { dispatch }) => {
       dispatch(commentsActions.addedMany(data));
       const users = data.map((entity) => entity.user);
       dispatch(usersActions.addedMany(users));
     });
+  }
+
+  function created() {
+    return createAsyncThunk(`${name}/created`, (data, { dispatch }) =>
+      createComment(data.body, data.repliedTo).then((response) => {
+        const data = response.data;
+        dispatch(commentsActions.addedOne(data));
+
+        const repliedToActions = repliedToActionsMap[data.replied_to.type];
+        const addedOneCommentReducer = repliedToActions.addedOneComment;
+        dispatch(addedOneCommentReducer(data.replied_to.uuid));
+      })
+    );
   }
 
   function deleted() {

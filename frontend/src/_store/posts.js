@@ -12,7 +12,7 @@ import { usersActions } from "./users";
 const name = "posts";
 const adapter = createEntityAdapter({
   selectId: (obj) => obj.uuid,
-  sortComparer: (a, b) => a.created < b.created,
+  sortComparer: (a, b) => b.created.localeCompare(a.created),
 });
 const initialState = createInitialState();
 const extraActions = createExtraActions();
@@ -37,6 +37,12 @@ function createReducers() {
       const obj = getObjFromAction(state, action);
       if (obj !== null) {
         obj.comments_count -= 1;
+      }
+    },
+    addedOneComment(state, action) {
+      const obj = getObjFromAction(state, action);
+      if (obj !== null) {
+        obj.comments_count += 1;
       }
     },
   };
@@ -77,7 +83,7 @@ function createExtraActions() {
   }
 
   function retrievedList() {
-    return createAsyncThunk(`${name}/retrieved`, (data, { dispatch }) => {
+    return createAsyncThunk(`${name}/retrievedList`, (data, { dispatch }) => {
       dispatch(postsActions.addedMany(data));
       const users = data.map((entity) => entity.user);
       dispatch(usersActions.addedMany(users));

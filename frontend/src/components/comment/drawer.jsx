@@ -2,18 +2,16 @@ import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
 import CommentPreview from "src/components/comment/preview";
-import theme from "src/general/theme";
+import ReplyBox from "src/components/comment/replyBox";
+import { withAuthFunction } from "src/components/auth/withAuth";
 import { getListComments, getPostComments } from "api";
 import { commentsActions, commentsSelectors, usersActions } from "src/_store";
-import { withAuthFunction } from "src/components/auth/withAuth";
 
 const swrFetcherMap = {
   list: getListComments,
@@ -43,41 +41,6 @@ function TitleBar({ toggleDrawer, className }) {
         className="ml-auto mr-4 cursor-pointer hover:fill-greyZ"
         onClick={toggleDrawer(false)}
       />
-    </Box>
-  );
-}
-
-function ReplyBox({
-  textInputBody,
-  replyButtonIsEnable,
-  handleTextInputChange,
-  handleClickOnReplyButton,
-  className,
-}) {
-  return (
-    <Box className="px-4 space-y-1">
-      <TextField
-        multiline
-        variant="outlined"
-        className="w-full"
-        onChange={handleTextInputChange}
-        inputProps={{ maxLength: 512 }}
-        InputProps={{ className: "text-sm items-end" }}
-        value={textInputBody}
-      />
-      <Box className="flex">
-        <Button
-          variant="contained"
-          size="small"
-          className="rounded-full px-4 ml-auto"
-          children="Reply"
-          disabled={!replyButtonIsEnable}
-          style={{
-            background: replyButtonIsEnable ? theme.palette.blueZ : "grey",
-          }}
-          onClick={handleClickOnReplyButton}
-        />
-      </Box>
     </Box>
   );
 }
@@ -123,6 +86,7 @@ export default function CommentDrawer({
   };
 
   const handleClickOnReplyButton = withAuthFunction((event) => {
+    dispatch(commentsActions.created({ body: textInputBody, repliedTo }));
     setTextInputBody("");
     setReplyButtonIsEnable(false);
   });

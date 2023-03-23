@@ -8,6 +8,12 @@ export async function getComments(type, uuid) {
   return await responseApi(url, "get");
 }
 
+export async function createComment(body, repliedTo) {
+  const url = stringFormat(apiUrls.comments, repliedTo.type, repliedTo.uuid);
+  const data = { body };
+  return await responseApi(url, "post", data);
+}
+
 export async function deleteComment(uuid) {
   const url = stringFormat(apiUrls.comment, uuid);
   return await responseApi(url, "delete");
