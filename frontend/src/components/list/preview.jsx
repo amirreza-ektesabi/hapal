@@ -22,7 +22,7 @@ function Media({ data, className }) {
 
 function Content({ data, className }) {
   return (
-    <Box className="absolute bottom-0 left-0 w-full p-2.5 bg-blackZ/[.45]">
+    <Box className="absolute bottom-0 left-0 h-[4.8rem] w-full p-2.5 bg-blackZ/[.45]">
       <Box className="ml-2">
         <Typography
           variant="h6"
