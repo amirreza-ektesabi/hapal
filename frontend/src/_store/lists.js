@@ -37,8 +37,8 @@ function createInitialState() {
 
 function createReducers() {
   return {
-    addedOne: adapter.addOne,
-    addedMany: adapter.addMany,
+    addedOne: adapter.upsertOne,
+    addedMany: adapter.upsertMany,
     removedOne: adapter.removeOne,
     updateOne: adapter.updateOne,
     removedOneComment(state, action) {
