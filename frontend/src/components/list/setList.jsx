@@ -1,8 +1,11 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import SaveButton from "src/components/objectRelated/saveButton";
+import { HeaderEdit as Header } from "src/components/objectRelated/header";
+import { stringFormat } from "src/_helpers";
+import urls from "src/general/urls";
 
 function Top({ data, className }) {
   return (
@@ -21,6 +24,7 @@ function InputFields({ data, className, setTitle, setDescription }) {
         label="Title"
         value={data.title}
         onChange={setTitle}
+        inputProps={{ maxLength: 255 }}
         variant="standard"
         className="w-full"
       />
@@ -29,6 +33,7 @@ function InputFields({ data, className, setTitle, setDescription }) {
         label="Description"
         value={data.description}
         onChange={setDescription}
+        inputProps={{ maxLength: 500 }}
         variant="standard"
         className="w-full"
       />
@@ -36,8 +41,13 @@ function InputFields({ data, className, setTitle, setDescription }) {
   );
 }
 
-export default function SetListPage({ data, className }) {
-  const [formData, setFormData] = React.useState(data);
+export default function SetListPage({ data, handleOnSave, className }) {
+  const router = useRouter();
+  const initialData = {
+    title: data.title,
+    description: data.description,
+  };
+  const [formData, setFormData] = React.useState(initialData);
 
   React.useEffect(() => {
     setFormData(data);
@@ -55,6 +65,16 @@ export default function SetListPage({ data, className }) {
       description: event.target.value,
     });
   };
+  const handleOnClickSaveButton = async () => {
+    const dataToSave = {
+      title: formData.title,
+      description: formData.description,
+    };
+    const response = await handleOnSave(dataToSave);
+    const uuid = response.payload.uuid;
+    const redirectUrl = stringFormat(urls.list, uuid);
+    router.push(redirectUrl);
+  };
 
   return (
     <Box className="flex flex-col place-items-center">
@@ -69,7 +89,11 @@ export default function SetListPage({ data, className }) {
           setTitle={setTitle}
           setDescription={setDescription}
         />
-        <SaveButton isEnable={true} className="px-4" />
+        <SaveButton
+          isEnable={true}
+          className="px-4"
+          handleOnClick={handleOnClickSaveButton}
+        />
       </Box>
     </Box>
   );

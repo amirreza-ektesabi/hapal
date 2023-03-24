@@ -5,11 +5,13 @@ import {
   createEntityAdapter,
 } from "@reduxjs/toolkit";
 import {
+  createList,
   deleteList,
   followList,
   likeList,
   unfollowList,
   unlikeList,
+  updateList,
 } from "api";
 import { getObjFromAction } from "src/_helpers";
 import { usersActions } from "./users";
@@ -38,6 +40,7 @@ function createReducers() {
     addedOne: adapter.addOne,
     addedMany: adapter.addMany,
     removedOne: adapter.removeOne,
+    updateOne: adapter.updateOne,
     removedOneComment(state, action) {
       const obj = getObjFromAction(state, action);
       if (obj !== null) {
@@ -95,6 +98,8 @@ function createExtraActions() {
   return {
     retrieved: retrieved(),
     retrievedList: retrievedList(),
+    created: created(),
+    updated: updated(),
     deleted: deleted(),
     followed: followed(),
     unfollowed: unfollowed(),
@@ -115,6 +120,26 @@ function createExtraActions() {
       const users = data.map((entity) => entity.user);
       dispatch(usersActions.addedMany(users));
     });
+  }
+
+  function created() {
+    return createAsyncThunk(`${name}/created`, (data, { dispatch }) =>
+      createList(data).then((response) => {
+        const data = response.data;
+        dispatch(listsActions.addedOne(data));
+        return data;
+      })
+    );
+  }
+
+  function updated() {
+    return createAsyncThunk(`${name}/updated`, (data, { dispatch }) =>
+      updateList(data).then((response) => {
+        const data = response.data;
+        dispatch(listsActions.updateOne({ id: data.uuid, changes: data }));
+        return data;
+      })
+    );
   }
 
   function deleted() {

@@ -16,6 +16,16 @@ export async function getLists(type, uuid) {
   return await responseApi(url, "get");
 }
 
+export async function createList(data) {
+  return await responseApi(apiUrls.newList, "post", data);
+}
+
+export async function updateList(data) {
+  const url = stringFormat(apiUrls.list, data.uuid);
+  delete data.uuid;
+  return await responseApi(url, "put", data);
+}
+
 export async function deleteList(uuid) {
   const url = stringFormat(apiUrls.list, uuid);
   return await responseApi(url, "delete");

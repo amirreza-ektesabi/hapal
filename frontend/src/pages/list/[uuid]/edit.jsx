@@ -17,6 +17,10 @@ export default withAuth(function EditListPage({ uuid }) {
   const dispatch = useDispatch();
   const { currentUser } = React.useContext(AuthContext);
 
+  const handleOnSave = async (dataToSave) => {
+    return await dispatch(listsActions.updated({ ...dataToSave, uuid }));
+  };
+
   let data = useSelector((state) => listsSelectors.selectByUuid(state, uuid));
 
   const swrKey = `list/${uuid}`;
@@ -33,7 +37,7 @@ export default withAuth(function EditListPage({ uuid }) {
   if (currentUser?.username !== data.user.username)
     return <ErrorPage statusCode={404} />;
 
-  return <SetListPage data={data} />;
+  return <SetListPage data={data} handleOnSave={handleOnSave} />;
 });
 
 export const getStaticProps = getDefaultStaticProps("uuid");
