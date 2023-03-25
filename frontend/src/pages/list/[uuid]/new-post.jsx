@@ -28,7 +28,7 @@ export default withAuth(function NewPostPage({ uuid }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (listData === undefined || isLoading) return <Loading fullScreen />;

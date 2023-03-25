@@ -125,9 +125,9 @@ function createExtraActions() {
   function created() {
     return createAsyncThunk(`${name}/created`, (data, { dispatch }) =>
       createList(data).then((response) => {
-        const data = response.data;
-        dispatch(listsActions.addedOne(data));
-        return data;
+        const responseData = response.data;
+        dispatch(listsActions.addedOne(responseData));
+        return responseData;
       })
     );
   }
@@ -135,9 +135,9 @@ function createExtraActions() {
   function updated() {
     return createAsyncThunk(`${name}/updated`, (data, { dispatch }) =>
       updateList(data).then((response) => {
-        const data = response.data;
-        dispatch(listsActions.updateOne({ id: data.uuid, changes: data }));
-        return data;
+        const responseData = response.data;
+        dispatch(listsActions.updateOne({ id: responseData.uuid, changes: responseData }));
+        return responseData;
       })
     );
   }

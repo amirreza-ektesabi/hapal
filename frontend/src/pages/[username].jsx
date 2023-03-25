@@ -114,7 +114,7 @@ function Lists({ data, className }) {
   React.useEffect(() => {
     if (!isLoading && !isError)
       dispatch(listsActions.retrievedList(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   return (
     <React.StrictMode>
@@ -143,7 +143,7 @@ export default function ProfilePage({ username }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(usersActions.addedOne(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (data === undefined || isLoading) return <Loading fullScreen />;

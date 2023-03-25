@@ -30,7 +30,7 @@ export default withAuth(function EditListPage({ uuid }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (data === undefined || isLoading) return <Loading fullScreen />;

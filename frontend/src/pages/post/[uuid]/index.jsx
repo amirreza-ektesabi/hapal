@@ -127,7 +127,7 @@ export default function PostPage({ uuid }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(postsActions.retrieved(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (data === undefined || isLoading) return <Loading fullScreen />;

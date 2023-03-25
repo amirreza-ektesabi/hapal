@@ -99,7 +99,7 @@ export default function CommentDrawer({
   React.useEffect(() => {
     if (!isLoading && !isError)
       dispatch(commentsActions.retrievedList(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   React.useEffect(() => {
     const handleWindowResize = () => setAnchor(getAnchor());

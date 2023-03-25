@@ -116,7 +116,7 @@ function Posts({ data, className }) {
   React.useEffect(() => {
     if (!isLoading && !isError)
       dispatch(postsActions.retrievedList(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   return (
     <React.StrictMode>
@@ -146,7 +146,7 @@ export default function ListPage({ uuid }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));
-  }, [isLoading]);
+  }, [response]);
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (data === undefined || isLoading) return <Loading fullScreen />;
