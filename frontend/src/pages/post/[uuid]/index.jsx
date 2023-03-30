@@ -1,7 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -19,8 +18,9 @@ import {
   stringToColor,
   dateFormat,
   timeFormat,
+  useSwrNoFocus,
 } from "src/_helpers";
-import { postsActions, postsSelectors, usersActions } from "src/_store";
+import { postsActions, postsSelectors } from "src/_store";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -122,7 +122,7 @@ export default function PostPage({ uuid }) {
 
   const swrKey = `post/${uuid}`;
   const swrFetcher = () => getPost(uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

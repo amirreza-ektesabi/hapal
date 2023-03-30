@@ -1,10 +1,9 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetListPage from "src/components/list/setList";
-import { listsActions, listsSelectors, usersActions } from "src/_store";
+import { listsActions, listsSelectors } from "src/_store";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -12,6 +11,7 @@ import {
 import { getList } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
+import { useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function EditListPage({ uuid }) {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ export default withAuth(function EditListPage({ uuid }) {
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

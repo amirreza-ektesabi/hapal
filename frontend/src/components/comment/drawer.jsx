@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -11,7 +10,8 @@ import CommentPreview from "src/components/comment/preview";
 import ReplyBox from "src/components/comment/replyBox";
 import { withAuthFunction } from "src/components/auth/withAuth";
 import { getListComments, getPostComments } from "api";
-import { commentsActions, commentsSelectors, usersActions } from "src/_store";
+import { commentsActions, commentsSelectors } from "src/_store";
+import { useSwrNoFocus } from "src/_helpers";
 
 const swrFetcherMap = {
   list: getListComments,
@@ -93,7 +93,7 @@ export default function CommentDrawer({
 
   const swrKey = `comments/${repliedTo.type}/${repliedTo.uuid}`;
   const swrFetcher = () => swrFetcherMap[repliedTo.type](repliedTo.uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

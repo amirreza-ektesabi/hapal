@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
@@ -8,6 +7,7 @@ import Property from "src/components/property/view";
 import EditProperty from "src/components/property/editView";
 import { propertiesActions, propertiesSelectors } from "src/_store";
 import { getPostProperties } from "api";
+import { useSwrNoFocus } from "src/_helpers";
 
 export function PropertyEditList({
   data,
@@ -45,7 +45,7 @@ export function PropertyList({ postData, className }) {
 
   const swrKey = `properties/post/${postData.uuid}`;
   const swrFetcher = () => getPostProperties(postData.uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   return (

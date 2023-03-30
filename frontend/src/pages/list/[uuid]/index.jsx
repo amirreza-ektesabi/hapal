@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -13,7 +12,7 @@ import PostPreview from "src/components/post/preview";
 import User from "src/components/objectRelated/user";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
-import { dateFormat, timeFormat, pluralize } from "src/_helpers";
+import { dateFormat, timeFormat, pluralize, useSwrNoFocus } from "src/_helpers";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -23,7 +22,6 @@ import {
   listsSelectors,
   postsActions,
   postsSelectors,
-  usersActions,
 } from "src/_store";
 import { getList, getListPosts } from "api";
 
@@ -107,10 +105,9 @@ function Posts({ data, className }) {
     postsSelectors.selectUuidsByAddedTo(state, data)
   );
 
-  const { data: response, isLoading } = useSWRImmutable(
-    `posts/${data.type}/${data.uuid}`,
-    () => getListPosts(data.uuid)
-  );
+  const swrKey = `posts/${data.type}/${data.uuid}`;
+  const swrFetcher = () => getListPosts(data.uuid);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {
@@ -141,7 +138,7 @@ export default function ListPage({ uuid }) {
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

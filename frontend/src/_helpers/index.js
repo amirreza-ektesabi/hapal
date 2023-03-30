@@ -5,3 +5,4 @@ export * from "./pluralize";
 export * from "./stringFormat";
 export * from "./stringToColor";
 export * from "./getObjFromAction";
+export * from "./swrNoFocus";

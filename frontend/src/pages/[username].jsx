@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -21,7 +20,7 @@ import {
   getDefaultStaticPaths,
 } from "src/components/routing";
 import { getUser, getUserLists } from "api";
-import { pluralize } from "src/_helpers";
+import { pluralize, useSwrNoFocus } from "src/_helpers";
 
 function Statistics({ data, className }) {
   return (
@@ -105,10 +104,7 @@ function Lists({ data, className }) {
     listsSelectors.selectUuidsByCreatedBy(state, data)
   );
 
-  const { data: response, isLoading } = useSWRImmutable(
-    `lists/user/${data.username}`,
-    () => getUserLists(data.username)
-  );
+  const swrKey = `lists/user/${data.username}`;
   const isError = response && response.error;
 
   React.useEffect(() => {
@@ -138,7 +134,7 @@ export default function ProfilePage({ username }) {
 
   const swrKey = `user/${username}`;
   const swrFetcher = () => getUser(username);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {

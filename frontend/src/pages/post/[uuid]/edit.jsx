@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
@@ -9,7 +8,6 @@ import {
   postsSelectors,
   propertiesActions,
   propertiesSelectors,
-  usersActions,
 } from "src/_store";
 import {
   getDefaultStaticProps,
@@ -18,6 +16,7 @@ import {
 import { getPost, getPostProperties } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
+import { useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
@@ -32,7 +31,7 @@ export default withAuth(function EditPostPage({ uuid }) {
 
   const postSwrKey = `post/${uuid}`;
   const postSwrFetcher = () => getPost(uuid);
-  const { data: postResponse, isLoading: postIsLoading } = useSWRImmutable(
+  const { data: postResponse, isLoading: postIsLoading } = useSwrNoFocus(
     postSwrKey,
     postSwrFetcher
   );
@@ -41,18 +40,18 @@ export default withAuth(function EditPostPage({ uuid }) {
   const propertiesSwrKey = `properties/post/${uuid}`;
   const propertiesSwrFetcher = () => getPostProperties(uuid);
   const { data: propertiesResponse, isLoading: propertiesIsLoading } =
-    useSWRImmutable(propertiesSwrKey, propertiesSwrFetcher);
+    useSwrNoFocus(propertiesSwrKey, propertiesSwrFetcher);
   const propertiesIsError = propertiesResponse && propertiesResponse.error;
 
   React.useEffect(() => {
     if (!postIsLoading && !postIsError)
       dispatch(postsActions.retrieved(postResponse.data));
-  }, [postIsLoading]);
+  }, [postResponse]);
 
   React.useEffect(() => {
     if (!propertiesIsLoading && !propertiesIsError)
       dispatch(propertiesActions.addedMany(propertiesResponse.data));
-  }, [propertiesIsLoading]);
+  }, [propertiesResponse]);
 
   if (
     postData === undefined ||

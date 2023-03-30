@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useSWRImmutable from "swr/immutable";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import SetPostPage from "src/components/post/setPage";
@@ -12,10 +11,11 @@ import { listsActions, listsSelectors, usersActions } from "src/_store";
 import { getList } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
+import { useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function NewPostPage({ uuid }) {
   const dispatch = useDispatch();
-  const { currentUser } = React.useContext(AuthContextt);
+  const { currentUser } = React.useContext(AuthContext);
 
   let listData = useSelector((state) =>
     listsSelectors.selectByUuid(state, uuid)
@@ -23,7 +23,7 @@ export default withAuth(function NewPostPage({ uuid }) {
 
   const swrKey = `list/${uuid}`;
   const swrFetcher = () => getList(uuid);
-  const { data: response, isLoading } = useSWRImmutable(swrKey, swrFetcher);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {
