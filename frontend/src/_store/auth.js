@@ -3,7 +3,12 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { createToken, createUser, getCurrentUser } from "api/auth";
+import {
+  createToken,
+  createUser,
+  getCurrentUser,
+  updateProfile,
+} from "api/auth";
 
 const name = "auth";
 const initialState = createInitialState();
@@ -61,6 +66,14 @@ function extraReducers(builder) {
         localStorage.setItem("user", JSON.stringify(data));
         state.user = data;
       }
+    })
+    .addCase(extraActions.editProfile.fulfilled, (state, action) => {
+      const response = action.payload;
+      const data = response.data;
+      if (!response.error) {
+        localStorage.setItem("user", JSON.stringify(data));
+        state.user = data;
+      }
     });
 }
 
@@ -69,26 +82,30 @@ function createExtraActions() {
     login: login(),
     signup: signup(),
     getMe: getMe(),
+    editProfile: editProfile(),
   };
 
   function login() {
     return createAsyncThunk(`${name}/login`, async (data) => {
-      const response = await createToken(data);
-      return response;
+      return await createToken(data);
     });
   }
 
   function signup() {
     return createAsyncThunk(`${name}/signup`, async (data) => {
-      const response = await createUser(data);
-      return response;
+      return await createUser(data);
     });
   }
 
   function getMe() {
     return createAsyncThunk(`${name}/getMe`, async (data) => {
-      const response = await getCurrentUser(data);
-      return response;
+      return await getCurrentUser(data);
+    });
+  }
+
+  function editProfile() {
+    return createAsyncThunk(`${name}/editProfile`, async (data) => {
+      return await updateProfile(data);
     });
   }
 }

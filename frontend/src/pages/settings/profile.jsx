@@ -1,11 +1,16 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import SaveButton from "src/components/objectRelated/saveButton";
-import { authSelectors } from "src/_store";
 import withAuth from "src/components/auth/withAuth";
+import AutoFocusTextField from "src/components/autoFocusTextField";
+import AuthContext from "src/components/auth/authContext";
+import { HeaderEdit as Header } from "src/components/objectRelated/header";
+import { authActions } from "src/_store";
+import { stringFormat } from "src/_helpers";
+import urls from "src/general/urls";
 
 function Top({ data, className }) {
   return (
@@ -13,7 +18,7 @@ function Top({ data, className }) {
       <Box className="max-w-lg w-full">
         <Header
           data={data}
-          colorDecider={data.name + data.username}
+          colorDecider={data.bio}
           includeProfileAvatar={true}
         />
       </Box>
@@ -21,25 +26,23 @@ function Top({ data, className }) {
   );
 }
 
-function InputFields({ data, className }) {
+function InputFields({ data, setName, setBio, className }) {
   return (
     <Box className={className}>
-      <TextField
+      <AutoFocusTextField
         label="Name"
-        defaultValue={data.name}
-        variant="standard"
-        className="w-full"
-      />
-      <TextField
-        label="Username"
-        defaultValue={data.username}
+        value={data.name}
+        onChange={setName}
+        inputProps={{ maxLength: 50 }}
         variant="standard"
         className="w-full"
       />
       <TextField
         multiline
         label="Bio"
-        defaultValue={data.bio}
+        value={data.bio}
+        onChange={setBio}
+        inputProps={{ maxLength: 140 }}
         variant="standard"
         className="w-full"
       />
@@ -47,17 +50,49 @@ function InputFields({ data, className }) {
   );
 }
 
-export default withAuth(function EditProfilePage({ className }) {
-  const currentUser = useSelector(authSelectors.selectMe);
-  const data = currentUser;
+export default withAuth(function EditProfilePage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { currentUser } = React.useContext(AuthContext);
+  const [formData, setFormData] = React.useState(currentUser);
+
+  const setName = (event) => {
+    setFormData({
+      ...formData,
+      name: event.target.value,
+    });
+  };
+  const setBio = (event) => {
+    setFormData({
+      ...formData,
+      bio: event.target.value,
+    });
+  };
+  const handleOnClickSaveButton = async () => {
+    const dataToSave = {
+      name: formData.name,
+      bio: formData.bio,
+    };
+    await dispatch(authActions.editProfile(dataToSave));
+    const redirectUrl = stringFormat(urls.user, currentUser.username);
+    router.push(redirectUrl);
+  };
 
   return (
     <Box className="flex flex-col place-items-center">
       <Box className="max-w-lg w-full space-y-16">
-        <Top data={data} className="flex justify-center place-items-center" />
+        <Top
+          data={formData}
+          className="flex justify-center place-items-center"
+        />
         <Box className="space-y-10">
-          <InputFields data={data} className="px-4 space-y-10" />
-          <SaveButton isEnable={true} />
+          <InputFields
+            data={formData}
+            setName={setName}
+            setBio={setBio}
+            className="px-4 space-y-10"
+          />
+          <SaveButton isEnable={true} handleOnClick={handleOnClickSaveButton} />
         </Box>
       </Box>
     </Box>

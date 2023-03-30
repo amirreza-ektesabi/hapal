@@ -69,7 +69,7 @@ function Top({ data, className }) {
       <Box className="max-w-lg w-full">
         <Header
           data={data}
-          colorDecider={data.name + data.username}
+          colorDecider={data.bio}
           includeProfileAvatar={true}
         />
         <About data={data} className="mt-12 ml-4" />

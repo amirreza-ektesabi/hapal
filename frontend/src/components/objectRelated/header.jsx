@@ -5,8 +5,7 @@ import EditProfileButton from "src/components/objectRelated/editProfileButton";
 import HeaderIcons from "src/components/objectRelated/headerIcons";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import ProfileAvatar from "src/components/objectRelated/profileAvatar";
-import { useSelector } from "react-redux";
-import { authSelectors } from "src/_store";
+import AuthContext from "src/components/auth/authContext";
 
 function BottomEdge({
   data,
@@ -69,7 +68,7 @@ export default function Header({
   includeMoreIcon = false,
   includeProfileAvatar = false,
 }) {
-  const currentUser = useSelector(authSelectors.selectMe);
+  const { currentUser } = React.useContext(AuthContext);
   const includeEditProfileButton =
     data.type == "account" && currentUser?.username == data.username;
   const includeFollowButton = !includeEditProfileButton;

@@ -4,22 +4,16 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
-export default function SetPair({
-  data,
-  className,
-  handleRemove,
-  setField,
-}) {
+export default function SetPair({ data, className, handleRemove, setField }) {
   return (
     <Box className={className + " space-y-1"}>
       <TextField
-        onChange={(event) =>
-          setField(data.index, "key", event.target.value)
-        }
+        onChange={(event) => setField(data.index, "key", event.target.value)}
         value={data.key}
         variant="standard"
         className="w-full"
         InputProps={{
+          maxLength: 50,
           endAdornment: (
             <InputAdornment position="start">
               <DeleteRoundedIcon
@@ -33,9 +27,8 @@ export default function SetPair({
       <TextField
         multiline
         value={data.value}
-        onChange={(event) =>
-          setField(data.index, "value", event.target.value)
-        }
+        inputProps={{ maxLength: 1023 }}
+        onChange={(event) => setField(data.index, "value", event.target.value)}
         variant="outlined"
         className="w-full"
         maxRows={3}

@@ -10,5 +10,9 @@ export async function createUser(data) {
 }
 
 export async function getCurrentUser() {
-  return await responseApi(apiUrls.getMe, "get");
+  return await responseApi(apiUrls.currentUser, "get");
+}
+
+export async function updateProfile(data) {
+  return await responseApi(apiUrls.currentUser, "put", data);
 }

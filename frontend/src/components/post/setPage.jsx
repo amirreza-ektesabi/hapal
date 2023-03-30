@@ -33,6 +33,7 @@ function InputFields({
         label="Title"
         value={data.title}
         onChange={setTitle}
+        inputProps={{ maxLength: 255 }}
         variant="standard"
         className="w-full"
       />

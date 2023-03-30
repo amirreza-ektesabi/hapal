@@ -88,13 +88,11 @@ function createExtraActions() {
 
   function removedAbsents(dispatch, state, data) {
     const oldEntities = state.entities;
-    const oldUuids = new Set();
+    const oldUuids = [];
     for (const [uuid, obj] of Object.entries(oldEntities))
-      if (obj.added_to.uuid == data.addedToUuid) oldUuids.add(uuid);
-    const newUuids = new Set(data.list.map((obj) => obj.uuid));
-    const deletedUuids = new Set(
-      [...oldUuids].filter((obj) => !newUuids.has(obj))
-    );
+      if (obj.added_to.uuid == data.addedToUuid) oldUuids.push(uuid);
+    const newUuids = data.list.map((obj) => obj.uuid);
+    const deletedUuids = oldUuids.filter((obj) => !newUuids.includes(obj));
     dispatch(postsActions.removedMany(deletedUuids));
   }
 

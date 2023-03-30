@@ -23,7 +23,7 @@ const apiUrls = {
   // auth
   createToken: `${hostUrl}/auth/jwt/create/`,
   createUser: `${hostUrl}/auth/users/`,
-  getMe: `${hostUrl}/auth/users/me/`,
+  currentUser: `${hostUrl}/auth/users/me/`,
 };
 
 export default apiUrls;

@@ -52,6 +52,7 @@ function Content({
         label="Name"
         value={data.key}
         onChange={setKeyField}
+        inputProps={{ maxLength: 50 }}
         variant="standard"
         className="w-full"
       />
