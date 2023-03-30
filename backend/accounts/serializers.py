@@ -64,6 +64,14 @@ class ProfileSerializer(AccountBaseSerializer):
             'is_followed',
         ]
 
+    username = serializers.CharField(
+        read_only=True
+    )
+
+    avatar = serializers.ImageField(
+        read_only=True
+    )
+
     joined = serializers.DateTimeField(
         format='%Y-%m-%d',
         source='date_joined',
