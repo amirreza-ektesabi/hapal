@@ -9,6 +9,7 @@ const apiUrls = {
 
   post: `${hostUrl}/post/{0}/`,
   posts: `${hostUrl}/{0}/{1}/posts/`,
+  newPost: `${hostUrl}/list/{0}/posts/`,
 
   comment: `${hostUrl}/comment/{0}/`,
   comments: `${hostUrl}/{0}/{1}/comments/`,
@@ -16,7 +17,7 @@ const apiUrls = {
   properties: `${hostUrl}/post/{0}/properties/`,
 
   likes: `${hostUrl}/{0}/{1}/likes/`,
-  
+
   follows: `${hostUrl}/{0}/{1}/followers/`,
 
   // auth

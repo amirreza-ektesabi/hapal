@@ -1,10 +1,13 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import SaveButton from "src/components/objectRelated/saveButton";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import { PropertyEditList } from "src/components/post/propertyList";
+import AutoFocusTextField from "src/components/autoFocusTextField";
+import { stringFormat } from "src/_helpers";
+import urls from "src/general/urls";
 
 function Top({ data, className }) {
   return (
@@ -26,7 +29,7 @@ function InputFields({
 }) {
   return (
     <Box className={className}>
-      <TextField
+      <AutoFocusTextField
         label="Title"
         value={data.title}
         onChange={setTitle}
@@ -53,16 +56,21 @@ function AddPropertyButton({ className, handleAddNewProperty }) {
   );
 }
 
-function Buttons({ data, className, handleAddNewProperty }) {
+function Buttons({
+  className,
+  handleOnClickSaveButton,
+  handleAddNewProperty,
+}) {
   return (
     <Box className={className + " flex"}>
       <AddPropertyButton handleAddNewProperty={handleAddNewProperty} />
-      <SaveButton isEnable={true} />
+      <SaveButton isEnable={true} handleOnClick={handleOnClickSaveButton} />
     </Box>
   );
 }
 
-export default function SetPostPage({ data, className }) {
+export default function SetPostPage({ data, handleOnSave, className }) {
+  const router = useRouter();
   const [formData, setFormData] = React.useState(data);
   const endRef = React.useRef(null);
 
@@ -107,9 +115,22 @@ export default function SetPostPage({ data, className }) {
       title: event.target.value,
     });
   };
+  const handleOnClickSaveButton = async () => {
+    const dataToSave = {
+      ...formData,
+      properties: formData.properties.map((propertyData) => ({
+        key: propertyData.key,
+        pairs: propertyData.pairs,
+      })),
+    };
+    const response = await handleOnSave(dataToSave);
+    const uuid = response.payload.uuid;
+    const redirectUrl = stringFormat(urls.post, uuid);
+    router.push(redirectUrl);
+  };
 
   return (
-    <Box className="flex flex-col place-items-center mb-6">
+    <Box className="flex flex-col place-items-center">
       <Box className="max-w-lg w-full space-y-16">
         <Top data={formData} />
         <InputFields
@@ -120,12 +141,12 @@ export default function SetPostPage({ data, className }) {
           handleEditProperty={handleEditProperty}
         />
         <Buttons
-          data={formData}
           className="px-4"
+          handleOnClickSaveButton={handleOnClickSaveButton}
           handleAddNewProperty={handleAddNewProperty}
         />
       </Box>
-      <div ref={endRef} />
+      <div ref={endRef} className="mb-20" />
     </Box>
   );
 }

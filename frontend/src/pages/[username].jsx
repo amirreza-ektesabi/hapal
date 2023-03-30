@@ -105,11 +105,18 @@ function Lists({ data, className }) {
   );
 
   const swrKey = `lists/user/${data.username}`;
+  const swrFetcher = () => getUserLists(data.username);
+  const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
   React.useEffect(() => {
     if (!isLoading && !isError)
-      dispatch(listsActions.retrievedList(response.data));
+      dispatch(
+        listsActions.retrievedList({
+          list: response.data,
+          userUsername: data.username,
+        })
+      );
   }, [response]);
 
   return (

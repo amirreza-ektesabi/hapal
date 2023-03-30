@@ -98,7 +98,13 @@ export default function CommentDrawer({
 
   React.useEffect(() => {
     if (!isLoading && !isError)
-      dispatch(commentsActions.retrievedList(response.data));
+      dispatch(
+        commentsActions.retrievedList({
+          list: response.data,
+          repliedToUuid: repliedTo.uuid,
+          repliedToType: repliedTo.type,
+        })
+      );
   }, [response]);
 
   React.useEffect(() => {

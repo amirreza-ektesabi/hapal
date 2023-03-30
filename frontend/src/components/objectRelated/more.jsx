@@ -3,15 +3,39 @@ import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import CircleIcon from "src/components/circleIcon";
-import UserFollowItem, { UserFollowItemConditions } from "src/components/objectRelated/moreMenuItems/userFollow";
+import AddPostItem, {
+  addPostItemConditions,
+} from "src/components/objectRelated/moreMenuItems/addPost";
 import EditItem, {
   editItemConditions,
 } from "src/components/objectRelated/moreMenuItems/edit";
 import DeleteItem, {
   deleteItemConditions,
 } from "src/components/objectRelated/moreMenuItems/delete";
+import UserFollowItem, {
+  userFollowItemConditions,
+} from "src/components/objectRelated/moreMenuItems/userFollow";
 
-function MoreMenu({ data, menuIsOpen, anchorEl, handleClose }) {
+const items = [
+  {
+    component: AddPostItem,
+    conditions: addPostItemConditions,
+  },
+  {
+    component: EditItem,
+    conditions: editItemConditions,
+  },
+  {
+    component: DeleteItem,
+    conditions: deleteItemConditions,
+  },
+  {
+    component: UserFollowItem,
+    conditions: userFollowItemConditions,
+  },
+];
+
+function MoreMenu({ data, placement, menuIsOpen, anchorEl, handleClose }) {
   return (
     <Menu
       anchorEl={anchorEl}
@@ -20,15 +44,16 @@ function MoreMenu({ data, menuIsOpen, anchorEl, handleClose }) {
       disableScrollLock={true}
       id="__next"
     >
-      {editItemConditions(data) && (
-        <EditItem data={data} handleMenuClose={handleClose} />
-      )}
-      {deleteItemConditions(data) && (
-        <DeleteItem data={data} handleMenuClose={handleClose} />
-      )}
-      {UserFollowItemConditions(data) && (
-        <UserFollowItem data={data} handleMenuClose={handleClose} />
-      )}
+      {items
+        .filter((item) => item.conditions(data))
+        .map((item, index) => (
+          <item.component
+            data={data}
+            placement={placement}
+            handleMenuClose={handleClose}
+            key={index}
+          />
+        ))}
     </Menu>
   );
 }
@@ -68,6 +93,7 @@ export default function More({ data, button = false, className }) {
       />
       <MoreMenu
         data={data}
+        placement={button ? "header" : "card"}
         menuIsOpen={Boolean(anchorEl)}
         anchorEl={anchorEl}
         handleClose={handleClose}

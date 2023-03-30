@@ -11,13 +11,13 @@ import { usersActions, usersSelectors } from "src/_store";
 import { withAuthFunction } from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
 
-export function UserFollowItemConditions(data) {
+export function userFollowItemConditions(data) {
   const { currentUser } = React.useContext(AuthContext);
 
   return currentUser?.username != data.user.username;
 }
 
-export default function UserFollowItem({ data, handleMenuClose }) {
+export default function UserFollowItem({ data, placement, handleMenuClose }) {
   const user = useSelector((state) =>
     usersSelectors.selectByUsername(state, data.user.username)
   );

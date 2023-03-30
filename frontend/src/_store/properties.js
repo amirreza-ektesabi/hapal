@@ -28,13 +28,34 @@ function createReducers() {
   return {
     addedOne: adapter.upsertOne,
     addedMany: adapter.upsertMany,
+    removedMany: adapter.removeMany,
   };
 }
 
 function extraReducers(builder) {}
 
 function createExtraActions() {
-  return {};
+  return {
+    retrievedList: retrievedList(),
+  };
+
+  function removedOld(dispatch, state, data) {
+    const oldEntities = state.entities;
+    const oldPuuids = [];
+    for (const [puuid, obj] of Object.entries(oldEntities))
+      if (obj.post.uuid == data.postUuid) oldPuuids.push(puuid);
+    dispatch(propertiesActions.removedMany(oldPuuids));
+  }
+
+  function retrievedList() {
+    return createAsyncThunk(
+      `${name}/retrievedList`,
+      (data, { dispatch, getState }) => {
+        removedOld(dispatch, getState()[name], data);
+        dispatch(propertiesActions.addedMany(data.list));
+      }
+    );
+  }
 }
 
 function createSelectors() {

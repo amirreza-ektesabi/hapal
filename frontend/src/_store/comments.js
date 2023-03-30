@@ -34,6 +34,7 @@ function createReducers() {
     addedOne: adapter.upsertOne,
     addedMany: adapter.upsertMany,
     removedOne: adapter.removeOne,
+    removedMany: adapter.removeMany,
     removedOneComment(state, action) {
       const obj = getObjFromAction(state, action);
       if (obj !== null) {
@@ -82,12 +83,32 @@ function createExtraActions() {
     unliked: unliked(),
   };
 
+  function removedAbsents(dispatch, state, data) {
+    const oldEntities = state.entities;
+    const oldUuids = new Set();
+    for (const [uuid, obj] of Object.entries(oldEntities))
+      if (
+        obj.replied_to.uuid == data.repliedToUuid &&
+        obj.replied_to.type == data.repliedToType
+      )
+        oldUuids.add(uuid);
+    const newUuids = new Set(data.list.map((obj) => obj.uuid));
+    const deletedUuids = new Set(
+      [...oldUuids].filter((obj) => !newUuids.has(obj))
+    );
+    dispatch(commentsActions.removedMany(deletedUuids));
+  }
+
   function retrievedList() {
-    return createAsyncThunk(`${name}/retrievedList`, (data, { dispatch }) => {
-      dispatch(commentsActions.addedMany(data));
-      const users = data.map((entity) => entity.user);
-      dispatch(usersActions.addedMany(users));
-    });
+    return createAsyncThunk(
+      `${name}/retrievedList`,
+      (data, { dispatch, getState }) => {
+        removedAbsents(dispatch, getState()[name], data);
+        dispatch(commentsActions.addedMany(data.list));
+        const users = data.list.map((obj) => obj.user);
+        dispatch(usersActions.addedMany(users));
+      }
+    );
   }
 
   function created() {

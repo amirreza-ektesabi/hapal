@@ -2,7 +2,7 @@ import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
-import SetListPage from "src/components/list/setList";
+import SetListPage from "src/components/list/setPage";
 import { listsActions, listsSelectors } from "src/_store";
 import {
   getDefaultStaticProps,

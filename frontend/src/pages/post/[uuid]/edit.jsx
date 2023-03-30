@@ -22,6 +22,10 @@ export default withAuth(function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
   const { currentUser } = React.useContext(AuthContext);
 
+  const handleOnSave = async (dataToSave) => {
+    return await dispatch(postsActions.updated({ ...dataToSave, uuid }));
+  };
+
   let postData = useSelector((state) =>
     postsSelectors.selectByUuid(state, uuid)
   );
@@ -50,7 +54,12 @@ export default withAuth(function EditPostPage({ uuid }) {
 
   React.useEffect(() => {
     if (!propertiesIsLoading && !propertiesIsError)
-      dispatch(propertiesActions.addedMany(propertiesResponse.data));
+      dispatch(
+        propertiesActions.retrievedList({
+          list: propertiesResponse.data,
+          postUuid: uuid,
+        })
+      );
   }, [propertiesResponse]);
 
   if (
@@ -76,7 +85,7 @@ export default withAuth(function EditPostPage({ uuid }) {
     })),
   };
 
-  return <SetPostPage data={data} />;
+  return <SetPostPage data={data} handleOnSave={handleOnSave} />;
 });
 
 export const getStaticProps = getDefaultStaticProps("uuid");

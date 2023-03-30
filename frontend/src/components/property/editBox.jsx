@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ListItems from "src/components/listItems";
 import SetPair from "src/components/objectRelated/pair/set";
+import AutoFocusTextField from "src/components/autoFocusTextField";
 
 function PairList({ data, className, handleRemovePair, setPairField }) {
   return (
@@ -47,7 +48,7 @@ function Content({
       dividers={true}
       className="w-full flex flex-col place-items-center space-y-10"
     >
-      <TextField
+      <AutoFocusTextField
         label="Name"
         value={data.key}
         onChange={setKeyField}
@@ -63,13 +64,13 @@ function Content({
   );
 }
 
-function Actions({ data, className, handleSave, handleAddNewPair }) {
+function Actions({ handleSave, handleAddNewPair, className }) {
   return (
     <DialogActions>
       <Button onClick={handleAddNewPair} className="mr-auto ml-2">
         Add Pair
       </Button>
-      <Button onClick={() => handleSave(data)} className="ml-auto mr-2">
+      <Button onClick={handleSave} className="ml-auto mr-2">
         Save
       </Button>
     </DialogActions>
@@ -83,20 +84,21 @@ export default function EditPropertyBox({
   handleClose,
   handleSave,
 }) {
-  const [boxData, setBoxData] = React.useState({
+  const initialData = {
     ...data,
     pairs: data.pairs.map((pair, index) => ({ ...pair, index: index })),
-  });
+  };
+  const [boxData, setBoxData] = React.useState(initialData);
 
   const handleAddNewPair = () => {
-    const newProperty = {
-      key: "Untitled",
+    const newPair = {
+      key: "",
       value: "",
       index: boxData.pairs.length,
     };
     setBoxData({
       ...boxData,
-      pairs: [...boxData.pairs, newProperty],
+      pairs: [...boxData.pairs, newPair],
     });
   };
   const handleRemovePair = (index) => {
@@ -125,19 +127,33 @@ export default function EditPropertyBox({
       key: event.target.value,
     });
   };
+  const handleOnClose = () => {
+    handleClose();
+    setBoxData(initialData);
+  };
+  const handleOnSave = () => {
+    const dataToSave = {
+      ...boxData,
+      pairs: boxData.pairs.map((pairData) => ({
+        key: pairData.key,
+        value: pairData.value,
+      })),
+    };
+    handleSave(dataToSave);
+  };
 
   return (
     <React.StrictMode>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={handleOnClose}
         scroll="paper"
         maxWidth="sm"
         fullWidth={true}
         sx={{ "& .MuiDialog-paper": { height: "70%" } }}
         id="__next"
       >
-        <Title title="Edit Property" handleClose={handleClose} />
+        <Title title="Edit Property" handleClose={handleOnClose} />
         <Content
           data={boxData}
           handleRemovePair={handleRemovePair}
@@ -145,8 +161,7 @@ export default function EditPropertyBox({
           setKeyField={setKeyField}
         />
         <Actions
-          data={boxData}
-          handleSave={handleSave}
+          handleSave={handleOnSave}
           handleAddNewPair={handleAddNewPair}
         />
       </Dialog>

@@ -112,11 +112,16 @@ function Posts({ data, className }) {
 
   React.useEffect(() => {
     if (!isLoading && !isError)
-      dispatch(postsActions.retrievedList(response.data));
+      dispatch(
+        postsActions.retrievedList({
+          list: response.data,
+          addedToUuid: data.uuid,
+        })
+      );
   }, [response]);
 
   return (
-    <React.StrictMode>
+    <Box className={className}>
       <Typography
         variant="body2"
         className="font-normal ml-6"
@@ -124,7 +129,7 @@ function Posts({ data, className }) {
         paragraph={true}
       />
       <PostList uuids={uuids} isLoading={isLoading} isError={isError} />
-    </React.StrictMode>
+    </Box>
   );
 }
 
@@ -153,7 +158,7 @@ export default function ListPage({ uuid }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <Posts data={data} />
+        <Posts data={data} className="mb-10" />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer

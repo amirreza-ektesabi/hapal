@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import SaveButton from "src/components/objectRelated/saveButton";
+import AutoFocusTextField from "src/components/autoFocusTextField";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
@@ -20,7 +21,7 @@ function Top({ data, className }) {
 function InputFields({ data, className, setTitle, setDescription }) {
   return (
     <Box className={className}>
-      <TextField
+      <AutoFocusTextField
         label="Title"
         value={data.title}
         onChange={setTitle}

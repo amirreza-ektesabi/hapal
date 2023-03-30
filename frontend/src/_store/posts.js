@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import { deletePost, likePost, unlikePost } from "api";
+import { createPost, deletePost, likePost, unlikePost, updatePost } from "api";
 import { getObjFromAction } from "src/_helpers";
 import { listsActions } from "./lists";
 import { usersActions } from "./users";
@@ -33,6 +33,8 @@ function createReducers() {
     addedOne: adapter.upsertOne,
     addedMany: adapter.upsertMany,
     removedOne: adapter.removeOne,
+    removedMany: adapter.removeMany,
+    updateOne: adapter.updateOne,
     removedOneComment(state, action) {
       const obj = getObjFromAction(state, action);
       if (obj !== null) {
@@ -70,6 +72,8 @@ function createExtraActions() {
   return {
     retrieved: retrieved(),
     retrievedList: retrievedList(),
+    created: created(),
+    updated: updated(),
     deleted: deleted(),
     liked: liked(),
     unliked: unliked(),
@@ -82,12 +86,53 @@ function createExtraActions() {
     });
   }
 
+  function removedAbsents(dispatch, state, data) {
+    const oldEntities = state.entities;
+    const oldUuids = new Set();
+    for (const [uuid, obj] of Object.entries(oldEntities))
+      if (obj.added_to.uuid == data.addedToUuid) oldUuids.add(uuid);
+    const newUuids = new Set(data.list.map((obj) => obj.uuid));
+    const deletedUuids = new Set(
+      [...oldUuids].filter((obj) => !newUuids.has(obj))
+    );
+    dispatch(postsActions.removedMany(deletedUuids));
+  }
+
   function retrievedList() {
-    return createAsyncThunk(`${name}/retrievedList`, (data, { dispatch }) => {
-      dispatch(postsActions.addedMany(data));
-      const users = data.map((entity) => entity.user);
-      dispatch(usersActions.addedMany(users));
-    });
+    return createAsyncThunk(
+      `${name}/retrievedList`,
+      (data, { dispatch, getState }) => {
+        removedAbsents(dispatch, getState()[name], data);
+        dispatch(postsActions.addedMany(data.list));
+        const users = data.list.map((entity) => entity.user);
+        dispatch(usersActions.addedMany(users));
+      }
+    );
+  }
+
+  function created() {
+    return createAsyncThunk(`${name}/created`, (data, { dispatch }) =>
+      createPost(data).then((response) => {
+        const responseData = response.data;
+        dispatch(postsActions.addedOne(responseData));
+        return responseData;
+      })
+    );
+  }
+
+  function updated() {
+    return createAsyncThunk(`${name}/updated`, (data, { dispatch }) =>
+      updatePost(data).then((response) => {
+        const responseData = response.data;
+        dispatch(
+          postsActions.updateOne({
+            id: responseData.uuid,
+            changes: responseData,
+          })
+        );
+        return responseData;
+      })
+    );
   }
 
   function deleted() {

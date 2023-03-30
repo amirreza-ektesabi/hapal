@@ -15,6 +15,18 @@ export async function getPosts(type, uuid) {
   return await responseApi(url, "get");
 }
 
+export async function createPost(data) {
+  const url = stringFormat(apiUrls.newPost, data.addedToUuid);
+  delete data.addedToUuid;
+  return await responseApi(url, "post", data);
+}
+
+export async function updatePost(data) {
+  const url = stringFormat(apiUrls.post, data.uuid);
+  delete data.uuid;
+  return await responseApi(url, "put", data);
+}
+
 export async function deletePost(uuid) {
   const url = stringFormat(apiUrls.post, uuid);
   return await responseApi(url, "delete");

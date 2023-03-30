@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -13,6 +14,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AuthContext from "src/components/auth/authContext";
 import { listsActions, postsActions, commentsActions } from "src/_store";
+import { stringFormat } from "src/_helpers";
+import urls from "src/general/urls";
 
 const deletedReducerMap = {
   list: listsActions.deleted,
@@ -47,7 +50,8 @@ function AlertDialog({ data, open, handleClose, handleOnDelete }) {
   );
 }
 
-export default function DeleteItem({ data, handleMenuClose }) {
+export default function DeleteItem({ data, placement, handleMenuClose }) {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
@@ -58,11 +62,20 @@ export default function DeleteItem({ data, handleMenuClose }) {
     handleMenuClose();
   };
   const handleOnClick = () => handleOpenAlertDialog();
+  const redirectAfterDelete = () => {
+    if (data.type === "post") {
+      const redirectUrl = stringFormat(urls.list, data.added_to.uuid);
+      router.push(redirectUrl);
+    } else if (data.type === "list") {
+      const redirectUrl = stringFormat(urls.user, data.user.username);
+      router.push(redirectUrl);
+    }
+  };
   const handleOnDelete = () => {
     const deletedReducer = deletedReducerMap[data.type];
     dispatch(deletedReducer(data));
-
     handleCloseAlertDialog();
+    if (placement === "header") redirectAfterDelete();
   };
 
   return (

@@ -38,15 +38,20 @@ export function PropertyList({ postData, className }) {
     propertiesSelectors.selectPuuidsByPostUuid(state, postData.uuid)
   );
 
-  React.useEffect(() => {
-    if (!isLoading && !isError)
-      dispatch(propertiesActions.addedMany(response.data));
-  });
-
   const swrKey = `properties/post/${postData.uuid}`;
   const swrFetcher = () => getPostProperties(postData.uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    if (!isLoading && !isError)
+      dispatch(
+        propertiesActions.retrievedList({
+          list: response.data,
+          postUuid: postData.uuid,
+        })
+      );
+  }, [response]);
 
   return (
     <Box className={className}>
