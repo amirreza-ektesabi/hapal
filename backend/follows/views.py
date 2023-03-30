@@ -2,7 +2,7 @@ from lists.models import List
 from follows.models import Follow
 from accounts.models import Account
 from follows.serializers import FollowSerializer
-from baseapp.views import PageNumberPaginationWithSize, ListCreateRelatedAPIView, ListRelatedAPIView
+from baseapp.views import ListCreateRelatedAPIView, ListRelatedAPIView
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly

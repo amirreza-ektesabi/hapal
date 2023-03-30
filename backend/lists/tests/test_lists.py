@@ -1,5 +1,5 @@
 from lists.models import List
-from posts.models import Post
+from posts.models import PROPERTY_TYPES, Pair, Post, Property
 from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
 from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
 from follows.tests.test_follows import AbstractTestFollow, AbstractTestUnfollow, AbstractTestRetrieveListOfFollowers
@@ -189,7 +189,7 @@ class TestAddPost:
     def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.post(
             reverse('list_posts', kwargs={'uuid': uuid}),
-            data
+            data, format='json'
         )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
@@ -210,11 +210,56 @@ class TestAddPost:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_if_successes_returns_201(self, authenticated_user: APIClient):
+        def check_pair(pair_data, value_model, fields_switch):
+            pair_queryset = Pair.objects.filter(
+                key=pair_data['key']
+            )
+            assert pair_queryset.exists()
+            pair = pair_queryset.get()
+            value_data = {
+                model_field: pair_data[serializer_field]
+                for serializer_field, model_field in fields_switch.items()
+            }
+            value_model.objects.filter(
+                **value_data,
+                pair=pair
+            ).exists()
+
+        def check_property(property_data):
+            property_queryset = Property.objects.filter(
+                key=property_data['key'],
+                post__uuid=response.data['uuid']
+            )
+            assert property_queryset.exists()
+            property = property_queryset.get()
+
+            value_model, fields_switch = PROPERTY_TYPES[property.type]
+            for pair_data in property_data['pairs']:
+                check_pair(pair_data, value_model, fields_switch)
+
         user = authenticated_user.handler._force_user
         object = baker.make(List, user=user)
 
         data = {
             'title': 'test post title',
+            'properties': [
+                {
+                    'key': 'property 1',
+                    'pairs': [
+                        {'key': 'pair 1', 'value': 'value 1'},
+                        {'key': 'pair 2', 'value': 'value 2'},
+                        {'key': 'pair 3', 'value': 'value 3'}
+                    ]
+                },
+                {
+                    'key': 'property 2',
+                    'pairs': [
+                        {'key': 'pair 4', 'value': 'value 4'},
+                        {'key': 'pair 5', 'value': 'value 5'},
+                        {'key': 'pair 6', 'value': 'value 6'}
+                    ]
+                }
+            ]
         }
         response = self.do(authenticated_user, object.uuid, data)
 
@@ -223,9 +268,10 @@ class TestAddPost:
             uuid=response.data['uuid'],
             added_to=object,
             user=user,
-            **data
+            title=data['title']
         ).exists()
-        assert all(response.data[key] == data[key] for key in data.keys())
+        for property_data in data['properties']:
+            check_property(property_data)
 
 
 @pytest.mark.django_db
@@ -242,7 +288,8 @@ class TestRetrieveListOfPosts:
 
     def test_if_successes_returns_200(self, anonymous_user: APIClient):
         object = baker.make(List)
-        posts = baker.make(Post, added_to=object, user=object.user, _quantity=10)
+        posts = baker.make(Post, added_to=object,
+                           user=object.user, _quantity=10)
 
         response = self.do(anonymous_user, object.uuid)
 
@@ -277,6 +324,7 @@ class TestUnlike(AbstractTestUnlike):
 class TestRetrieveListOfLikes(AbstractTestRetrieveListOfLikes):
     liked_model = List
     liked_model_name = 'list'
+
 
 @pytest.mark.django_db
 class TestFollow(AbstractTestFollow):

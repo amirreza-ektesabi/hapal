@@ -17,7 +17,7 @@ class TestUpdatePost:
     def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
         return user.patch(
             reverse('post_page', kwargs={'uuid': uuid}),
-            data
+            data, format='json'
         )
 
     def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
@@ -49,11 +49,57 @@ class TestUpdatePost:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_if_successes_returns_200(self, authenticated_user: APIClient):
+        def check_pair(pair_data, value_model, fields_switch):
+            pair_queryset = Pair.objects.filter(
+                key=pair_data['key']
+            )
+            assert pair_queryset.exists()
+            pair = pair_queryset.get()
+            value_data = {
+                model_field: pair_data[serializer_field]
+                for serializer_field, model_field in fields_switch.items()
+            }
+            value_model.objects.filter(
+                **value_data,
+                pair=pair
+            ).exists()
+
+        def check_property(property_data):
+            property_queryset = Property.objects.filter(
+                key=property_data['key'],
+                post__uuid=response.data['uuid']
+            )
+            assert property_queryset.exists()
+            property = property_queryset.get()
+
+            value_model, fields_switch = PROPERTY_TYPES[property.type]
+            for pair_data in property_data['pairs']:
+                check_pair(pair_data, value_model, fields_switch)
+        
         user = authenticated_user.handler._force_user
         object = baker.make(Post, user=user)
+        properties = baker.make(Property, post=object)
 
         data = {
             'title': 'test post title',
+            'properties': [
+                {
+                    'key': 'property 1',
+                    'pairs': [
+                        {'key': 'pair 1', 'value': 'value 1'},
+                        {'key': 'pair 2', 'value': 'value 2'},
+                        {'key': 'pair 3', 'value': 'value 3'}
+                    ]
+                },
+                {
+                    'key': 'property 2',
+                    'pairs': [
+                        {'key': 'pair 4', 'value': 'value 4'},
+                        {'key': 'pair 5', 'value': 'value 5'},
+                        {'key': 'pair 6', 'value': 'value 6'}
+                    ]
+                }
+            ]
         }
         response = self.do(authenticated_user, object.uuid, data)
 
@@ -61,9 +107,9 @@ class TestUpdatePost:
         assert Post.objects.filter(
             uuid=object.uuid,
             user=user,
-            **data
         ).exists()
-        assert all(response.data[key] == data[key] for key in data.keys())
+        for property_data in data['properties']:
+            check_property(property_data)
 
 
 @pytest.mark.django_db
@@ -121,76 +167,6 @@ class TestRetrievePost:
         response = self.do(anonymous_user, object.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-class TestAddProperty:
-    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
-        return user.post(
-            reverse('post_properties', kwargs={'uuid': uuid}),
-            data, format='json'
-        )
-    
-    def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
-        object = baker.make(Post)
-        response = self.do(anonymous_user, object.uuid)
-
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_if_user_is_not_owner_of_post_returns_403(self, authenticated_user: APIClient):
-        object = baker.make(Post)
-        response = self.do(authenticated_user, object.uuid)
-
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    def test_if_post_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
-
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    def test_if_type_is_not_provided_returns_400(self, authenticated_user: APIClient):
-        user = authenticated_user.handler._force_user
-        object = baker.make(Post, user=user)
-
-        response = self.do(authenticated_user, object.uuid)
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-    
-    def test_if_successes_returns_201(self, authenticated_user: APIClient):
-        user = authenticated_user.handler._force_user
-        object = baker.make(Post, user=user)
-
-        data = {
-            'type': 'Text',
-            'key': 'test property key',
-            'pairs': [
-                {'key': 'first key', 'value': 'first value'},
-                {'key': 'second key', 'value': 'second value'},
-                {'key': 'third key', 'value': 'third value'},
-                {'key': 'fourth key', 'value': 'fourth value'}
-            ]
-        }
-        response = self.do(authenticated_user, object.uuid, data)
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert Property.objects.filter(
-            puuid=response.data['puuid'],
-            type=Property.Type[data['type']],
-            post=object,
-        ).exists()
-        value_model, fields_switch = PROPERTY_TYPES[Property.Type[data['type']]]
-        for order_number, pair in enumerate(data['pairs'], 1):
-            assert Pair.objects.filter(
-                property__puuid=response.data['puuid'],
-                key=pair['key'],
-                order_number=order_number,
-            ).exists()
-            assert value_model.objects.filter(**{
-                fields_switch['value']: pair['value'],
-                'pair__order_number': order_number,
-                'pair__property__puuid': response.data['puuid'],
-            }).exists()
-        assert all(response.data[key] == data[key] for key in data.keys())
 
 
 @pytest.mark.django_db

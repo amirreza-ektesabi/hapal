@@ -3,9 +3,8 @@ from lists.serializers import ListPreviewSerializer, ListFullviewSerializer
 from accounts.models import Account
 from baseapp.permissions import IsOwnerOrReadOnly
 from baseapp.views import (
-    ListRelatedAPIView, PageNumberPaginationWithSize,
-    CheckObjectLikedByCurrentUserMixin, CheckObjectFollowedByCurrentUserMixin,
-    CheckObjectUserFollowedByCurrentUserMixin
+    ListRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
+    CheckObjectFollowedByCurrentUserMixin, CheckObjectUserFollowedByCurrentUserMixin
 )
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly

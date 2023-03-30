@@ -4,7 +4,7 @@ from comments.models import Comment
 from comments.serializers import CommentFullviewSerializer
 from baseapp.views import (
     ListCreateRelatedAPIView, CheckObjectLikedByCurrentUserMixin,
-    CheckObjectUserFollowedByCurrentUserMixin, PageNumberPaginationWithSize
+    CheckObjectUserFollowedByCurrentUserMixin
 )
 from baseapp.permissions import IsOwnerOrReadOnly
 

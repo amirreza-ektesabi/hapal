@@ -3,8 +3,6 @@ from posts.models import Property, Pair, PROPERTY_TYPES
 
 from rest_framework import serializers
 
-from itertools import zip_longest
-
 
 class PairSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,56 +14,61 @@ class PairSerializer(serializers.ModelSerializer):
 
     value = serializers.CharField()
 
+    def create(self, validated_data):
+        property = validated_data.get('property')
+        value_model, fields_switch = PROPERTY_TYPES[property.type]
+
+        value_data = {
+            model_field: validated_data[serializer_field]
+            for serializer_field, model_field in fields_switch.items()
+        }
+        validated_data['value'] = value_model.objects.create(**value_data)
+        
+        return super().create(validated_data)
+
     def to_representation(self, instance: Pair) -> dict:
         ret = super().to_representation(instance)
         ret['value'] = instance.value.value
         return ret
 
 
-class PropertyListCreateSerializer(serializers.ModelSerializer):
+class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
             'puuid',
             'type',
+            'order',
             'key',
             'pairs',
             'post',
         ]
 
+    order = serializers.IntegerField(source='order_number', read_only=True)
+
     post = PostSubviewSerializer(read_only=True)
 
-    type = serializers.ChoiceField(Property.Type.labels)
+    type = serializers.ChoiceField(Property.Type.labels, read_only=True)
 
     pairs = PairSerializer(many=True, required=False)
 
-    def add_pairs(self, instance: Property, pairs_data: list, property_type: int) -> None:
-        value_model, fields_switch = PROPERTY_TYPES[property_type]
+    def add_pairs(self, instance, pair_list):
+        serializer_class = PairSerializer()
 
-        for pair_order_number, pair_data in enumerate(pairs_data, 1):
-            value_data = {model_field: pair_data[serializer_field]
-                          for serializer_field, model_field in fields_switch.items()}
-            value = value_model.objects.create(**value_data)
-            Pair.objects.create(
+        for order_number, validated_data in enumerate(pair_list, 1):
+            validated_data.update(dict(
                 property=instance,
-                order_number=pair_order_number,
-                key=pair_data['key'],
-                value=value
-            )
+                order_number=order_number
+            ))
+            serializer_class.create(validated_data)
 
-    def create(self, validated_data: dict) -> Property:
-        pairs_data = validated_data.pop('pairs', [])
-        validated_data['type'] = Property.Type[validated_data['type']]
+    def create(self, validated_data):
+        pair_list = validated_data.pop('pairs', [])
+        validated_data['type'] = Property.Type.Text
 
-        order_number = Property.objects.filter(
-            post=validated_data['post']).count() + 1
-        validated_data.update({
-            'order_number': order_number,
-        })
+        instance = super().create(validated_data)
 
-        instance: Property = super().create(validated_data)
-
-        self.add_pairs(instance, pairs_data, validated_data['type'])
+        self.add_pairs(instance, pair_list)
 
         return instance
 
@@ -73,32 +76,3 @@ class PropertyListCreateSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret['type'] = instance.get_type_display()
         return ret
-
-
-class PropertyUpdateSerializer(PropertyListCreateSerializer):
-    type = serializers.ChoiceField(Property.Type.labels, read_only=True)
-
-    def update(self, instance: Property, validated_data: dict) -> Property:
-        pairs_data = validated_data.pop('pairs', [])
-
-        super().update(instance, validated_data)
-
-        value_model, fields_switch = PROPERTY_TYPES[instance.type]
-        for pair_order_number, (pair, pair_data) in enumerate(zip_longest(instance.pairs.all(), pairs_data), 1):
-            if pair_data is None:
-                pair.delete()
-
-            else:
-                value_datas = {model_field: pair_data[serializer_field]
-                               for serializer_field, model_field in fields_switch.items()}
-                value = value_model.objects.create(**value_datas)
-                Pair.objects.update_or_create(
-                    property=instance,
-                    order_number=pair_order_number,
-                    defaults=dict(
-                        key=pair_data['key'],
-                        value=value
-                    )
-                )
-
-        return instance

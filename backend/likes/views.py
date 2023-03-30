@@ -3,7 +3,7 @@ from lists.models import List
 from posts.models import Post
 from comments.models import Comment
 from likes.serializers import LikeSerializer
-from baseapp.views import PageNumberPaginationWithSize, ListCreateRelatedAPIView
+from baseapp.views import ListCreateRelatedAPIView
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
