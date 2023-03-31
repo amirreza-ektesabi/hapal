@@ -48,7 +48,7 @@ export default function HeaderImage({
           bgcolor: stringToColor(colorDecider),
           opacity: forEdit ? 0.4 : 1,
         }}
-        className={`w-full h-${height} object-cover`}
+        className={`w-full h-${height} object-cover rounded-b-md`}
         src={data.header}
       />
       {forEdit && <EditOverlay data={data} className="absolute inset-0" />}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -78,17 +77,21 @@ function Actions({ handleSave, handleAddNewPair, className }) {
   );
 }
 
-export default function EditPropertyBox({
+export default function SetPropertyBox({
   data,
   className,
   open,
   handleClose,
   handleSave,
+  action,
 }) {
-  const initialData = {
-    ...data,
-    pairs: data.pairs.map((pair, index) => ({ ...pair, index: index })),
-  };
+  const initialData =
+    action === "add"
+      ? { key: "", pairs: [] }
+      : {
+          ...data,
+          pairs: data.pairs.map((pair, index) => ({ ...pair, index: index })),
+        };
   const [boxData, setBoxData] = React.useState(initialData);
 
   const handleAddNewPair = () => {
@@ -141,6 +144,7 @@ export default function EditPropertyBox({
       })),
     };
     handleSave(dataToSave);
+    handleOnClose();
   };
 
   return (
@@ -154,7 +158,10 @@ export default function EditPropertyBox({
         sx={{ "& .MuiDialog-paper": { height: "70%" } }}
         id="__next"
       >
-        <Title title="Edit Property" handleClose={handleOnClose} />
+        <Title
+          title={action === "add" ? "New Property" : "Edit Property"}
+          handleClose={handleOnClose}
+        />
         <Content
           data={boxData}
           handleRemovePair={handleRemovePair}

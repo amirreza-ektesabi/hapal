@@ -6,6 +6,7 @@ import SaveButton from "src/components/objectRelated/saveButton";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import { PropertyEditList } from "src/components/post/propertyList";
 import AutoFocusTextField from "src/components/autoFocusTextField";
+import SetPropertyBox from "src/components/property/setBox";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
@@ -46,25 +47,21 @@ function InputFields({
   );
 }
 
-function AddPropertyButton({ className, handleAddNewProperty }) {
+function AddPropertyButton({ className, handleOnClick }) {
   return (
     <Button
       variant="contained"
       className="px-7 mr-auto rounded-full h-10 font-bold bg-blueZ"
       children="Add Property"
-      onClick={handleAddNewProperty}
+      onClick={handleOnClick}
     />
   );
 }
 
-function Buttons({
-  className,
-  handleOnClickSaveButton,
-  handleAddNewProperty,
-}) {
+function Buttons({ className, handleOnClickSaveButton, handleOnClickAddNewProperty }) {
   return (
     <Box className={className + " flex"}>
-      <AddPropertyButton handleAddNewProperty={handleAddNewProperty} />
+      <AddPropertyButton handleOnClick={handleOnClickAddNewProperty} />
       <SaveButton isEnable={true} handleOnClick={handleOnClickSaveButton} />
     </Box>
   );
@@ -79,10 +76,13 @@ export default function SetPostPage({ data, handleOnSave, className }) {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleAddNewProperty = () => {
+  const [openAddPropertyBox, setOpenAddPropertyBox] = React.useState(false);
+  const handleOpenAddPropertyBox = () => setOpenAddPropertyBox(true);
+  const handleCloseAddPropertyBox = () => setOpenAddPropertyBox(false);
+
+  const handleAddProperty = (newPropertyData) => {
     const newProperty = {
-      key: "Untitled",
-      pairs: [],
+      ...newPropertyData,
       index: formData.properties.length,
     };
     setFormData({
@@ -144,9 +144,15 @@ export default function SetPostPage({ data, handleOnSave, className }) {
         <Buttons
           className="px-4"
           handleOnClickSaveButton={handleOnClickSaveButton}
-          handleAddNewProperty={handleAddNewProperty}
+          handleOnClickAddNewProperty={handleOpenAddPropertyBox}
         />
       </Box>
+      <SetPropertyBox
+        open={openAddPropertyBox}
+        handleClose={handleCloseAddPropertyBox}
+        handleSave={handleAddProperty}
+        action="add"
+      />
       <div ref={endRef} className="mb-20" />
     </Box>
   );
