@@ -12,6 +12,8 @@ const messages = {
     "Usernames must only contain alphanumeric and underscore characters.\n" +
     "Usernames must start with alphabet character.",
   invalidEmail: "Please enter a valid email.",
+
+  linkCopied: "Link copied to clipboard",
 };
 
 export default messages;

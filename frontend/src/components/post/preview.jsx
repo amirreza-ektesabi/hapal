@@ -46,7 +46,7 @@ export default function PostPreview({ uuid, className }) {
           </Link>
         </CardActionArea>
       </Card>
-      <CardIcons data={data} uuid={uuid} className="mt-1.5" />
+      <CardIcons data={data} className="mt-1.5" />
     </Box>
   );
 }
