@@ -63,13 +63,12 @@ export default function DeleteItem({ data, placement, handleMenuClose }) {
   };
   const handleOnClick = () => handleOpenAlertDialog();
   const redirectAfterDelete = () => {
-    if (data.type === "post") {
-      const redirectUrl = stringFormat(urls.list, data.added_to.uuid);
-      router.push(redirectUrl);
-    } else if (data.type === "list") {
-      const redirectUrl = stringFormat(urls.user, data.user.username);
-      router.push(redirectUrl);
-    }
+    let redirectUrl;
+    if (data.type === "post")
+      redirectUrl = stringFormat(urls.list, data.added_to.uuid);
+    else if (data.type === "list")
+      redirectUrl = stringFormat(urls.user, data.user.username);
+    if (redirectUrl) router.replace(redirectUrl);
   };
   const handleOnDelete = () => {
     const deletedReducer = deletedReducerMap[data.type];

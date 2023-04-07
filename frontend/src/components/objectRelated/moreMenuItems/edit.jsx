@@ -28,7 +28,8 @@ export default function EditItem({ data, placement, handleMenuClose }) {
 
   const handleOnClick = (event) => {
     const editUrl = stringFormat(urlMap[data.type], data.uuid);
-    router.push(editUrl);
+    if (placement === "header") router.replace(editUrl);
+    else router.push(editUrl);
     handleMenuClose();
   };
 

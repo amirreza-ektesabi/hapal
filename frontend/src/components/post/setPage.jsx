@@ -127,7 +127,7 @@ export default function SetPostPage({ data, handleOnSave, className }) {
     const response = await handleOnSave(dataToSave);
     const uuid = response.payload.uuid;
     const redirectUrl = stringFormat(urls.post, uuid);
-    router.push(redirectUrl);
+    router.replace(redirectUrl);
   };
 
   return (
