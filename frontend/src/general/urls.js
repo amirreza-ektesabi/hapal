@@ -1,5 +1,6 @@
 const urls = {
   home: "/",
+  explore: "/explore/",
 
   user: "/{0}/",
   profileEdit: "/settings/profile",

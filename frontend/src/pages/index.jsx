@@ -1,10 +1,32 @@
 import * as React from "react";
-import HomePage from "src/home";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Navbar from "src/components/navbar";
 
-export default function App() {
+export default function MainPage() {
   return (
     <React.StrictMode>
-      <HomePage />
+      <Navbar />
+      <Box className="flex bg-blueZ h-[calc(100vh-80px)] mt-[70px] mx-[10px] rounded-[32px] justify-center">
+        <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] mt-[27vh]">
+          <Box className="space-y-4">
+            <Typography
+              fontFamily="Changa_One"
+              className="text-blackZ text-3xl md:text-4xl lg:text-5xl"
+              children="Make list of anything."
+            />
+            <Typography
+              fontFamily="Nunito"
+              className="text-blackZ font-medium leading-5 md:leading-7 lg:leading-7 text-lg md:text-xl lg:text-2xl"
+            >
+              Discover what lists your friends
+              <br />
+              make, and share yours.
+            </Typography>
+          </Box>
+          <Box className="grow" />
+        </Box>
+      </Box>
     </React.StrictMode>
   );
 }

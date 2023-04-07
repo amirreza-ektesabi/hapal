@@ -8,7 +8,6 @@ import { authSelectors, authActions } from "src/_store";
 export default function LogoutButton({ className }) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const authUser = useSelector(authSelectors.selectUser);
 
   const handleOnClick = () => {
     dispatch(authActions.logout());
@@ -16,19 +15,15 @@ export default function LogoutButton({ className }) {
   };
 
   return (
-    <React.StrictMode>
-      {authUser && (
-        <Button
-          variant="contained"
-          style={{
-            background: "white",
-            color: theme.palette.blackZ,
-          }}
-          className={className + " px-4 font-black rounded-full"}
-          onClick={handleOnClick}
-          children="Log out"
-        />
-      )}
-    </React.StrictMode>
+    <Button
+      variant="contained"
+      style={{
+        background: "white",
+        color: theme.palette.blackZ,
+      }}
+      className={className + " px-4 font-black rounded-full"}
+      onClick={handleOnClick}
+      children="Log out"
+    />
   );
 }
