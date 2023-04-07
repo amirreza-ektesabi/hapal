@@ -9,7 +9,7 @@ import AutoFocusTextField from "src/components/autoFocusTextField";
 import AuthContext from "src/components/auth/authContext";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
 import { authActions } from "src/_store";
-import { stringFormat } from "src/_helpers";
+import { pageTitle, stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
 function Top({ data, className }) {
@@ -55,6 +55,10 @@ export default withAuth(function EditProfilePage() {
   const dispatch = useDispatch();
   const { currentUser } = React.useContext(AuthContext);
   const [formData, setFormData] = React.useState(currentUser);
+
+  React.useEffect(() => {
+    document.title = pageTitle("Edit profile");
+  }, []);
 
   const setName = (event) => {
     setFormData({

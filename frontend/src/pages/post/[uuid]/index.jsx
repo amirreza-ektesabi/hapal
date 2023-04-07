@@ -19,6 +19,7 @@ import {
   dateFormat,
   timeFormat,
   useSwrNoFocus,
+  pageTitle,
 } from "src/_helpers";
 import { postsActions, postsSelectors } from "src/_store";
 import {
@@ -124,6 +125,10 @@ export default function PostPage({ uuid }) {
   const swrFetcher = () => getPost(uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("{0}", data?.title);
+  }, [data]);
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(postsActions.retrieved(response.data));

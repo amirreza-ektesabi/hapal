@@ -16,7 +16,7 @@ import {
 import { getPost, getPostProperties } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
-import { useSwrNoFocus } from "src/_helpers";
+import { pageTitle, useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function EditPostPage({ uuid }) {
   const dispatch = useDispatch();
@@ -46,6 +46,10 @@ export default withAuth(function EditPostPage({ uuid }) {
   const { data: propertiesResponse, isLoading: propertiesIsLoading } =
     useSwrNoFocus(propertiesSwrKey, propertiesSwrFetcher);
   const propertiesIsError = propertiesResponse && propertiesResponse.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("Editing {0}", postData?.title);
+  }, [postData]);
 
   React.useEffect(() => {
     if (!postIsLoading && !postIsError)

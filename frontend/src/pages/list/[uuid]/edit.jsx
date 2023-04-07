@@ -11,7 +11,7 @@ import {
 import { getList } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
-import { useSwrNoFocus } from "src/_helpers";
+import { pageTitle, useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function EditListPage({ uuid }) {
   const dispatch = useDispatch();
@@ -27,6 +27,10 @@ export default withAuth(function EditListPage({ uuid }) {
   const swrFetcher = () => getList(uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("Editing {0}", data?.title);
+  }, [data]);
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));

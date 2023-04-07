@@ -11,14 +11,16 @@ import { listsActions, listsSelectors, postsActions } from "src/_store";
 import { getList } from "api";
 import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
-import { useSwrNoFocus } from "src/_helpers";
+import { pageTitle, useSwrNoFocus } from "src/_helpers";
 
 export default withAuth(function NewPostPage({ uuid }) {
   const dispatch = useDispatch();
   const { currentUser } = React.useContext(AuthContext);
 
   const handleOnSave = async (dataToSave) => {
-    return await dispatch(postsActions.created({ ...dataToSave, addedToUuid: uuid }));
+    return await dispatch(
+      postsActions.created({ ...dataToSave, addedToUuid: uuid })
+    );
   };
 
   let listData = useSelector((state) =>
@@ -29,6 +31,10 @@ export default withAuth(function NewPostPage({ uuid }) {
   const swrFetcher = () => getList(uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("Adding post to {0}", listData?.title);
+  }, [listData]);
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));

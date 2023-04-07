@@ -12,7 +12,13 @@ import PostPreview from "src/components/post/preview";
 import User from "src/components/objectRelated/user";
 import FloatingBox from "src/components/objectRelated/floatingBox";
 import CommentDrawer from "src/components/comment/drawer";
-import { dateFormat, timeFormat, pluralize, useSwrNoFocus } from "src/_helpers";
+import {
+  dateFormat,
+  timeFormat,
+  pluralize,
+  useSwrNoFocus,
+  pageTitle,
+} from "src/_helpers";
 import {
   getDefaultStaticProps,
   getDefaultStaticPaths,
@@ -145,6 +151,10 @@ export default function ListPage({ uuid }) {
   const swrFetcher = () => getList(uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("{0}", data?.title);
+  }, [data]);
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(listsActions.retrieved(response.data));

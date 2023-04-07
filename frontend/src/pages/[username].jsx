@@ -20,7 +20,7 @@ import {
   getDefaultStaticPaths,
 } from "src/components/routing";
 import { getUser, getUserLists } from "api";
-import { pluralize, useSwrNoFocus } from "src/_helpers";
+import { pageTitle, pluralize, useSwrNoFocus } from "src/_helpers";
 
 function Statistics({ data, className }) {
   return (
@@ -143,6 +143,10 @@ export default function ProfilePage({ username }) {
   const swrFetcher = () => getUser(username);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    document.title = pageTitle("{0} (@{1})", data?.name, data?.username);
+  }, [data]);
 
   React.useEffect(() => {
     if (!isLoading && !isError) dispatch(usersActions.addedOne(response.data));

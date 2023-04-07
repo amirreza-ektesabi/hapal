@@ -10,10 +10,11 @@ import store from "src/_store";
 import LoginButton from "src/components/auth/loginButton";
 import LogoutButton from "src/components/auth/logoutButton";
 import AuthContext from "src/components/auth/authContext";
+import { pageTitle } from "src/_helpers";
 
 export default function App({ Component, pageProps }) {
   React.useEffect(() => {
-    document.title = "Hapal";
+    document.title = pageTitle();
   }, []);
 
   const [openLoginBox, setOpenLoginBox] = React.useState(false);
