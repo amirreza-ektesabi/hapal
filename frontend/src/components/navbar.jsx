@@ -2,7 +2,6 @@ import * as React from "react";
 import Link from "next/link";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import AuthContext from "src/components/auth/authContext";
@@ -22,37 +21,35 @@ export default function Navbar() {
   const { openSignupBox } = React.useContext(AuthContext);
 
   return (
-    <AppBar color="transparent" sx={{ backdropFilter: "blur(10px)" }}>
-      <Toolbar className="justify-center h-[70px]">
-        <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] place-items-center px-1">
-          <Box className="flex align-bottom md:mt-[8px] space-x-[6px]">
-            <Link href={urls.home}>
-              <Logo width="46" className="fill-blueZ" />
-            </Link>
-            <Typography
-              fontFamily="George"
-              className="text-[0px] md:text-[33px] text-whiteZ mt-[2px]"
-              children="Hapal"
-            />
-          </Box>
-          <Box className="grow" />
-          <Box className="flex space-x-2">
+    <Toolbar className="justify-center h-[70px] bg-blackZ">
+      <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] place-items-center px-1">
+        <Box className="flex align-bottom md:mt-[8px] space-x-[6px]">
+          <Link href={urls.home}>
+            <Logo width="46" className="fill-blueZ" />
+          </Link>
+          <Typography
+            fontFamily="George"
+            className="text-[0px] md:text-[33px] text-whiteZ mt-[2px]"
+            children="Hapal"
+          />
+        </Box>
+        <Box className="grow" />
+        <Box className="flex space-x-2">
+          <Button
+            variant="contained"
+            className="rounded-full bg-blueZ font-medium text-sm"
+            children="Sign up"
+            onClick={openSignupBox}
+          />
+          <Link href={urls.explore}>
             <Button
               variant="contained"
-              className="rounded-full bg-blueZ font-medium text-sm"
-              children="Sign up"
-              onClick={openSignupBox}
+              className="mr-0 bg-whiteZ rounded-full text-blackZ font-medium text-sm"
+              children="Explore"
             />
-            <Link href={urls.explore}>
-              <Button
-                variant="contained"
-                className="mr-0 bg-whiteZ rounded-full text-blackZ font-medium text-sm"
-                children="Explore"
-              />
-            </Link>
-          </Box>
+          </Link>
         </Box>
-      </Toolbar>
-    </AppBar>
+      </Box>
+    </Toolbar>
   );
 }

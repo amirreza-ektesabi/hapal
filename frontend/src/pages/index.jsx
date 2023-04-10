@@ -7,7 +7,7 @@ export default function MainPage() {
   return (
     <React.StrictMode>
       <Navbar />
-      <Box className="flex bg-blueZ h-[calc(100vh-80px)] mt-[70px] mx-[10px] rounded-[32px] justify-center">
+      <Box className="flex bg-blueZ h-[calc(100vh-80px)] mx-[10px] rounded-[32px] justify-center">
         <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] mt-[27vh]">
           <Box className="space-y-4">
             <Typography
@@ -17,11 +17,11 @@ export default function MainPage() {
             />
             <Typography
               fontFamily="Nunito"
-              className="text-blackZ font-medium leading-5 md:leading-7 lg:leading-7 text-lg md:text-xl lg:text-2xl"
+              className="text-blackZ font-medium leading-5 md:leading-7 lg:leading-7 text-base md:text-xl lg:text-2xl"
             >
-              Discover what lists your friends
+              Discover what lists your friends make,
               <br />
-              make, and share yours.
+              and share yours.
             </Typography>
           </Box>
           <Box className="grow" />
