@@ -1,15 +1,16 @@
 const urls = {
   home: "/",
-  explore: "/explore/",
+  explore: "/explore",
+  profile: "/profile",
 
-  user: "/{0}/",
+  user: "/{0}",
   profileEdit: "/settings/profile",
 
-  list: "/list/{0}/",
-  listEdit: "/list/{0}/edit/",
-  listNew: "/new-list/",
+  list: "/list/{0}",
+  listEdit: "/list/{0}/edit",
+  listNew: "/new-list",
 
-  post: "/post/{0}/",
+  post: "/post/{0}",
   postEdit: "/post/{0}/edit",
   postNew: "/list/{0}/new-post",
 };

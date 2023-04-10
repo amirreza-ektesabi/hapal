@@ -18,8 +18,8 @@ export function editItemConditions(data) {
   const { currentUser } = React.useContext(AuthContext);
 
   return (
-    currentUser?.username == data.user.username &&
-    Object.keys(urlMap).includes(data.type)
+    Object.keys(urlMap).includes(data.type) &&
+    currentUser?.username == data.user.username
   );
 }
 

@@ -10,7 +10,6 @@ import AuthContext from "src/components/auth/authContext";
 function BottomEdge({
   data,
   className,
-  openLoginBox,
   includeProfileAvatar = false,
   includeFollowButton = false,
   includeEditProfileButton = false,
@@ -24,19 +23,9 @@ function BottomEdge({
       }
     >
       {includeProfileAvatar && <ProfileAvatar data={data} forEdit={forEdit} />}
-      {includeFollowButton && (
-        <FollowButton
-          data={data}
-          openLoginBox={openLoginBox}
-          className="ml-auto"
-        />
-      )}
+      {includeFollowButton && <FollowButton data={data} className="ml-auto" />}
       {includeEditProfileButton && (
-        <EditProfileButton
-          data={data}
-          openLoginBox={openLoginBox}
-          className="ml-auto"
-        />
+        <EditProfileButton data={data} className="ml-auto" />
       )}
     </Box>
   );
@@ -64,14 +53,18 @@ export default function Header({
   data,
   className,
   colorDecider,
-  openLoginBox,
   includeMoreIcon = false,
+  includeShareIcon = true,
   includeProfileAvatar = false,
+  includeFollowButton = true,
 }) {
-  const { currentUser } = React.useContext(AuthContext);
-  const includeEditProfileButton =
-    data.type == "account" && currentUser?.username == data.username;
-  const includeFollowButton = !includeEditProfileButton;
+  const { isAuthenticated, currentUser } = React.useContext(AuthContext);
+  const includeUserProfile =
+    data.type === "account" &&
+    isAuthenticated &&
+    currentUser?.username == data?.username;
+  includeMoreIcon ||= includeUserProfile;
+  includeFollowButton &&= !includeUserProfile;
 
   return (
     <Box className="relative">
@@ -79,14 +72,14 @@ export default function Header({
       <HeaderIcons
         data={data}
         includeMoreIcon={includeMoreIcon}
+        includeShareIcon={includeShareIcon}
         className="absolute top-4 space-x-3 px-4"
       />
       <BottomEdge
         data={data}
-        openLoginBox={openLoginBox}
         includeProfileAvatar={includeProfileAvatar}
         includeFollowButton={includeFollowButton}
-        includeEditProfileButton={includeEditProfileButton}
+        includeEditProfileButton={includeUserProfile}
       />
     </Box>
   );

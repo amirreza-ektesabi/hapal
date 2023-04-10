@@ -25,13 +25,13 @@ export default function Navbar() {
     <AppBar color="transparent" sx={{ backdropFilter: "blur(10px)" }}>
       <Toolbar className="justify-center h-[70px]">
         <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] place-items-center px-1">
-          <Box className="flex align-bottom mt-[8px] space-x-[6px]">
+          <Box className="flex align-bottom md:mt-[8px] space-x-[6px]">
             <Link href={urls.home}>
               <Logo width="46" className="fill-blueZ" />
             </Link>
             <Typography
               fontFamily="George"
-              className="text-[33px] text-whiteZ mt-[2px]"
+              className="text-[0px] md:text-[33px] text-whiteZ mt-[2px]"
               children="Hapal"
             />
           </Box>

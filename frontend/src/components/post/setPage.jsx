@@ -15,7 +15,7 @@ function Top({ data, className }) {
     <HeaderImage
       data={data}
       colorDecider={data.title}
-      height="20"
+      height={5}
       className={className}
     />
   );

@@ -92,7 +92,7 @@ function About({ data, className }) {
 function Header({ data, className }) {
   return (
     <Box className="relative">
-      <HeaderImage data={data} colorDecider={data.title} height="20" />
+      <HeaderImage data={data} colorDecider={data.title} height={5} />
       <HeaderIcons
         data={data}
         includeMoreIcon={true}
@@ -107,7 +107,7 @@ function Top({ data, className }) {
     <Box className={className}>
       <Box className="max-w-lg w-full space-y-4">
         <Header data={data} />
-        <About data={data} className="ml-4" />
+        <About data={data} className="px-4" />
       </Box>
     </Box>
   );
@@ -142,7 +142,10 @@ export default function PostPage({ uuid }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <PropertyList postData={data} className="px-4 mb-10" />
+        <PropertyList
+          postData={data}
+          className="px-4 mb-[5.5rem] sm:mb-[5rem]"
+        />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer

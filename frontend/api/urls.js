@@ -1,4 +1,4 @@
-const hostUrl = "http://localhost:8000";
+const hostUrl = process.env.NEXT_PUBLIC_HOST;
 
 const apiUrls = {
   user: `${hostUrl}/account/{0}/`,

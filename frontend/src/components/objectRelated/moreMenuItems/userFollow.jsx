@@ -11,10 +11,15 @@ import { usersActions, usersSelectors } from "src/_store";
 import { withAuthFunction } from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
 
+const allowedTypes = ["list", "post", "comment"];
+
 export function userFollowItemConditions(data) {
   const { currentUser } = React.useContext(AuthContext);
 
-  return currentUser?.username != data.user.username;
+  return (
+    allowedTypes.includes(data.type) &&
+    currentUser?.username != data.user.username
+  );
 }
 
 export default function UserFollowItem({ data, placement, handleMenuClose }) {

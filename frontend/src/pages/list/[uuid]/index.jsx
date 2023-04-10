@@ -79,7 +79,7 @@ function Top({ data, className }) {
     <Box className={className}>
       <Box className="max-w-lg w-full">
         <Header data={data} colorDecider={data.title} includeMoreIcon={true} />
-        <About data={data} className="mt-7 ml-4" />
+        <About data={data} className="mt-7 px-4" />
       </Box>
     </Box>
   );
@@ -168,7 +168,7 @@ export default function ListPage({ uuid }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <Posts data={data} className="mb-10" />
+        <Posts data={data} className="mb-[5.5rem] sm:mb-[5rem]" />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer

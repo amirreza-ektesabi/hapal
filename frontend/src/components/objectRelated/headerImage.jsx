@@ -37,9 +37,8 @@ export default function HeaderImage({
   className,
   colorDecider = "",
   forEdit = false,
-  height = 64,
+  height = 16,
 }) {
-  height = height.toString();
   return (
     <Box className={className + " relative w-full bg-blackZ"}>
       <Box
@@ -47,8 +46,9 @@ export default function HeaderImage({
         sx={{
           bgcolor: stringToColor(colorDecider),
           opacity: forEdit ? 0.4 : 1,
+          height: height.toString() + "rem",
         }}
-        className={`w-full h-${height} object-cover rounded-b-md`}
+        className="w-full object-cover sm:rounded-b-md"
         src={data.header}
       />
       {forEdit && <EditOverlay data={data} className="absolute inset-0" />}

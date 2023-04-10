@@ -137,7 +137,7 @@ export default function LoginDialog({
   const handleOnSubmit = async () => {
     const response = await dispatch(authActions.login(formData));
     if (!response.payload.error) {
-      dispatch(authActions.getMe());
+      await dispatch(authActions.getMe());
       handleCloseBox();
       setOpenSuccessfulAlert(true);
       router.reload();

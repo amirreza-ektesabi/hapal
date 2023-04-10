@@ -15,6 +15,12 @@ import DeleteItem, {
 import UserFollowItem, {
   userFollowItemConditions,
 } from "src/components/objectRelated/moreMenuItems/userFollow";
+import LoginItem, {
+  loginConditions,
+} from "src/components/objectRelated/moreMenuItems/login";
+import LogoutItem, {
+  logoutConditions,
+} from "src/components/objectRelated/moreMenuItems/logout";
 
 const items = [
   {
@@ -32,6 +38,14 @@ const items = [
   {
     component: UserFollowItem,
     conditions: userFollowItemConditions,
+  },
+  {
+    component: LoginItem,
+    conditions: loginConditions,
+  },
+  {
+    component: LogoutItem,
+    conditions: logoutConditions,
   },
 ];
 

@@ -7,7 +7,7 @@ import Comment from "src/components/objectRelated/comment";
 export default function FloatingButton({ data, className, toggleDrawer }) {
   return (
     <Box
-      className="fixed bottom-4 h-8 rounded-full bg-blackZ shadow-black shadow-sm flex place-items-center px-4"
+      className="fixed bottom-[3.8rem] sm:bottom-[3.3rem] h-8 rounded-full bg-blackZ shadow-[0px_0px_2px_2px_rgba(0,0,0,0.3)] drop-shadow-2xl flex place-items-center px-4"
     >
       <Favorite data={data} />
       <Divider

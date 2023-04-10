@@ -4,11 +4,16 @@ import More from "src/components/objectRelated/more";
 import Back from "src/components/objectRelated/back";
 import Share from "src/components/objectRelated/share";
 
-export default function HeaderIcons({ data, className, includeMoreIcon }) {
+export default function HeaderIcons({
+  data,
+  className,
+  includeMoreIcon,
+  includeShareIcon,
+}) {
   return (
     <Box className={className + " flex w-full"}>
       <Back className="mr-auto" />
-      <Share button data={data} className="ml-auto" />
+      {includeShareIcon && <Share button data={data} className="ml-auto" />}
       {includeMoreIcon && <More button data={data} className="ml-auto" />}
     </Box>
   );

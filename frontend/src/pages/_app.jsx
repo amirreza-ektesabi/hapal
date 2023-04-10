@@ -7,26 +7,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import NoSsr from "@mui/material/NoSsr";
 import darkTheme from "src/general/theme";
 import store from "src/_store";
-import LoginButton from "src/components/auth/loginButton";
-import LogoutButton from "src/components/auth/logoutButton";
+import Tabbar from "src/components/tabbar";
 import AuthContext from "src/components/auth/authContext";
 import LoginDialog from "src/components/auth/loginDialog";
 import SignupDialog from "src/components/auth/signupDialog";
 import { pageTitle } from "src/_helpers";
-
-function AuthButtons({ className }) {
-  const { isAuthenticated } = React.useContext(AuthContext);
-
-  return (
-    <React.StrictMode>
-      {isAuthenticated ? (
-        <LogoutButton className={className} />
-      ) : (
-        <LoginButton className={className} />
-      )}
-    </React.StrictMode>
-  );
-}
 
 export default function App({ Component, pageProps, ...appProps }) {
   React.useEffect(() => {
@@ -60,7 +45,7 @@ export default function App({ Component, pageProps, ...appProps }) {
           <CssBaseline />
           <AuthContext.Provider value={authContextValue}>
             <Component {...pageProps} />
-            {!isHomePage && <AuthButtons className="absolute top-4 right-4" />}
+            {!isHomePage && <Tabbar />}
             <LoginDialog
               open={openLoginBox}
               handleClose={handleCloseLoginBox}

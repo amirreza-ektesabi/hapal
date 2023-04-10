@@ -26,7 +26,10 @@ const deletedReducerMap = {
 export function deleteItemConditions(data) {
   const { currentUser } = React.useContext(AuthContext);
 
-  return currentUser?.username == data.user.username;
+  return (
+    Object.keys(deletedReducerMap).includes(data.type) &&
+    currentUser?.username == data.user.username
+  );
 }
 
 function AlertDialog({ data, open, handleClose, handleOnDelete }) {
