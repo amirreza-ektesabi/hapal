@@ -38,6 +38,7 @@ export default function Favorite({ data, className }) {
       <FavoriteRoundedIcon
         onClick={handleOnClick}
         className={colorClassName + " text-xl cursor-pointer"}
+        titleAccess="Like"
       />
       <Typography
         variant="caption"

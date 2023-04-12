@@ -18,10 +18,12 @@ function Icons({ data, handleRemove, handleEdit }) {
       <EditRoundedIcon
         className="text-xl cursor-pointer hover:fill-greyZ"
         onClick={handleOpenEditBox}
+        titleAccess="Edit Property"
       />
       <DeleteRoundedIcon
         className="text-xl cursor-pointer hover:text-greyZ"
         onClick={() => handleRemove(data.index)}
+        titleAccess="Delete Property"
       />
       <SetPropertyBox
         data={data}

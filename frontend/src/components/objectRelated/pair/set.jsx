@@ -19,6 +19,7 @@ export default function SetPair({ data, className, handleRemove, setField }) {
               <DeleteRoundedIcon
                 onClick={() => handleRemove(data.index)}
                 className="text-xl cursor-pointer hover:text-greyZ mx-1"
+                titleAccess="Delete Pair"
               />
             </InputAdornment>
           ),

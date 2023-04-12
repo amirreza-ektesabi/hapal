@@ -18,15 +18,15 @@ export default function Tabbar() {
       <Toolbar className="justify-center w-full">
         <Box className="flex justify-center w-[70%]">
           <Link href={urls.explore}>
-            <SearchIcon className="hover:text-greyZ" />
+            <SearchIcon className="hover:text-greyZ" titleAccess="Explore" />
           </Link>
           <Box className="grow" />
           <Link href={urls.listNew}>
-            <AddIcon className="hover:text-greyZ" />
+            <AddIcon className="hover:text-greyZ" titleAccess="New List" />
           </Link>
           <Box className="grow" />
           <Link href={urls.profile}>
-            <AccountCircleIcon className="hover:text-greyZ" />
+            <AccountCircleIcon className="hover:text-greyZ" titleAccess="Profile" />
           </Link>
         </Box>
       </Toolbar>

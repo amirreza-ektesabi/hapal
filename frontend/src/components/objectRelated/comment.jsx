@@ -10,6 +10,7 @@ export default function Comment({ data, className, iconOnClick }) {
       <ModeCommentRoundedIcon
         onClick={iconOnClick}
         className="text-xl cursor-pointer hover:fill-greyZ"
+        titleAccess="Comment"
       />
       <Typography
         variant="caption"

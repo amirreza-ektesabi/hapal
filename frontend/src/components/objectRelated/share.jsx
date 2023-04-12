@@ -41,12 +41,17 @@ function ShareIcon({ className, button, handleClick }) {
     <React.StrictMode>
       {button ? (
         <CircleIcon onClick={handleClick} className={className}>
-          <ShareRoundedIcon color="white" className="pr-0.5" />
+          <ShareRoundedIcon
+            color="white"
+            className="pr-0.5"
+            titleAccess="Share"
+          />
         </CircleIcon>
       ) : (
         <ShareRoundedIcon
           className={className + " text-xl cursor-pointer hover:fill-greyZ"}
           onClick={handleClick}
+          titleAccess="Share"
         />
       )}
     </React.StrictMode>
@@ -74,7 +79,7 @@ function Title({ handleClose }) {
     <DialogTitle className="flex">
       {"Share"}
       <IconButton onClick={handleClose} className="ml-auto -mt-1">
-        <CloseRoundedIcon className="fill-greyZ" />
+        <CloseRoundedIcon className="fill-greyZ" titleAccess="Close" />
       </IconButton>
     </DialogTitle>
   );

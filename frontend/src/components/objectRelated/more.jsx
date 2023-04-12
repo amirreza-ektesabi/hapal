@@ -77,12 +77,13 @@ function MoreIcon({ data, className, button, handleClick }) {
     <React.StrictMode>
       {button ? (
         <CircleIcon onClick={handleClick} className={className}>
-          <MoreVertRoundedIcon color="white" />
+          <MoreVertRoundedIcon color="white" titleAccess="More" />
         </CircleIcon>
       ) : (
         <MoreVertRoundedIcon
           className={className + " text-xl cursor-pointer hover:fill-greyZ"}
           onClick={handleClick}
+          titleAccess="More"
         />
       )}
     </React.StrictMode>

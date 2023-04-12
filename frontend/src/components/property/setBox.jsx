@@ -29,7 +29,7 @@ function Title({ title, data, className, handleClose }) {
     <DialogTitle className="flex">
       {title}
       <IconButton onClick={handleClose} className="ml-auto mr-1">
-        <CloseRoundedIcon className="fill-greyZ" />
+        <CloseRoundedIcon className="fill-greyZ" titleAccess="Close" />
       </IconButton>
     </DialogTitle>
   );

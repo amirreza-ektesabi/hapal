@@ -6,9 +6,9 @@ import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 
 function VisibilityIcon({ showPassword, ...props }) {
   return showPassword ? (
-    <VisibilityOffRoundedIcon {...props} />
+    <VisibilityOffRoundedIcon {...props} titleAccess="Hide password" />
   ) : (
-    <VisibilityRoundedIcon {...props} />
+    <VisibilityRoundedIcon {...props} titleAccess="Show password" />
   );
 }
 

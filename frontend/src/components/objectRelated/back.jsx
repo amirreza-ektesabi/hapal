@@ -12,7 +12,7 @@ export default function Back({ className }) {
 
   return (
     <CircleIcon className={className} onClick={handleOnClick}>
-      <ArrowBackRoundedIcon color="white" />
+      <ArrowBackRoundedIcon color="white" titleAccess="Back" />
     </CircleIcon>
   );
 }
