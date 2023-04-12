@@ -129,7 +129,7 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/retrievedList`,
       (data, { dispatch, getState }) => {
-        removedAbsents(dispatch, getState()[name], data);
+        if (data.userUsername) removedAbsents(dispatch, getState()[name], data);
         dispatch(listsActions.addedMany(data.list));
         const users = data.list.map((entity) => entity.user);
         dispatch(usersActions.addedMany(users));
@@ -221,11 +221,23 @@ function createSelectors() {
     selectAllUuids
   );
 
+  const selectExplores = createSelector(selectAll, (entities) =>
+    entities
+      .filter((obj) => obj.explore)
+      .sort(
+        (a, b) =>
+          b.likes_count - a.likes_count || b.created.localeCompare(a.created)
+      )
+  );
+
+  const selectExploreUuids = createSelector(selectExplores, selectAllUuids);
+
   return {
     selectAll,
     selectByUuid,
     selectUuids,
     selectByCreatedBy,
     selectUuidsByCreatedBy,
+    selectExploreUuids,
   };
 }

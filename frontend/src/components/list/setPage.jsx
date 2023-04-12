@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import SaveButton from "src/components/objectRelated/saveButton";
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import { HeaderEdit as Header } from "src/components/objectRelated/header";
+import AuthContext from "src/components/auth/authContext";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
@@ -43,6 +44,7 @@ function InputFields({ data, className, setTitle, setDescription }) {
 }
 
 export default function SetListPage({ data, handleOnSave, className }) {
+  const { isAuthenticated } = React.useContext(AuthContext);
   const router = useRouter();
   const initialData = {
     title: data.title,
@@ -91,7 +93,7 @@ export default function SetListPage({ data, handleOnSave, className }) {
           setDescription={setDescription}
         />
         <SaveButton
-          isEnable={true}
+          isEnable={isAuthenticated}
           className="px-4"
           handleOnClick={handleOnClickSaveButton}
         />

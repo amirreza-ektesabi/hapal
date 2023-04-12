@@ -1,14 +1,16 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
 import ErrorPage from "src/pages/_error";
-import { authSelectors } from "src/_store";
 import AuthContext from "src/components/auth/authContext";
 
-export default function withAuth(Component) {
+export default function withAuth(Component, login=false) {
   const Auth = (props) => {
-    const authUser = useSelector(authSelectors.selectUser);
+    const { isAuthenticated, openLoginBox } = React.useContext(AuthContext);
 
-    if (!authUser) return <ErrorPage statusCode={404} />;
+    React.useEffect(() => {
+      if (!isAuthenticated && login) openLoginBox();
+    }, []);
+
+    if (!isAuthenticated) return <ErrorPage statusCode={404} />;
 
     return <Component {...props} />;
   };

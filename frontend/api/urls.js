@@ -6,6 +6,7 @@ const apiUrls = {
   list: `${hostUrl}/list/{0}/`,
   lists: `${hostUrl}/{0}/{1}/lists/`,
   newList: `${hostUrl}/list/create/`,
+  exploreLists: `${hostUrl}/list/explore/`,
 
   post: `${hostUrl}/post/{0}/`,
   posts: `${hostUrl}/{0}/{1}/posts/`,
