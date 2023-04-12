@@ -13,22 +13,23 @@ export default function MainPage() {
   React.useEffect(() => {
     if (isAuthenticated) router.replace(urls.profile);
   }, []);
+
   if (isAuthenticated) return "";
 
   return (
     <React.StrictMode>
       <Navbar />
       <Box className="flex bg-blueZ h-[calc(100vh-80px)] mx-[10px] rounded-[32px] justify-center">
-        <Box className="flex w-full max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] mt-[27vh]">
+        <Box className="flex w-full max-w-[15rem] min-[470px]:max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] mt-[27vh]">
           <Box className="space-y-4">
             <Typography
               fontFamily="Changa_One"
-              className="text-blackZ text-3xl md:text-4xl lg:text-5xl"
+              className="text-blackZ text-[1.5rem] min-[470px]:text-3xl md:text-4xl lg:text-5xl"
               children="Make list of anything."
             />
             <Typography
               fontFamily="Nunito"
-              className="text-blackZ font-medium leading-5 md:leading-7 lg:leading-7 text-base md:text-xl lg:text-2xl"
+              className="text-blackZ font-medium leading-5 md:leading-7 lg:leading-7 text-sm min-[470px]:text-base md:text-xl lg:text-2xl"
             >
               Discover what lists your friends make,
               <br />

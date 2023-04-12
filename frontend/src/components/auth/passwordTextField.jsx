@@ -8,7 +8,7 @@ function VisibilityIcon({ showPassword, ...props }) {
   return showPassword ? (
     <VisibilityOffRoundedIcon {...props} titleAccess="Hide password" />
   ) : (
-    <VisibilityRoundedIcon {...props} titleAccess="Show password" />
+    <VisibilityRoundedIcon {...props} titleAccess="Reveal password" />
   );
 }
 

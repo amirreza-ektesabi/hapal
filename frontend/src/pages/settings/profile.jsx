@@ -79,7 +79,7 @@ export default withAuth(function EditProfilePage() {
     };
     await dispatch(authActions.editProfile(dataToSave));
     const redirectUrl = stringFormat(urls.user, currentUser.username);
-    router.replace(redirectUrl);
+    router.push(redirectUrl);
   };
 
   return (

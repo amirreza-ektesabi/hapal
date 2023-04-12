@@ -76,7 +76,7 @@ export default function SetListPage({ data, handleOnSave, className }) {
     const response = await handleOnSave(dataToSave);
     const uuid = response.payload.uuid;
     const redirectUrl = stringFormat(urls.list, uuid);
-    router.replace(redirectUrl);
+    router.push(redirectUrl);
   };
 
   return (

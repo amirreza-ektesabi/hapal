@@ -10,7 +10,7 @@ export default function EditProfileButton({ data, className }) {
 
   const handleOnClick = () => {
     const profileEditUrl = stringFormat(urls.profileEdit, data.username);
-    router.replace(profileEditUrl);
+    router.push(profileEditUrl);
   };
 
   return (
