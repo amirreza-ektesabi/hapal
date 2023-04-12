@@ -6,18 +6,28 @@ import SaveButton from "src/components/objectRelated/saveButton";
 import HeaderImage from "src/components/objectRelated/headerImage";
 import { PropertyEditList } from "src/components/post/propertyList";
 import AutoFocusTextField from "src/components/autoFocusTextField";
+import HeaderIcons from "src/components/objectRelated/headerIcons";
 import SetPropertyBox from "src/components/property/setBox";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
 function Top({ data, className }) {
   return (
-    <HeaderImage
-      data={data}
-      colorDecider={data.title}
-      height={5}
-      className={className}
-    />
+    <Box className="relative">
+      <HeaderImage
+        data={data}
+        colorDecider={data.title}
+        height={5}
+        className={className}
+        forEdit={true}
+      />
+      <HeaderIcons
+        data={data}
+        includeMoreIcon={false}
+        includeShareIcon={false}
+        className="absolute top-4 space-x-3 px-4"
+      />
+    </Box>
   );
 }
 
@@ -58,7 +68,11 @@ function AddPropertyButton({ className, handleOnClick }) {
   );
 }
 
-function Buttons({ className, handleOnClickSaveButton, handleOnClickAddNewProperty }) {
+function Buttons({
+  className,
+  handleOnClickSaveButton,
+  handleOnClickAddNewProperty,
+}) {
   return (
     <Box className={className + " flex"}>
       <AddPropertyButton handleOnClick={handleOnClickAddNewProperty} />

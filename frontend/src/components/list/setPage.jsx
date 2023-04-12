@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import SaveButton from "src/components/objectRelated/saveButton";
 import AutoFocusTextField from "src/components/autoFocusTextField";
-import { HeaderEdit as Header } from "src/components/objectRelated/header";
+import { HeaderEdit } from "src/components/objectRelated/header";
 import AuthContext from "src/components/auth/authContext";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
@@ -13,7 +13,7 @@ function Top({ data, className }) {
   return (
     <Box className={className}>
       <Box className="max-w-lg w-full">
-        <Header data={data} colorDecider={data.title} />
+        <HeaderEdit data={data} colorDecider={data.title} />
       </Box>
     </Box>
   );

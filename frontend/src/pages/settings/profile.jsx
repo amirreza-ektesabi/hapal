@@ -7,7 +7,7 @@ import SaveButton from "src/components/objectRelated/saveButton";
 import withAuth from "src/components/auth/withAuth";
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import AuthContext from "src/components/auth/authContext";
-import { HeaderEdit as Header } from "src/components/objectRelated/header";
+import { HeaderEdit } from "src/components/objectRelated/header";
 import { authActions } from "src/_store";
 import { pageTitle, stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
@@ -16,7 +16,7 @@ function Top({ data, className }) {
   return (
     <Box className={className}>
       <Box className="max-w-lg w-full">
-        <Header
+        <HeaderEdit
           data={data}
           colorDecider={data.bio}
           includeProfileAvatar={true}
