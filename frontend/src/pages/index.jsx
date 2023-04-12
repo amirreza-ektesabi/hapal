@@ -1,9 +1,20 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Navbar from "src/components/navbar";
+import AuthContext from "src/components/auth/authContext";
+import urls from "src/general/urls";
 
 export default function MainPage() {
+  const router = useRouter();
+  const { isAuthenticated } = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    if (isAuthenticated) router.replace(urls.profile);
+  }, []);
+  if (isAuthenticated) return "";
+
   return (
     <React.StrictMode>
       <Navbar />
