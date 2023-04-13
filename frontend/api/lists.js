@@ -56,6 +56,6 @@ export async function unfollowList(uuid) {
 }
 
 export async function getExploreLists() {
-  const url = stringFormat(apiUrls.exploreLists);
+  const url = stringFormat(apiUrls.explore);
   return await responseApi(url, "get");
 }
