@@ -42,7 +42,9 @@ class RestrictedWordsValidator(BaseValidator):
     username_restricted_words = {
         'admin', 'deleted', 'hapal',
         'lists', 'list', 'posts', 'post', 'comments', 'comment',
-        'home', 'new-list', 'settings',
+        'home', 'new-list', 'settings', 'explore', 'profile',
+        'notifications', 'notification', 'search',
+        'new', 'edit', 'new',
         '404', '_404', 'error', '_error'
     }
 

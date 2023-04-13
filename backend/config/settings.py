@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'posts',
     'comments',
     'likes',
+    'general',
 ]
 
 MIDDLEWARE = [
@@ -56,8 +57,7 @@ INTERNAL_IPS = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1:3000',
-    'http://localhost:3000',
+    *os.getenv('ALlOWED_FRONTEND_HOSTS').split(',')
 ]
 
 ROOT_URLCONF = 'config.urls'

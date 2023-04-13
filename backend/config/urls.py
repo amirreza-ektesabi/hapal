@@ -12,11 +12,12 @@ urlpatterns = [
          RedirectView.as_view(url=staticfiles_storage.url('img/favicon-amougus.ico'))),
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
-    
+
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 
-    path('', include('accounts.urls')),
+    path('', include('general.urls')),
+    path('account/', include('accounts.urls')),
     path('list/', include('lists.urls')),
     path('post/', include('posts.urls')),
     path('comment/', include('comments.urls')),
