@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
@@ -8,11 +9,6 @@ admin.site.site_header = 'Hapal Admin'
 admin.site.index_title = 'Admin Panel'
 
 urlpatterns = [
-    path('favicon.ico/',
-         RedirectView.as_view(url=staticfiles_storage.url('img/favicon-amougus.ico'))),
-    path('admin/', admin.site.urls),
-    path('__debug__/', include('debug_toolbar.urls')),
-
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 
@@ -22,3 +18,12 @@ urlpatterns = [
     path('post/', include('posts.urls')),
     path('comment/', include('comments.urls')),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += [
+        path('favicon.ico/',
+             RedirectView.as_view(url=staticfiles_storage.url('img/favicon-amougus.ico'))),
+        path('admin/', admin.site.urls),
+        path('__debug__/', include('debug_toolbar.urls')),
+    ]
