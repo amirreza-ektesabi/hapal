@@ -11,10 +11,10 @@ export default function MainPage() {
   const { isAuthenticated } = React.useContext(AuthContext);
 
   React.useEffect(() => {
-    // if (isAuthenticated) router.replace(urls.profile);
+    if (isAuthenticated) router.replace(urls.profile);
   }, []);
 
-  // if (isAuthenticated) return "";
+  if (isAuthenticated) return "";
 
   return (
     <React.StrictMode>
