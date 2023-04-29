@@ -144,7 +144,7 @@ export default function PostPage({ uuid }) {
         <Divider className="w-full mt-3.5 mb-2" />
         <PropertyList
           postData={data}
-          className="px-4 mb-[5.5rem] sm:mb-[5rem]"
+          className="px-4 mb-[3.5rem] sm:mb-[3rem]"
         />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />

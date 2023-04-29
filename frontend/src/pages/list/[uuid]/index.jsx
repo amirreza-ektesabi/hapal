@@ -168,7 +168,7 @@ export default function ListPage({ uuid }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <Posts data={data} className="mb-[5.5rem] sm:mb-[5rem]" />
+        <Posts data={data} className="mb-[3.5rem] sm:mb-[3rem]" />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer
