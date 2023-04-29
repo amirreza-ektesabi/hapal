@@ -50,6 +50,16 @@ const items = [
 ];
 
 function MoreMenu({ data, placement, menuIsOpen, anchorEl, handleClose }) {
+  React.useEffect(() => {
+    document.addEventListener("scroll", handleClose);
+  }, []);
+  React.useEffect(
+    () => () => {
+      document.removeEventListener("scroll", handleClose);
+    },
+    []
+  );
+
   return (
     <Menu
       anchorEl={anchorEl}
