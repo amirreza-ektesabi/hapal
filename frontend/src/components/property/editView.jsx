@@ -14,7 +14,7 @@ function Icons({ data, handleRemove, handleEdit }) {
   const handleCloseEditBox = () => setOpenEditBox(false);
 
   return (
-    <Box className="mb-1 space-x-1">
+    <Box className="flex mb-1 space-x-1">
       <EditRoundedIcon
         className="text-xl cursor-pointer hover:fill-greyZ"
         onClick={handleOpenEditBox}
@@ -38,11 +38,12 @@ function Icons({ data, handleRemove, handleEdit }) {
 
 function Key({ data, handleEdit, handleRemove, className }) {
   return (
-    <Box className="flex items-center space-x-1">
+    <Box className="flex items-center space-x-1 w-full">
       <Icons data={data} handleEdit={handleEdit} handleRemove={handleRemove} />
       <Typography
         variant="body1"
-        className="text-xl font-bold whitespace-pre"
+        className="text-xl font-bold whitespace-pre-wrap break-words"
+        
         children={data.key}
       />
     </Box>
@@ -68,7 +69,7 @@ export default function EditProperty({
   handleRemove,
 }) {
   return (
-    <Box className={className}>
+    <Box className={className + " w-full"}>
       <Key data={data} handleRemove={handleRemove} handleEdit={handleEdit} />
       <Value data={data} />
     </Box>

@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ListItems from "src/components/listItems";
-import SetPair from "src/components/objectRelated/pair/set";
+import SetPair from "src/components/pair/set";
 import AutoFocusTextField from "src/components/autoFocusTextField";
 
 function PairList({ data, className, handleRemovePair, setPairField }) {

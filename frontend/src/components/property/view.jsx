@@ -11,7 +11,7 @@ function Key({ data }) {
     <Box className="flex items-center space-x-1">
       <Typography
         variant="body1"
-        className="text-xl font-bold whitespace-pre"
+        className="text-xl font-bold whitespace-pre-wrap break-words"
         children={data.key}
       />
     </Box>

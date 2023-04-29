@@ -150,7 +150,7 @@ export default function SetPostPage({ data, handleOnSave, className }) {
         <Top data={formData} />
         <InputFields
           data={formData}
-          className="px-4 space-y-16"
+          className="px-4 space-y-16 w-full"
           setTitle={setTitle}
           handleRemoveProperty={handleRemoveProperty}
           handleEditProperty={handleEditProperty}

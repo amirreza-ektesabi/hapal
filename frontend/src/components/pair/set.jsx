@@ -12,8 +12,8 @@ export default function SetPair({ data, className, handleRemove, setField }) {
         value={data.key}
         variant="standard"
         className="w-full"
+        inputProps={{ maxLength: 50 }}
         InputProps={{
-          maxLength: 50,
           endAdornment: (
             <InputAdornment position="start">
               <DeleteRoundedIcon

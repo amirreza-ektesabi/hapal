@@ -16,7 +16,7 @@ export function PropertyEditList({
   handleEdit,
 }) {
   return (
-    <Box className={className}>
+    <Box className={className + " w-full"}>
       <ListItems
         data={data}
         itemKey="data"
