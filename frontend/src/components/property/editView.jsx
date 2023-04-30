@@ -15,16 +15,18 @@ function Icons({ data, handleRemove, handleEdit }) {
 
   return (
     <Box className="flex mb-1 space-x-1">
-      <EditRoundedIcon
-        className="text-xl cursor-pointer hover:fill-greyZ"
-        onClick={handleOpenEditBox}
-        titleAccess="Edit Property"
-      />
-      <DeleteRoundedIcon
-        className="text-xl cursor-pointer hover:text-greyZ"
-        onClick={() => handleRemove(data.index)}
-        titleAccess="Delete Property"
-      />
+      <ArrowTooltip title="Edit Property">
+        <EditRoundedIcon
+          className="text-xl cursor-pointer hover:fill-greyZ"
+          onClick={handleOpenEditBox}
+        />
+      </ArrowTooltip>
+      <ArrowTooltip title="Delete Property">
+        <DeleteRoundedIcon
+          className="text-xl cursor-pointer hover:text-greyZ"
+          onClick={() => handleRemove(data.index)}
+        />
+      </ArrowTooltip>
       <SetPropertyBox
         data={data}
         open={openEditBox}
@@ -43,7 +45,6 @@ function Key({ data, handleEdit, handleRemove, className }) {
       <Typography
         variant="body1"
         className="text-xl font-bold whitespace-pre-wrap break-words"
-        
         children={data.key}
       />
     </Box>

@@ -3,15 +3,17 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import ModeCommentRoundedIcon from "@mui/icons-material/ModeCommentRounded";
 import { numberFormat } from "src/_helpers";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 export default function Comment({ data, className, iconOnClick }) {
   return (
     <Box className={className + " space-x-1"}>
-      <ModeCommentRoundedIcon
-        onClick={iconOnClick}
-        className="text-xl cursor-pointer hover:fill-greyZ"
-        titleAccess="Comment"
-      />
+      <ArrowTooltip title="Comment">
+        <ModeCommentRoundedIcon
+          onClick={iconOnClick}
+          className="text-xl cursor-pointer hover:fill-greyZ"
+        />
+      </ArrowTooltip>
       <Typography
         variant="caption"
         color="text.secondary"

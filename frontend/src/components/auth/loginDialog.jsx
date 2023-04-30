@@ -68,7 +68,9 @@ function Title({ handleCloseDialog }) {
     <DialogTitle className="flex">
       {"Log in to Hapal"}
       <IconButton onClick={handleCloseDialog} className="ml-auto -mt-1">
-        <CloseRoundedIcon className="fill-greyZ" titleAccess="Close" />
+        <ArrowTooltip title="Close">
+          <CloseRoundedIcon className="fill-greyZ" />
+        </ArrowTooltip>
       </IconButton>
     </DialogTitle>
   );

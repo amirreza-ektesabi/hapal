@@ -6,6 +6,7 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { numberFormat } from "src/_helpers";
 import { listsActions, postsActions, commentsActions } from "src/_store";
 import { withAuthFunction } from "src/components/auth/withAuth";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 const likedReducers = {
   list: listsActions.liked,
@@ -35,11 +36,12 @@ export default function Favorite({ data, className }) {
 
   return (
     <Box className={className + " space-x-1"}>
-      <FavoriteRoundedIcon
-        onClick={handleOnClick}
-        className={colorClassName + " text-xl cursor-pointer"}
-        titleAccess="Like"
-      />
+      <ArrowTooltip title="Like">
+        <FavoriteRoundedIcon
+          onClick={handleOnClick}
+          className={colorClassName + " text-xl cursor-pointer"}
+        />
+      </ArrowTooltip>
       <Typography
         variant="caption"
         color="text.secondary"

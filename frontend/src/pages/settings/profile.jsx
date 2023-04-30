@@ -96,7 +96,8 @@ export default withAuth(function EditProfilePage() {
             setBio={setBio}
             className="px-4 space-y-10"
           />
-          <SaveButton isEnable={true} handleOnClick={handleOnClickSaveButton} />
+          <SaveButton isEnable={true}
+          className="px-4" handleOnClick={handleOnClickSaveButton} />
         </Box>
       </Box>
     </Box>

@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 export default function SetPair({ data, className, handleRemove, setField }) {
   return (
@@ -16,11 +17,12 @@ export default function SetPair({ data, className, handleRemove, setField }) {
         InputProps={{
           endAdornment: (
             <InputAdornment position="start">
-              <DeleteRoundedIcon
-                onClick={() => handleRemove(data.index)}
-                className="text-xl cursor-pointer hover:text-greyZ mx-1"
-                titleAccess="Delete Pair"
-              />
+              <ArrowTooltip title="Delete Pair">
+                <DeleteRoundedIcon
+                  onClick={() => handleRemove(data.index)}
+                  className="text-xl cursor-pointer hover:text-greyZ mx-1"
+                />
+              </ArrowTooltip>
             </InputAdornment>
           ),
         }}

@@ -9,6 +9,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ListItems from "src/components/listItems";
 import SetPair from "src/components/pair/set";
 import AutoFocusTextField from "src/components/autoFocusTextField";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 function PairList({ data, className, handleRemovePair, setPairField }) {
   return (
@@ -29,7 +30,9 @@ function Title({ title, data, className, handleClose }) {
     <DialogTitle className="flex">
       {title}
       <IconButton onClick={handleClose} className="ml-auto mr-1">
-        <CloseRoundedIcon className="fill-greyZ" titleAccess="Close" />
+        <ArrowTooltip title="Close">
+          <CloseRoundedIcon className="fill-greyZ" />
+        </ArrowTooltip>
       </IconButton>
     </DialogTitle>
   );

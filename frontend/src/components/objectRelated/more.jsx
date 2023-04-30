@@ -21,6 +21,7 @@ import LoginItem, {
 import LogoutItem, {
   logoutConditions,
 } from "src/components/objectRelated/moreMenuItems/logout";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 const items = [
   {
@@ -86,15 +87,20 @@ function MoreIcon({ data, className, button, handleClick }) {
   return (
     <React.StrictMode>
       {button ? (
-        <CircleIcon onClick={handleClick} className={className}>
-          <MoreVertRoundedIcon color="white" titleAccess="More" />
-        </CircleIcon>
+        <ArrowTooltip title="More">
+          <span style={{ display: "inline-block" }} className={className}>
+            <CircleIcon onClick={handleClick}>
+              <MoreVertRoundedIcon color="white" />
+            </CircleIcon>
+          </span>
+        </ArrowTooltip>
       ) : (
-        <MoreVertRoundedIcon
-          className={className + " text-xl cursor-pointer hover:fill-greyZ"}
-          onClick={handleClick}
-          titleAccess="More"
-        />
+        <ArrowTooltip title="More">
+          <MoreVertRoundedIcon
+            className={className + " text-xl cursor-pointer hover:fill-greyZ"}
+            onClick={handleClick}
+          />
+        </ArrowTooltip>
       )}
     </React.StrictMode>
   );

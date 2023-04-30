@@ -20,6 +20,7 @@ import { stringFormat } from "src/_helpers";
 import messages from "src/general/messages";
 import urls from "src/general/urls";
 import Link from "next/link";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 const shareToSocialItems = [
   {
@@ -40,19 +41,20 @@ function ShareIcon({ className, button, handleClick }) {
   return (
     <React.StrictMode>
       {button ? (
-        <CircleIcon onClick={handleClick} className={className}>
-          <ShareRoundedIcon
-            color="white"
-            className="pr-0.5"
-            titleAccess="Share"
-          />
-        </CircleIcon>
+        <ArrowTooltip title="Share">
+          <span style={{ display: "inline-block" }} className={className}>
+            <CircleIcon onClick={handleClick}>
+              <ShareRoundedIcon color="white" className="pr-0.5" />
+            </CircleIcon>
+          </span>
+        </ArrowTooltip>
       ) : (
-        <ShareRoundedIcon
-          className={className + " text-xl cursor-pointer hover:fill-greyZ"}
-          onClick={handleClick}
-          titleAccess="Share"
-        />
+        <ArrowTooltip title="Share">
+          <ShareRoundedIcon
+            className={className + " text-xl cursor-pointer hover:fill-greyZ"}
+            onClick={handleClick}
+          />
+        </ArrowTooltip>
       )}
     </React.StrictMode>
   );
@@ -79,7 +81,9 @@ function Title({ handleClose }) {
     <DialogTitle className="flex">
       {"Share"}
       <IconButton onClick={handleClose} className="ml-auto -mt-1">
-        <CloseRoundedIcon className="fill-greyZ" titleAccess="Close" />
+        <ArrowTooltip title="Close">
+          <CloseRoundedIcon className="fill-greyZ" />
+        </ArrowTooltip>
       </IconButton>
     </DialogTitle>
   );
@@ -90,9 +94,11 @@ function CopyLink({ link }) {
   const [openAlert, setOpenAlert] = React.useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(link);
     inputRef.current.select();
-    setOpenAlert(true);
+    if (window.isSecureContext) {
+      navigator.clipboard.writeText(link);
+      setOpenAlert(true);
+    }
   };
 
   return (
@@ -103,17 +109,22 @@ function CopyLink({ link }) {
         value={link}
         className="w-full"
         inputRef={inputRef}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <Button
-                variant="contained"
-                className="bg-blueZ rounded-full font-medium text-xs"
-                children="Copy"
-              />
-            </InputAdornment>
-          ),
-        }}
+        inputProps={{ readOnly: true }}
+        InputProps={
+          window.isSecureContext
+            ? {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      variant="contained"
+                      className="bg-blueZ rounded-full font-medium text-xs"
+                      children="Copy"
+                    />
+                  </InputAdornment>
+                ),
+              }
+            : undefined
+        }
         onClick={copyToClipboard}
       />
       <Alert

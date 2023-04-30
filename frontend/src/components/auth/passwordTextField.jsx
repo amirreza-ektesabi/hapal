@@ -3,12 +3,17 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+import ArrowTooltip from "src/components/arrowTooltip";
 
 function VisibilityIcon({ showPassword, ...props }) {
   return showPassword ? (
-    <VisibilityOffRoundedIcon {...props} titleAccess="Hide password" />
+    <ArrowTooltip title="Hide password">
+      <VisibilityOffRoundedIcon {...props} />
+    </ArrowTooltip>
   ) : (
-    <VisibilityRoundedIcon {...props} titleAccess="Reveal password" />
+    <ArrowTooltip title="Reveal password">
+      <VisibilityRoundedIcon {...props} />
+    </ArrowTooltip>
   );
 }
 

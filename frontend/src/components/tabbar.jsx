@@ -1,15 +1,20 @@
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import SearchIcon from "@mui/icons-material/SearchRounded";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import AccountCircleIcon from "@mui/icons-material/AccountCircleOutlined";
+import ArrowTooltip from "src/components/arrowTooltip";
 import theme from "src/general/theme";
 import urls from "src/general/urls";
-import { Box } from "@mui/material";
 
-export default function Tabbar() {
+export default function Tabbar({ appProps }) {
+  const router = useRouter();
+  const currentPath = router.asPath;
+
   return (
     <AppBar
       style={{ background: theme.palette.blackZ }}
@@ -18,15 +23,36 @@ export default function Tabbar() {
       <Toolbar className="justify-center w-full">
         <Box className="flex justify-center w-[70%]">
           <Link href={urls.explore}>
-            <SearchIcon className="hover:text-greyZ" titleAccess="Explore" />
+            <ArrowTooltip title="Explore">
+              <SearchIcon
+                className={
+                  "hover:text-greyZ" +
+                  (currentPath === urls.explore ? " fill-blueZ" : "")
+                }
+              />
+            </ArrowTooltip>
           </Link>
           <Box className="grow" />
           <Link href={urls.listNew}>
-            <AddIcon className="hover:text-greyZ" titleAccess="New List" />
+            <ArrowTooltip title="New List">
+              <AddIcon
+                className={
+                  "hover:text-greyZ" +
+                  (currentPath === urls.listNew ? " fill-blueZ" : "")
+                }
+              />
+            </ArrowTooltip>
           </Link>
           <Box className="grow" />
           <Link href={urls.profile}>
-            <AccountCircleIcon className="hover:text-greyZ" titleAccess="Profile" />
+            <ArrowTooltip title="Profile">
+              <AccountCircleIcon
+                className={
+                  "hover:text-greyZ" +
+                  (currentPath === urls.profile ? " fill-blueZ" : "")
+                }
+              />
+            </ArrowTooltip>
           </Link>
         </Box>
       </Toolbar>
