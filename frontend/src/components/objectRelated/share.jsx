@@ -1,14 +1,16 @@
 import * as React from "react";
+import Link from "next/link";
 import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ArrowTooltip from "src/components/arrowTooltip";
 import CircleIcon from "src/components/circleIcon";
 import Alert from "src/components/alert";
 import {
@@ -19,8 +21,6 @@ import {
 import { stringFormat } from "src/_helpers";
 import messages from "src/general/messages";
 import urls from "src/general/urls";
-import Link from "next/link";
-import ArrowTooltip from "src/components/arrowTooltip";
 
 const shareToSocialItems = [
   {

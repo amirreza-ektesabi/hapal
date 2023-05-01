@@ -36,9 +36,9 @@ function PostedIn({ data, className }) {
     <Box className="flex space-x-1.5 place-items-center">
       <Typography
         variant="body1"
-        className="font-normal"
+        className="font-normal whitespace-nowrap"
         color="text.secondary"
-        children={"Posted in"}
+        children="Posted in"
       />
       <Link href={listHref} className="cursor-pointer">
         <Box
@@ -46,10 +46,10 @@ function PostedIn({ data, className }) {
           className="w-4 h-4 rounded-sm"
         />
       </Link>
-      <Link href={listHref} className="cursor-pointer">
+      <Link href={listHref} className="cursor-pointer w-full">
         <Typography
           variant="body1"
-          className="truncate font-medium whitespace-pre"
+          className="max-w-[92%] truncate font-medium whitespace-pre"
           children={data.added_to.title}
         />
       </Link>

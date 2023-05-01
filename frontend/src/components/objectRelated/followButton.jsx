@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import Button from "@mui/material/Button";
-import theme from "src/general/theme";
+import DisposableButton from "src/components/disposableButton";
 import { listsActions, usersActions } from "src/_store";
 import { withAuthFunction } from "src/components/auth/withAuth";
+import theme from "src/general/theme";
 
 const followedReducers = {
   account: usersActions.followed,
@@ -17,7 +17,7 @@ const unfollowedReducers = {
 
 function Following({ className, onClick }) {
   return (
-    <Button
+    <DisposableButton
       variant="outlined"
       className={className}
       sx={{
@@ -36,7 +36,7 @@ function Following({ className, onClick }) {
 
 function Follow({ className, onClick }) {
   return (
-    <Button
+    <DisposableButton
       variant="contained"
       className={className}
       style={{

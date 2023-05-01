@@ -2,8 +2,8 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import Button from "@mui/material/Button";
 import theme from "src/general/theme";
-import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
+import { stringFormat } from "src/_helpers";
 
 export default function EditProfileButton({ data, className }) {
   const router = useRouter();

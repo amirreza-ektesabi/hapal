@@ -3,8 +3,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import ListItems from "src/components/listItems";
 import SetPropertyBox from "src/components/property/setBox";
+import ArrowTooltip from "src/components/arrowTooltip";
+import ListItems from "src/components/listItems";
 import Pair from "src/components/pair/view";
 
 function Icons({ data, handleRemove, handleEdit }) {

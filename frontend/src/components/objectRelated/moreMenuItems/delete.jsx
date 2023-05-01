@@ -2,7 +2,6 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -13,6 +12,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AuthContext from "src/components/auth/authContext";
+import DisposableButton from "src/components/disposableButton";
 import { listsActions, postsActions, commentsActions } from "src/_store";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
@@ -46,8 +46,8 @@ function AlertDialog({ data, open, handleClose, handleOnDelete }) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleOnDelete}>Delete</Button>
+        <DisposableButton onClick={handleClose}>Cancel</DisposableButton>
+        <DisposableButton onClick={handleOnDelete}>Delete</DisposableButton>
       </DialogActions>
     </Dialog>
   );

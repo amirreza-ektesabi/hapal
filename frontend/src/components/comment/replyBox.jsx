@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import DisposableButton from "src/components/disposableButton";
 import theme from "src/general/theme";
 
 export default function ReplyBox({
@@ -23,7 +23,7 @@ export default function ReplyBox({
         value={textInputBody}
       />
       <Box className="flex">
-        <Button
+        <DisposableButton
           variant="contained"
           size="small"
           className="rounded-full px-4 ml-auto"

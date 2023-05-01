@@ -6,10 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import ListItems from "src/components/listItems";
 import SetPair from "src/components/pair/set";
-import AutoFocusTextField from "src/components/autoFocusTextField";
+import ListItems from "src/components/listItems";
 import ArrowTooltip from "src/components/arrowTooltip";
+import DisposableButton from "src/components/disposableButton";
+import AutoFocusTextField from "src/components/autoFocusTextField";
 
 function PairList({ data, className, handleRemovePair, setPairField }) {
   return (
@@ -73,9 +74,9 @@ function Actions({ handleSave, handleAddNewPair, className }) {
       <Button onClick={handleAddNewPair} className="mr-auto ml-2">
         Add Pair
       </Button>
-      <Button onClick={handleSave} className="ml-auto mr-2">
+      <DisposableButton onClick={handleSave} className="ml-auto mr-2">
         Save
-      </Button>
+      </DisposableButton>
     </DialogActions>
   );
 }

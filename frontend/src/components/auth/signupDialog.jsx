@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,8 +8,10 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import DisposableButton, { DisposableButtonFalied } from "src/components/disposableButton";
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import PasswordTextField from "src/components/auth/passwordTextField";
+import ArrowTooltip from "src/components/arrowTooltip";
 import Alert from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
@@ -43,7 +44,7 @@ function EmailTextField({ className, setFieldText }) {
 
 function SubmitButton({ className, isEnable, handleOnClick }) {
   return (
-    <Button
+    <DisposableButton
       variant="contained"
       className={className + " w-full font-medium"}
       style={{
@@ -169,10 +170,12 @@ export default function SignupDialog({
       } else {
         setTextErrorAlert(response.payload.data[0]);
         setOpenErrorAlert(true);
+        return DisposableButtonFalied;
       }
     } else {
       setTextErrorAlert(msg);
       setOpenErrorAlert(true);
+      return DisposableButtonFalied;
     }
   };
   const handlePressEnter = (event) => {

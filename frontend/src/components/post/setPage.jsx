@@ -68,7 +68,7 @@ function AddPropertyButton({ className, handleOnClick }) {
   );
 }
 
-function Buttons({
+function Bottom({
   className,
   handleOnClickSaveButton,
   handleOnClickAddNewProperty,
@@ -155,7 +155,7 @@ export default function SetPostPage({ data, handleOnSave, className }) {
           handleRemoveProperty={handleRemoveProperty}
           handleEditProperty={handleEditProperty}
         />
-        <Buttons
+        <Bottom
           className="px-4"
           handleOnClickSaveButton={handleOnClickSaveButton}
           handleOnClickAddNewProperty={handleOpenAddPropertyBox}
