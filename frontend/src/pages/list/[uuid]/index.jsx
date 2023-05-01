@@ -6,12 +6,13 @@ import Typography from "@mui/material/Typography";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
-import Statistic from "src/components/objectRelated/statistic";
-import Header from "src/components/objectRelated/header";
-import PostPreview from "src/components/post/preview";
 import User from "src/components/objectRelated/user";
-import FloatingBox from "src/components/objectRelated/floatingBox";
+import PostPreview from "src/components/post/preview";
+import Header from "src/components/objectRelated/header";
 import CommentDrawer from "src/components/comment/drawer";
+import Statistic from "src/components/objectRelated/statistic";
+import TypographyLinkify from "src/components/typographyLinkify";
+import FloatingBox from "src/components/objectRelated/floatingBox";
 import {
   dateFormat,
   timeFormat,
@@ -57,7 +58,7 @@ function About({ data, className }) {
           className="font-bold whitespace-pre-wrap break-words"
           children={data.title}
         />
-        <Typography
+        <TypographyLinkify
           variant="body1"
           className="font-light mt-2.5 whitespace-pre-wrap break-words"
           children={data.description}

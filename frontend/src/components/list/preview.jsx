@@ -32,7 +32,7 @@ function Content({ data, className }) {
         <Typography
           variant="body1"
           className="truncate whitespace-pre"
-          children={data.description}
+          children={data.description.split('\n')[0]}
         />
       </Box>
     </Box>

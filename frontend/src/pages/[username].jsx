@@ -6,9 +6,10 @@ import Typography from "@mui/material/Typography";
 import ErrorPage from "src/pages/_error";
 import Loading from "src/components/loading";
 import ListItems from "src/components/listItems";
-import Statistic from "src/components/objectRelated/statistic";
-import Header from "src/components/objectRelated/header";
 import ListPreview from "src/components/list/preview";
+import Header from "src/components/objectRelated/header";
+import Statistic from "src/components/objectRelated/statistic";
+import TypographyLinkify from "src/components/typographyLinkify";
 import {
   usersActions,
   usersSelectors,
@@ -53,7 +54,7 @@ function About({ data, className }) {
         color="text.secondary"
         children={"@" + data.username}
       />
-      <Typography
+      <TypographyLinkify
         variant="body1"
         className="font-light mt-2.5 whitespace-pre-wrap break-words"
         children={data.bio}
