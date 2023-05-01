@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
@@ -8,7 +9,9 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import DisposableButton, { DisposableButtonFalied } from "src/components/disposableButton";
+import DisposableButton, {
+  DisposableButtonFalied,
+} from "src/components/disposableButton";
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import PasswordTextField from "src/components/auth/passwordTextField";
 import ArrowTooltip from "src/components/arrowTooltip";
@@ -128,6 +131,7 @@ export default function SignupDialog({
   handleClose,
   handleOpenLoginBox,
 }) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const initialFormData = {
     username: "",
@@ -159,23 +163,31 @@ export default function SignupDialog({
     setFormData(newFormData);
     setSubmitButtonEnable(checkNoEmptyField(newFormData));
   };
+  const handleOnSuccessfulSubmit = async () => {
+    const response = await dispatch(authActions.login(formData));
+    if (!response.payload.error) {
+      await dispatch(authActions.getMe());
+      handleCloseBox();
+      setOpenSuccessfulAlert(true);
+      router.reload();
+    }
+  };
+  const handleOnUnsuccessfulSubmit = (errorMessage) => {
+    setTextErrorAlert(errorMessage);
+    setOpenErrorAlert(true);
+    return DisposableButtonFalied;
+  };
   const handleOnSubmit = async () => {
     const { error, msg } = validateSignupForm(formData);
     if (!error) {
       const response = await dispatch(authActions.signup(formData));
       if (!response.payload.error) {
-        handleCloseBox();
-        setOpenSuccessfulAlert(true);
-        handleOpenLoginBox();
+        handleOnSuccessfulSubmit();
       } else {
-        setTextErrorAlert(response.payload.data[0]);
-        setOpenErrorAlert(true);
-        return DisposableButtonFalied;
+        return handleOnUnsuccessfulSubmit(response.payload.data[0]);
       }
     } else {
-      setTextErrorAlert(msg);
-      setOpenErrorAlert(true);
-      return DisposableButtonFalied;
+      return handleOnUnsuccessfulSubmit(msg);
     }
   };
   const handlePressEnter = (event) => {
