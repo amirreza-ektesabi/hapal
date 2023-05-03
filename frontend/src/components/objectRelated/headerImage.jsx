@@ -37,7 +37,7 @@ export default function HeaderImage({
   className,
   colorDecider = "",
   forEdit = false,
-  height = 16,
+  height = 14,
 }) {
   return (
     <Box className={className + " relative w-full bg-blackZ"}>

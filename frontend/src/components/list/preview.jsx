@@ -46,10 +46,10 @@ export default function ListPreview({ uuid, className }) {
   return (
     <Box className={className}>
       <CardTop data={data} className="mb-2" />
-      <Card className="h-64 rounded-2xl">
+      <Card className="h-[14rem] rounded-2xl">
         <CardActionArea>
           <Link href={listHref}>
-            <Media data={data} className="h-64 w-full" />
+            <Media data={data} className="h-[14rem] w-full" />
             <Content data={data} />
           </Link>
         </CardActionArea>
