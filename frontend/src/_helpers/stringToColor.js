@@ -1,7 +1,7 @@
 import theme from "src/general/theme";
 
 export function stringToColor(str = "") {
-  if (str === "") return theme.palette.blueZ;
+  if (str === "") return theme.palette.greyZ;
   var hash = 0;
   for (var i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);

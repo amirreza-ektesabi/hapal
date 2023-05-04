@@ -25,6 +25,9 @@ function UsernameTextField({ className, setFieldText }) {
       label="Username"
       variant="outlined"
       margin="dense"
+      inputProps={{
+        autoCapitalize: "none",
+      }}
       onChange={setFieldText}
       className={className + " w-full rounded-md"}
     />

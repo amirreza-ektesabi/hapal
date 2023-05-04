@@ -11,7 +11,7 @@ function NotAuthenticatedProfile() {
         <Box className="flex justify-center place-items-center">
           <Box className="max-w-lg w-full">
             <Header
-              data={{ type: "account", name: "Hapal" }}
+              data={{ type: "account", name: "" }}
               includeMoreIcon={true}
               includeShareIcon={false}
               includeFollowButton={false}

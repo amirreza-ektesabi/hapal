@@ -3,11 +3,13 @@ import "tailwindcss/tailwind.css";
 import * as React from "react";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
 import NoSsr from "@mui/material/NoSsr";
+import CssBaseline from "@mui/material/CssBaseline";
 import darkTheme from "src/general/theme";
 import store from "src/_store";
 import Tabbar from "src/components/tabbar";
+import Authbar from "src/components/authbar";
 import AuthContext from "src/components/auth/authContext";
 import LoginDialog from "src/components/auth/loginDialog";
 import SignupDialog from "src/components/auth/signupDialog";
@@ -37,6 +39,7 @@ export default function App({ Component, pageProps, ...appProps }) {
   };
 
   const isHomePage = appProps.router.pathname === "/";
+  const includeAuthbar = !isHomePage && !authState.user;
 
   return (
     <Provider store={store}>
@@ -44,6 +47,8 @@ export default function App({ Component, pageProps, ...appProps }) {
         <NoSsr>
           <CssBaseline />
           <AuthContext.Provider value={authContextValue}>
+            {includeAuthbar && <Authbar />}
+            <Box className={includeAuthbar ? "mt-[3rem]" : ""} />
             <Component {...pageProps} />
             {!isHomePage && <Tabbar />}
             <LoginDialog
