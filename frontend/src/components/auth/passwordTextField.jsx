@@ -19,8 +19,8 @@ function VisibilityIcon({ showPassword, ...props }) {
 
 export default function PasswordTextField({
   className,
-  setFieldText,
   confirm = false,
+  ...props
 }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -31,7 +31,6 @@ export default function PasswordTextField({
     <TextField
       label={!confirm ? "Password" : "Confirm Password"}
       variant="outlined"
-      onChange={setFieldText}
       type={showPassword ? "text" : "password"}
       InputProps={{
         endAdornment: (
@@ -46,6 +45,7 @@ export default function PasswordTextField({
         ),
       }}
       className={className + " w-full rounded-md"}
+      {...props}
     />
   );
 }

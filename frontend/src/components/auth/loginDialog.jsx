@@ -19,7 +19,7 @@ import theme from "src/general/theme";
 import messages from "src/general/messages";
 import { authActions } from "src/_store";
 
-function UsernameTextField({ className, setFieldText }) {
+function UsernameTextField({ className, ...props }) {
   return (
     <AutoFocusTextField
       label="Username"
@@ -28,8 +28,8 @@ function UsernameTextField({ className, setFieldText }) {
       inputProps={{
         autoCapitalize: "none",
       }}
-      onChange={setFieldText}
       className={className + " w-full rounded-md"}
+      {...props}
     />
   );
 }
@@ -83,20 +83,22 @@ function Title({ handleCloseDialog }) {
 }
 
 function Content({
-  data,
-  submitButtonEnable,
-  setFieldText,
+  inputRefs,
+  handleOnChange,
   handleOnSubmit,
   handleCloseDialog,
   handleOpenSignupBox,
+  submitButtonEnable,
 }) {
   return (
     <DialogContent className="my-4 flex flex-col place-items-center space-y-6">
       <UsernameTextField
-        setFieldText={(event) => setFieldText(event, "username")}
+        inputRef={inputRefs.username}
+        onChange={handleOnChange}
       />
       <PasswordTextField
-        setFieldText={(event) => setFieldText(event, "password")}
+        inputRef={inputRefs.password}
+        onChange={handleOnChange}
       />
       <SubmitButton
         handleOnClick={handleOnSubmit}
@@ -117,8 +119,10 @@ export default function LoginDialog({
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const initialFormData = { username: "", password: "" };
-  const [formData, setFormData] = React.useState(initialFormData);
+  const fieldNames = ["username", "password"];
+  const inputRefs = Object.fromEntries(
+    fieldNames.map((key) => [key, React.useRef()])
+  );
   const [submitButtonEnable, setSubmitButtonEnable] = React.useState(false);
   const [openSuccessfulAlert, setOpenSuccessfulAlert] = React.useState(false);
   const [textErrorAlert, setTextErrorAlert] = React.useState(null);
@@ -126,33 +130,40 @@ export default function LoginDialog({
 
   const handleCloseBox = () => {
     handleClose();
-    setFormData(initialFormData);
     setSubmitButtonEnable(false);
     setTextErrorAlert(null);
     setOpenErrorAlert(false);
   };
+  const getFormData = () => {
+    return Object.fromEntries(
+      fieldNames.map((key) => [key, inputRefs[key].current.value])
+    );
+  };
   const checkNoEmptyField = (data) => {
     return Object.keys(data).every((key) => data[key].trim() !== "");
   };
-  const setFieldText = (event, fieldName) => {
-    const newFormData = {
-      ...formData,
-      [fieldName]: event.target.value,
-    };
-    setFormData(newFormData);
-    setSubmitButtonEnable(checkNoEmptyField(newFormData));
+  const handleOnChange = () => {
+    const formData = getFormData();
+    setSubmitButtonEnable(checkNoEmptyField(formData));
+  };
+  const handleOnSuccessfulSubmit = async () => {
+    await dispatch(authActions.getMe());
+    handleCloseBox();
+    setOpenSuccessfulAlert(true);
+    router.reload();
+  };
+  const handleOnUnsuccessfulSubmit = (errorMessage) => {
+    setTextErrorAlert(errorMessage);
+    setOpenErrorAlert(true);
+    return DisposableButtonFalied;
   };
   const handleOnSubmit = async () => {
+    const formData = getFormData();
     const response = await dispatch(authActions.login(formData));
     if (!response.payload.error) {
-      await dispatch(authActions.getMe());
-      handleCloseBox();
-      setOpenSuccessfulAlert(true);
-      router.reload();
+      await handleOnSuccessfulSubmit();
     } else {
-      setTextErrorAlert(messages.wrongDataOnLogin);
-      setOpenErrorAlert(true);
-      return DisposableButtonFalied;
+      return handleOnUnsuccessfulSubmit(messages.wrongDataOnLogin);
     }
   };
   const handlePressEnter = (event) => {
@@ -172,12 +183,12 @@ export default function LoginDialog({
       >
         <Title handleCloseDialog={handleCloseBox} />
         <Content
-          data={formData}
-          submitButtonEnable={submitButtonEnable}
-          setFieldText={setFieldText}
+          inputRefs={inputRefs}
+          handleOnChange={handleOnChange}
           handleOnSubmit={handleOnSubmit}
           handleCloseDialog={handleCloseBox}
           handleOpenSignupBox={handleOpenSignupBox}
+          submitButtonEnable={submitButtonEnable}
         />
       </Dialog>
       <Alert

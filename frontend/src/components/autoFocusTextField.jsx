@@ -1,8 +1,8 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 
-export default function AutoFocusTextField(props) {
-  const inputRef = React.useRef();
+export default function AutoFocusTextField({ inputRef, ...props }) {
+  if (inputRef === undefined) inputRef = React.useRef();
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {

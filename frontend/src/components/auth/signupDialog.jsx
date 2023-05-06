@@ -21,7 +21,7 @@ import messages from "src/general/messages";
 import { authActions } from "src/_store";
 import { validateSignupForm } from "src/_helpers/validators";
 
-function UsernameTextField({ className, setFieldText }) {
+function UsernameTextField({ className, ...props }) {
   return (
     <AutoFocusTextField
       label="Username"
@@ -30,13 +30,13 @@ function UsernameTextField({ className, setFieldText }) {
       inputProps={{
         autoCapitalize: "none",
       }}
-      onChange={setFieldText}
       className={className + " w-full rounded-md"}
+      {...props}
     />
   );
 }
 
-function EmailTextField({ className, setFieldText }) {
+function EmailTextField({ className, ...props }) {
   return (
     <TextField
       label="Email"
@@ -45,8 +45,8 @@ function EmailTextField({ className, setFieldText }) {
       inputProps={{
         autoCapitalize: "none",
       }}
-      onChange={setFieldText}
       className={className + " w-full rounded-md"}
+      {...props}
     />
   );
 }
@@ -100,25 +100,28 @@ function Title({ handleCloseDialog }) {
 }
 
 function Content({
-  data,
-  submitButtonEnable,
-  setFieldText,
+  inputRefs,
+  handleOnChange,
   handleOnSubmit,
   handleCloseDialog,
   handleOpenLoginBox,
+  submitButtonEnable,
 }) {
   return (
     <DialogContent className="my-4 flex flex-col place-items-center space-y-6">
       <UsernameTextField
-        setFieldText={(event) => setFieldText(event, "username")}
+        inputRef={inputRefs.username}
+        onChange={handleOnChange}
       />
-      <EmailTextField setFieldText={(event) => setFieldText(event, "email")} />
+      <EmailTextField inputRef={inputRefs.email} onChange={handleOnChange} />
       <PasswordTextField
-        setFieldText={(event) => setFieldText(event, "password")}
+        inputRef={inputRefs.password}
+        onChange={handleOnChange}
       />
       <PasswordTextField
         confirm={true}
-        setFieldText={(event) => setFieldText(event, "confirmPassword")}
+        inputRef={inputRefs.confirmPassword}
+        onChange={handleOnChange}
       />
       <SubmitButton
         handleOnClick={handleOnSubmit}
@@ -139,13 +142,10 @@ export default function SignupDialog({
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const initialFormData = {
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  };
-  const [formData, setFormData] = React.useState(initialFormData);
+  const fieldNames = ["username", "email", "password", "confirmPassword"];
+  const inputRefs = Object.fromEntries(
+    fieldNames.map((key) => [key, React.useRef()])
+  );
   const [submitButtonEnable, setSubmitButtonEnable] = React.useState(false);
   const [openSuccessfulAlert, setOpenSuccessfulAlert] = React.useState(false);
   const [textErrorAlert, setTextErrorAlert] = React.useState(null);
@@ -153,23 +153,23 @@ export default function SignupDialog({
 
   const handleCloseBox = () => {
     handleClose();
-    setFormData(initialFormData);
     setSubmitButtonEnable(false);
     setTextErrorAlert(null);
     setOpenErrorAlert(false);
   };
+  const getFormData = () => {
+    return Object.fromEntries(
+      fieldNames.map((key) => [key, inputRefs[key].current.value])
+    );
+  };
   const checkNoEmptyField = (data) => {
     return Object.keys(data).every((key) => data[key].trim() !== "");
   };
-  const setFieldText = (event, fieldName) => {
-    const newFormData = {
-      ...formData,
-      [fieldName]: event.target.value,
-    };
-    setFormData(newFormData);
-    setSubmitButtonEnable(checkNoEmptyField(newFormData));
+  const handleOnChange = () => {
+    const formData = getFormData();
+    setSubmitButtonEnable(checkNoEmptyField(formData));
   };
-  const handleOnSuccessfulSubmit = async () => {
+  const handleOnSuccessfulSubmit = async (formData) => {
     const response = await dispatch(authActions.login(formData));
     if (!response.payload.error) {
       await dispatch(authActions.getMe());
@@ -184,11 +184,12 @@ export default function SignupDialog({
     return DisposableButtonFalied;
   };
   const handleOnSubmit = async () => {
+    const formData = getFormData();
     const { error, msg } = validateSignupForm(formData);
     if (!error) {
       const response = await dispatch(authActions.signup(formData));
       if (!response.payload.error) {
-        handleOnSuccessfulSubmit();
+        await handleOnSuccessfulSubmit(formData);
       } else {
         return handleOnUnsuccessfulSubmit(response.payload.data[0]);
       }
@@ -213,12 +214,12 @@ export default function SignupDialog({
       >
         <Title handleCloseDialog={handleCloseBox} />
         <Content
-          data={formData}
-          submitButtonEnable={submitButtonEnable}
-          setFieldText={setFieldText}
+          inputRefs={inputRefs}
+          handleOnChange={handleOnChange}
           handleOnSubmit={handleOnSubmit}
           handleCloseDialog={handleCloseBox}
           handleOpenLoginBox={handleOpenLoginBox}
+          submitButtonEnable={submitButtonEnable}
         />
       </Dialog>
       <Alert
