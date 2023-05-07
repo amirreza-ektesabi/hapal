@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -114,6 +115,7 @@ function Top({ data, className }) {
 }
 
 export default function PostPage({ uuid }) {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
@@ -125,6 +127,10 @@ export default function PostPage({ uuid }) {
   const swrFetcher = () => getPost(uuid);
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
+
+  React.useEffect(() => {
+    setDrawerIsOpen(router.query.reply === "1");
+  }, [router.query.reply]);
 
   React.useEffect(() => {
     document.title = pageTitle("{0}", data?.title);

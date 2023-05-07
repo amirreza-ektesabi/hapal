@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import DisposableButton from "src/components/disposableButton";
 import theme from "src/general/theme";
+import AutoFocusTextField from "src/components/autoFocusTextField";
 
 export default function ReplyBox({
   textInputBody,
@@ -13,7 +14,7 @@ export default function ReplyBox({
 }) {
   return (
     <Box className="px-4 space-y-1">
-      <TextField
+      <AutoFocusTextField
         multiline
         variant="outlined"
         className="w-full"

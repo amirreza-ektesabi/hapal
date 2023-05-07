@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -141,6 +142,7 @@ function Posts({ data, className }) {
 }
 
 export default function ListPage({ uuid }) {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
@@ -153,6 +155,10 @@ export default function ListPage({ uuid }) {
   const { data: response, isLoading } = useSwrNoFocus(swrKey, swrFetcher);
   const isError = response && response.error;
 
+  React.useEffect(() => {
+    setDrawerIsOpen(router.query.reply === '1');
+  }, [router.query.reply]);
+  
   React.useEffect(() => {
     document.title = pageTitle("{0}", data?.title);
   }, [data]);
