@@ -1,3 +1,4 @@
+from baseapp.uuid_generator import uuid_generator
 from follows.models import Follow
 from lists.models import List
 
@@ -7,7 +8,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 
-import uuid
 from model_bakery import baker
 
 
@@ -17,7 +17,7 @@ class AbstractTestFollow:
 
     def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
-            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
+            return {'uuid': uuid_generator() if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     
@@ -65,7 +65,7 @@ class AbstractTestUnfollow:
 
     def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
-            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
+            return {'uuid': uuid_generator() if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     
@@ -112,7 +112,7 @@ class AbstractTestRetrieveListOfFollowers:
 
     def get_kwargs(self, followed) -> dict:
         if self.followed_model == List:
-            return {'uuid': str(uuid.uuid4()) if followed is None else followed.uuid}
+            return {'uuid': uuid_generator() if followed is None else followed.uuid}
         else:
             return {'username': 'testuser2' if followed is None else followed.username}
     

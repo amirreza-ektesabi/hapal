@@ -35,6 +35,7 @@ class PostAdmin(SharedBaseAdmin):
         'title__icontains',
     ]
     list_select_related = [
+        'uuid__exact',
         'user',
         'added_to',
     ]

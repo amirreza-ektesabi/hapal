@@ -1,12 +1,13 @@
 from baseapp.managers import SharedBaseManager
+from baseapp.uuid_generator import uuid_generator
 
-from django.db import DEFAULT_DB_ALIAS, models
+from django.conf import settings
 from django.db.models import QuerySet
-from django.contrib.contenttypes import fields as contenttypes_fields
+from django.db import DEFAULT_DB_ALIAS, models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes import fields as contenttypes_fields
 
 from softdelete.models import SoftDeleteObject
-from uuid import uuid4
 
 
 class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRelation):
@@ -26,9 +27,10 @@ class GenericRelationWithoutCommentAsRelatedObject(contenttypes_fields.GenericRe
 class SharedBaseModel(SoftDeleteObject):
     objects = SharedBaseManager()
 
-    uuid = models.UUIDField(
+    uuid = models.CharField(
         unique=True,
-        default=uuid4,
+        default=uuid_generator,
+        max_length=settings.UUID_LENGTH,
         editable=False,
         db_index=True,
     )

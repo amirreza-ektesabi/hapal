@@ -1,11 +1,11 @@
 from baseapp.models import SharedBaseModel
+from baseapp.uuid_generator import uuid_generator
 
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
-
-from uuid import uuid4
 
 
 class Post(SharedBaseModel):
@@ -13,7 +13,7 @@ class Post(SharedBaseModel):
         max_length=255,
         blank=True
     )
-    
+
     added_to = models.ForeignKey(
         'lists.List',
         models.DO_NOTHING,
@@ -30,7 +30,7 @@ class Post(SharedBaseModel):
 class Property(models.Model):
     class Type(models.IntegerChoices):
         Text = 0
-    
+
     post = models.ForeignKey(
         'Post',
         models.CASCADE,
@@ -38,13 +38,14 @@ class Property(models.Model):
         related_name='properties',
     )
 
-    puuid = models.UUIDField(
-        default=uuid4,
+    puuid = models.CharField(
+        default=uuid_generator,
+        max_length=settings.UUID_LENGTH,
         editable=False
     )
-    
+
     order_number = models.PositiveIntegerField()
-    
+
     key = models.CharField(
         max_length=50,
         blank=True
@@ -91,9 +92,9 @@ class Pair(models.Model):
         limit_choices_to=value_limit_choices,
         related_name='pairs',
     )
-    
+
     value_id = models.PositiveIntegerField()
-    
+
     value = contenttypes_fields.GenericForeignKey(
         'value_type',
         'value_id'

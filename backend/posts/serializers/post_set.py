@@ -3,6 +3,7 @@ from posts.serializers.property import PropertySerializer
 from lists.serializers import ListSubviewSerializer
 from baseapp.serializers import SharedObjectFullviewSerializer
 
+from django.db.transaction import atomic
 
 class PostSetSerializer(SharedObjectFullviewSerializer):
     class Meta:
@@ -35,6 +36,7 @@ class PostSetSerializer(SharedObjectFullviewSerializer):
             ))
             serializer_class.create(validated_data)
 
+    @atomic
     def create(self, validated_data):
         property_list = validated_data.pop('properties', [])
         
@@ -44,6 +46,7 @@ class PostSetSerializer(SharedObjectFullviewSerializer):
 
         return instance
     
+    @atomic
     def update(self, instance, validated_data):
         property_list = validated_data.pop('properties', [])
         

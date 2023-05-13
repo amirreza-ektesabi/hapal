@@ -8,8 +8,7 @@ from django.utils.safestring import SafeString
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
 
-from uuid import UUID
-from typing import Any, Union, Tuple
+from typing import Any, Tuple
 
 
 def link_to_listpage(text_to_show: Any, app_model_label: str, **kwargs) -> SafeString:
@@ -23,13 +22,6 @@ def link_to_listpage(text_to_show: Any, app_model_label: str, **kwargs) -> SafeS
 def link_to_objectpage(text_to_show: Any, app_model_label: str, *args) -> SafeString:
     href = reverse('admin:{}_change'.format(app_model_label), args=args)
     return format_html('<a href="{}">{}</a>', href, str(text_to_show))
-
-
-def string_to_UUID(as_string: str) -> Union[UUID, None]:
-    try:
-        return UUID(as_string.strip())
-    except ValueError:
-        return None
 
 
 class SharedBaseAdmin(admin.ModelAdmin):
@@ -53,26 +45,13 @@ class SharedBaseAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
-    
+
     def has_delete_permission(self, request: HttpRequest, obj=None) -> bool:
         return False
 
     def __init__(self, model, admin_site):
         super().__init__(model, admin_site)
         self.opts = self.model._meta
-
-    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str) -> Tuple[QuerySet, bool]:
-        queryset, may_have_duplicates = super().get_search_results(
-            request, queryset, search_term
-        )
-
-        search_term_as_uuid = string_to_UUID(search_term)
-        if search_term_as_uuid is not None:
-            queryset |= self.model.objects.filter(
-                uuid__exact=search_term_as_uuid
-            )
-
-        return queryset, may_have_duplicates
 
     @admin.display(ordering='user__username', description='owner')
     def owner(self, object: SharedBaseModel) -> SafeString:

@@ -37,6 +37,7 @@ class CommentAdmin(SharedBaseAdmin):
         'body__icontains',
     ]
     list_select_related = [
+        'uuid__exact',
         'user',
         'replied_to_type',
     ]

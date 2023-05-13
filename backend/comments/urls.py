@@ -11,5 +11,5 @@ comment_urls = [
 ]
 
 urlpatterns = [
-    path('<uuid:uuid>/', include(comment_urls), kwargs={'type': 'comment'}),
+    path('<str:uuid>/', include(comment_urls), kwargs={'type': 'comment'}),
 ]

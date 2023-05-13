@@ -1,3 +1,4 @@
+from baseapp.uuid_generator import uuid_generator
 from posts.models import Post, Property, Pair, PROPERTY_TYPES
 from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
 from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
@@ -7,7 +8,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 
-import uuid
 import pytest
 from model_bakery import baker
 
@@ -33,7 +33,7 @@ class TestUpdatePost:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_if_post_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -132,7 +132,7 @@ class TestDestroyPost:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_if_post_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -157,7 +157,7 @@ class TestRetrievePost:
         )
 
     def test_if_post_doesnt_exist_returns_404(self, anonymous_user: APIClient):
-        response = self.do(anonymous_user, str(uuid.uuid4()))
+        response = self.do(anonymous_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -177,7 +177,7 @@ class TestRetrieveListOfProperties:
         )
 
     def test_if_post_doesnt_exist_returns_404(self, anonymous_user: APIClient):
-        response = self.do(anonymous_user, str(uuid.uuid4()))
+        response = self.do(anonymous_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

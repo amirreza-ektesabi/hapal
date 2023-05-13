@@ -34,6 +34,7 @@ class ListAdmin(SharedBaseAdmin):
         'likes_',
     ]
     search_fields = [
+        'uuid__exact',
         'title__icontains',
         'description__icontains',
     ]

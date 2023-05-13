@@ -1,3 +1,4 @@
+from baseapp.uuid_generator import uuid_generator
 from lists.models import List
 from posts.models import PROPERTY_TYPES, Pair, Post, Property
 from comments.tests.test_comments import AbstractTestAddComment, AbstractTestRetrieveListOfComments
@@ -9,7 +10,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 
-import uuid
 import pytest
 from model_bakery import baker
 
@@ -82,7 +82,7 @@ class TestUpdateList:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_if_list_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -147,7 +147,7 @@ class TestDestroyList:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_if_list_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -172,7 +172,7 @@ class TestRetrieveList:
         )
 
     def test_if_list_doesnt_exist_returns_404(self, anonymous_user: APIClient):
-        response = self.do(anonymous_user, str(uuid.uuid4()))
+        response = self.do(anonymous_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -205,7 +205,7 @@ class TestAddPost:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_if_list_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -282,7 +282,7 @@ class TestRetrieveListOfPosts:
         )
 
     def test_if_list_doesnt_exist_returns_404(self, anonymous_user: APIClient):
-        response = self.do(anonymous_user, str(uuid.uuid4()))
+        response = self.do(anonymous_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

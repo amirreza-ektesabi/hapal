@@ -14,5 +14,5 @@ post_urls = [
 ]
 
 urlpatterns = [
-    path('<uuid:uuid>/', include(post_urls), kwargs={'type': 'post'}),
+    path('<str:uuid>/', include(post_urls), kwargs={'type': 'post'}),
 ]

@@ -1,3 +1,4 @@
+from baseapp.uuid_generator import uuid_generator
 from likes.models import Like
 
 from django.urls import reverse
@@ -6,7 +7,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 
-import uuid
 from model_bakery import baker
 
 
@@ -26,7 +26,7 @@ class AbstractTestLike:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_if_liked_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
     
@@ -68,7 +68,7 @@ class AbstractTestUnlike:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_if_liked_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
     
@@ -103,7 +103,7 @@ class AbstractTestRetrieveListOfLikes:
         )
 
     def test_if_liked_doesnt_exist_returns_404(self, authenticated_user: APIClient):
-        response = self.do(authenticated_user, str(uuid.uuid4()))
+        response = self.do(authenticated_user, uuid_generator())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 

@@ -17,5 +17,5 @@ list_urls = [
 
 urlpatterns = [
     path('create/', CreateList.as_view(), name='list_create'),
-    path('<uuid:uuid>/', include(list_urls), kwargs={'type': 'list'}),
+    path('<str:uuid>/', include(list_urls), kwargs={'type': 'list'}),
 ]

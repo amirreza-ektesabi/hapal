@@ -1,9 +1,8 @@
 from accounts.models import Account
 
-from django.urls import reverse
-from rest_framework import serializers
 from djoser.conf import settings
 from djoser.serializers import UserCreateSerializer as DjoserUserCreateSerializer
+from rest_framework import serializers
 
 
 class UserCreateSerializer(DjoserUserCreateSerializer):

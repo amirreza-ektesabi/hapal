@@ -116,6 +116,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+UUID_LENGTH = 11
+
 AUTH_USER_MODEL = 'accounts.Account'
 
 REST_FRAMEWORK = {
