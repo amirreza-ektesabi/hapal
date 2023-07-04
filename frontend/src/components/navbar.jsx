@@ -18,11 +18,11 @@ function Logo({ ...props }) {
 }
 
 export default function Navbar() {
-  const { openSignupBox } = React.useContext(AuthContext);
+  const { openLoginBox } = React.useContext(AuthContext);
 
   return (
     <Toolbar className="justify-center h-[70px] bg-blackZ">
-      <Box className="flex w-full max-w-[15rem] max-[470px]:max-w-[20rem] md:max-w-[28rem] lg:max-w-[40rem] 2xl:max-w-[52rem] place-items-center px-1">
+      <Box className="flex w-full mx-4 min-[400px]:max-w-[20rem] md:max-w-[28rem] lg:max-w-[44rem] 2xl:max-w-[54rem] place-items-center px-1">
         <Box className="flex align-bottom md:mt-[8px] space-x-[6px]">
           <Link href={urls.home}>
             <Logo width="46" className="fill-blueZ" />
@@ -38,8 +38,8 @@ export default function Navbar() {
           <Button
             variant="contained"
             className="rounded-full bg-blueZ font-medium text-sm"
-            children="Sign up"
-            onClick={openSignupBox}
+            children="Log in"
+            onClick={openLoginBox}
           />
           <Link href={urls.explore}>
             <Button
