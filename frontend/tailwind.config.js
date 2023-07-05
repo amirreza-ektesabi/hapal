@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   important: "#__next",
@@ -10,6 +12,13 @@ module.exports = {
         whiteZ: "#d8d8d8",
         blueZ: "#1976d2",
       },
+    },
+    screens: {
+      mobile: "480px",
+      tablet: "768px",
+      laptop: "1024px",
+      desktop: "1280px",
+      ...defaultTheme.screens,
     },
   },
   plugins: [],

@@ -22,29 +22,24 @@ export default function Navbar() {
 
   return (
     <Toolbar className="justify-center h-[70px] bg-blackZ">
-      <Box className="flex w-full mx-4 min-[400px]:max-w-[20rem] md:max-w-[28rem] lg:max-w-[44rem] 2xl:max-w-[54rem] place-items-center px-1">
-        <Box className="flex align-bottom md:mt-[8px] space-x-[6px]">
+      <Box className="flex w-full mx-8 laptop:max-w-[58rem] desktop:max-w-[70rem] place-items-center px-1">
+        <Box className="flex align-bottom space-x-[6px]">
           <Link href={urls.home}>
-            <Logo width="46" className="fill-blueZ" />
+            <Logo className="fill-blueZ w-10 tablet:w-12" />
           </Link>
-          <Typography
-            fontFamily="George"
-            className="text-[0px] md:text-[33px] text-whiteZ mt-[2px]"
-            children="Hapal"
-          />
         </Box>
         <Box className="grow" />
-        <Box className="flex space-x-2">
+        <Box className="flex space-x-3">
           <Button
             variant="contained"
-            className="rounded-full bg-blueZ font-medium text-sm"
+            className="rounded-full bg-blueZ font-medium text-sm tablet:text-base tablet:px-6"
             children="Log in"
             onClick={openLoginBox}
           />
           <Link href={urls.explore}>
             <Button
               variant="contained"
-              className="mr-0 bg-whiteZ rounded-full text-blackZ font-medium text-sm"
+              className="mr-0 bg-whiteZ rounded-full text-blackZ font-medium text-sm tablet:text-base tablet:px-6"
               children="Explore"
             />
           </Link>
