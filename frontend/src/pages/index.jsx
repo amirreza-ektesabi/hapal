@@ -17,7 +17,7 @@ function BoxItemIcon({ ...props }) {
 
 function BoxItem({ children }) {
   return (
-    <Box className="flex flex-col bg-blackZ border-[1px] border-blueZ rounded-3xl max-w-[21rem] laptop:max-w-full w-full aspect-square p-4">
+    <Box className="flex flex-col bg-blackZ border-[1px] border-blueZ rounded-3xl max-w-[21rem] laptop:max-w-full w-full aspect-square p-4 hover:bg-blueZ/[.1] hover:cursor-pointer">
       <Box className="mx-auto mt-8">
         <BoxItemIcon width="48" className="fill-blueZ" />
       </Box>
