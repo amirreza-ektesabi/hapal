@@ -15,7 +15,7 @@ import DisposableButton, {
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import PasswordTextField from "src/components/auth/passwordTextField";
 import ArrowTooltip from "src/components/arrowTooltip";
-import Alert from "src/components/alert";
+import { AlertContext } from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
 import { authActions } from "src/_store";
@@ -142,20 +142,18 @@ export default function SignupDialog({
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { setAlert } = React.useContext(AlertContext);
+
   const fieldNames = ["username", "email", "password", "confirmPassword"];
   const inputRefs = Object.fromEntries(
     fieldNames.map((key) => [key, React.useRef()])
   );
   const [submitButtonEnable, setSubmitButtonEnable] = React.useState(false);
-  const [openSuccessfulAlert, setOpenSuccessfulAlert] = React.useState(false);
-  const [textErrorAlert, setTextErrorAlert] = React.useState(null);
-  const [openErrorAlert, setOpenErrorAlert] = React.useState(false);
 
   const handleCloseBox = () => {
     handleClose();
     setSubmitButtonEnable(false);
-    setTextErrorAlert(null);
-    setOpenErrorAlert(false);
   };
   const getFormData = () => {
     return Object.fromEntries(
@@ -174,13 +172,12 @@ export default function SignupDialog({
     if (!response.payload.error) {
       await dispatch(authActions.getMe());
       handleCloseBox();
-      setOpenSuccessfulAlert(true);
+      setAlert(messages.successfulSignup, "success");
       router.reload();
     }
   };
   const handleOnUnsuccessfulSubmit = (errorMessage) => {
-    setTextErrorAlert(errorMessage);
-    setOpenErrorAlert(true);
+    setAlert(errorMessage, "error", true);
     return DisposableButtonFalied;
   };
   const handleOnSubmit = async () => {
@@ -222,18 +219,6 @@ export default function SignupDialog({
           submitButtonEnable={submitButtonEnable}
         />
       </Dialog>
-      <Alert
-        open={openErrorAlert}
-        setOpen={setOpenErrorAlert}
-        text={textErrorAlert}
-        mode="error"
-      />
-      <Alert
-        open={openSuccessfulAlert}
-        setOpen={setOpenSuccessfulAlert}
-        text={messages.successfulSignup}
-        mode="success"
-      />
     </React.StrictMode>
   );
 }

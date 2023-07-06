@@ -89,8 +89,8 @@ export default function DeleteItem({ data, placement, handleMenuClose }) {
     const deletedReducer = deletedReducerMap[data.type];
     dispatch(deletedReducer(data));
     handleCloseAlertDialog();
-    setAlert(getAlertMessage(), "success");
     if (placement === "header") redirectAfterDelete();
+    setAlert(getAlertMessage(), "success", placement !== "header");
   };
 
   return (

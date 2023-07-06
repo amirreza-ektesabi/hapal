@@ -12,7 +12,7 @@ import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ArrowTooltip from "src/components/arrowTooltip";
 import CircleIcon from "src/components/circleIcon";
-import Alert from "src/components/alert";
+import { AlertContext } from "src/components/alert";
 import {
   RedditLogo,
   TelegramLogo,
@@ -90,14 +90,14 @@ function Title({ handleClose }) {
 }
 
 function CopyLink({ link }) {
+  const { setAlert } = React.useContext(AlertContext);
   const inputRef = React.useRef();
-  const [openAlert, setOpenAlert] = React.useState(false);
 
   const copyToClipboard = () => {
     inputRef.current.select();
     if (window.isSecureContext) {
       navigator.clipboard.writeText(link);
-      setOpenAlert(true);
+      setAlert(messages.linkCopied, "success", true);
     }
   };
 
@@ -126,12 +126,6 @@ function CopyLink({ link }) {
             : undefined
         }
         onClick={copyToClipboard}
-      />
-      <Alert
-        open={openAlert}
-        setOpen={setOpenAlert}
-        text={messages.linkCopied}
-        mode="success"
       />
     </React.StrictMode>
   );

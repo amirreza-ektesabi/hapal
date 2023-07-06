@@ -14,9 +14,14 @@ export function AlertProvider({ children }) {
     mode: null,
   });
   const contextValue = {
-    setAlert: (message, mode) => {
-      const data = { message, mode };
-      localStorage.setItem("alert", JSON.stringify(data));
+    setAlert: function (message, mode, showNow = false) {
+      const alert = { message, mode };
+      if (showNow) {
+        setState(alert);
+        setOpen(true);
+      } else {
+        localStorage.setItem("alert", JSON.stringify(alert));
+      }
     },
   };
 
