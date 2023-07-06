@@ -12,10 +12,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AuthContext from "src/components/auth/authContext";
+import { AlertContext } from "src/components/alert";
 import DisposableButton from "src/components/disposableButton";
 import { listsActions, postsActions, commentsActions } from "src/_store";
-import { stringFormat } from "src/_helpers";
+import { stringFormat, truncate } from "src/_helpers";
 import urls from "src/general/urls";
+import messages from "src/general/messages";
 
 const deletedReducerMap = {
   list: listsActions.deleted,
@@ -56,6 +58,7 @@ function AlertDialog({ data, open, handleClose, handleOnDelete }) {
 export default function DeleteItem({ data, placement, handleMenuClose }) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { setAlert } = React.useContext(AlertContext);
 
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
 
@@ -73,10 +76,20 @@ export default function DeleteItem({ data, placement, handleMenuClose }) {
       redirectUrl = stringFormat(urls.user, data.user.username);
     if (redirectUrl) router.replace(redirectUrl);
   };
+  const getAlertMessage = () => {
+    if (data.type === "post")
+      return stringFormat(messages.postDeleted, truncate(data.title, 20));
+    else if (data.type === "list")
+      return stringFormat(messages.listDeleted, truncate(data.title, 20));
+    else if (data.type === "comment") {
+      return stringFormat(messages.commentDeleted, truncate(data.body, 20));
+    }
+  };
   const handleOnDelete = () => {
     const deletedReducer = deletedReducerMap[data.type];
     dispatch(deletedReducer(data));
     handleCloseAlertDialog();
+    setAlert(getAlertMessage(), "success");
     if (placement === "header") redirectAfterDelete();
   };
 

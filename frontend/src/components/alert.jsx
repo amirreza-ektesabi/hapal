@@ -1,6 +1,46 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+
+export const AlertContext = React.createContext(null);
+
+export function AlertProvider({ children }) {
+  const router = useRouter();
+
+  const [open, setOpen] = React.useState(false);
+  const [state, setState] = React.useState({
+    message: null,
+    mode: null,
+  });
+  const contextValue = {
+    setAlert: (message, mode) => {
+      const data = { message, mode };
+      localStorage.setItem("alert", JSON.stringify(data));
+    },
+  };
+
+  React.useEffect(() => {
+    let alert = JSON.parse(localStorage.getItem("alert"));
+    if (alert !== null) {
+      localStorage.removeItem("alert");
+      setState(alert);
+      setOpen(true);
+    }
+  }, [router.pathname]);
+
+  return (
+    <AlertContext.Provider value={contextValue}>
+      {children}
+      <Alert
+        open={open}
+        setOpen={setOpen}
+        text={state.message}
+        mode={state.mode}
+      />
+    </AlertContext.Provider>
+  );
+}
 
 export default function Alert({
   open,

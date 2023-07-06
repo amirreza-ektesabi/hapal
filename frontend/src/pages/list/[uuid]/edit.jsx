@@ -10,14 +10,21 @@ import {
 } from "src/components/routing";
 import { getList } from "api";
 import withAuth from "src/components/auth/withAuth";
+import { AlertContext } from "src/components/alert";
 import AuthContext from "src/components/auth/authContext";
-import { pageTitle, useSwrNoFocus } from "src/_helpers";
+import { pageTitle, stringFormat, truncate, useSwrNoFocus } from "src/_helpers";
+import messages from "src/general/messages";
 
 export default withAuth(function EditListPage({ uuid }) {
   const dispatch = useDispatch();
   const { currentUser } = React.useContext(AuthContext);
+  const { setAlert } = React.useContext(AlertContext);
 
   const handleOnSave = async (dataToSave) => {
+    setAlert(
+      stringFormat(messages.listEdited, truncate(dataToSave.title, 20)),
+      "success"
+    );
     return await dispatch(listsActions.updated({ ...dataToSave, uuid }));
   };
 

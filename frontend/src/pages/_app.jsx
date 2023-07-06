@@ -10,6 +10,7 @@ import darkTheme from "src/general/theme";
 import store from "src/_store";
 import Tabbar from "src/components/tabbar";
 import Authbar from "src/components/authbar";
+import { AlertProvider } from "src/components/alert";
 import AuthContext from "src/components/auth/authContext";
 import LoginDialog from "src/components/auth/loginDialog";
 import SignupDialog from "src/components/auth/signupDialog";
@@ -47,20 +48,22 @@ export default function App({ Component, pageProps, ...appProps }) {
         <NoSsr>
           <CssBaseline />
           <AuthContext.Provider value={authContextValue}>
-            {includeAuthbar && <Authbar />}
-            <Box className={includeAuthbar ? "mt-[3rem]" : ""} />
-            <Component {...pageProps} />
-            {!isHomePage && <Tabbar />}
-            <LoginDialog
-              open={openLoginBox}
-              handleClose={handleCloseLoginBox}
-              handleOpenSignupBox={handleOpenSignupBox}
-            />
-            <SignupDialog
-              open={openSignupBox}
-              handleClose={handleCloseSignupBox}
-              handleOpenLoginBox={handleOpenLoginBox}
-            />
+            <AlertProvider>
+              {includeAuthbar && <Authbar />}
+              <Box className={includeAuthbar ? "mt-[3rem]" : ""} />
+              <Component {...pageProps} />
+              {!isHomePage && <Tabbar />}
+              <LoginDialog
+                open={openLoginBox}
+                handleClose={handleCloseLoginBox}
+                handleOpenSignupBox={handleOpenSignupBox}
+              />
+              <SignupDialog
+                open={openSignupBox}
+                handleClose={handleCloseSignupBox}
+                handleOpenLoginBox={handleOpenLoginBox}
+              />
+            </AlertProvider>
           </AuthContext.Provider>
         </NoSsr>
       </ThemeProvider>

@@ -4,13 +4,15 @@ import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import SaveButton from "src/components/objectRelated/saveButton";
-import withAuth from "src/components/auth/withAuth";
 import AutoFocusTextField from "src/components/autoFocusTextField";
+import withAuth from "src/components/auth/withAuth";
 import AuthContext from "src/components/auth/authContext";
+import { AlertContext } from "src/components/alert";
 import { HeaderEdit } from "src/components/objectRelated/header";
 import { authActions } from "src/_store";
 import { pageTitle, stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
+import messages from "src/general/messages";
 
 function Top({ data, className }) {
   return (
@@ -53,6 +55,7 @@ function InputFields({ data, setName, setBio, className }) {
 export default withAuth(function EditProfilePage() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { setAlert } = React.useContext(AlertContext);
   const { currentUser } = React.useContext(AuthContext);
   const [formData, setFormData] = React.useState(currentUser);
 
@@ -79,6 +82,7 @@ export default withAuth(function EditProfilePage() {
     };
     await dispatch(authActions.editProfile(dataToSave));
     const redirectUrl = stringFormat(urls.user, currentUser.username);
+    setAlert(messages.profileSaved, "success");
     router.push(redirectUrl);
   };
 
@@ -96,8 +100,11 @@ export default withAuth(function EditProfilePage() {
             setBio={setBio}
             className="px-4 space-y-10"
           />
-          <SaveButton isEnable={true}
-          className="px-4" handleOnClick={handleOnClickSaveButton} />
+          <SaveButton
+            isEnable={true}
+            className="px-4"
+            handleOnClick={handleOnClickSaveButton}
+          />
         </Box>
       </Box>
     </Box>

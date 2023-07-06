@@ -14,7 +14,7 @@ import DisposableButton, {
 import AutoFocusTextField from "src/components/autoFocusTextField";
 import PasswordTextField from "src/components/auth/passwordTextField";
 import ArrowTooltip from "src/components/arrowTooltip";
-import Alert from "src/components/alert";
+import Alert, { AlertContext } from "src/components/alert";
 import theme from "src/general/theme";
 import messages from "src/general/messages";
 import { authActions } from "src/_store";
@@ -119,12 +119,14 @@ export default function LoginDialog({
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { setAlert } = React.useContext(AlertContext);
+
   const fieldNames = ["username", "password"];
   const inputRefs = Object.fromEntries(
     fieldNames.map((key) => [key, React.useRef()])
   );
   const [submitButtonEnable, setSubmitButtonEnable] = React.useState(false);
-  const [openSuccessfulAlert, setOpenSuccessfulAlert] = React.useState(false);
   const [textErrorAlert, setTextErrorAlert] = React.useState(null);
   const [openErrorAlert, setOpenErrorAlert] = React.useState(false);
 
@@ -149,7 +151,7 @@ export default function LoginDialog({
   const handleOnSuccessfulSubmit = async () => {
     await dispatch(authActions.getMe());
     handleCloseBox();
-    setOpenSuccessfulAlert(true);
+    setAlert(messages.successfulLogin, "success");
     router.reload();
   };
   const handleOnUnsuccessfulSubmit = (errorMessage) => {
@@ -196,12 +198,6 @@ export default function LoginDialog({
         setOpen={setOpenErrorAlert}
         text={textErrorAlert}
         mode="error"
-      />
-      <Alert
-        open={openSuccessfulAlert}
-        setOpen={setOpenSuccessfulAlert}
-        text={messages.successfulLogin}
-        mode="success"
       />
     </React.StrictMode>
   );

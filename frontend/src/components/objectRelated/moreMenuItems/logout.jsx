@@ -5,9 +5,11 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import AuthContext from "src/components/auth/authContext";
 import { authActions } from "src/_store";
+import { AlertContext } from "src/components/alert";
+import messages from "src/general/messages";
 
 export function logoutConditions(data) {
   const { isAuthenticated } = React.useContext(AuthContext);
@@ -18,9 +20,11 @@ export function logoutConditions(data) {
 export default function LogoutItem({ data, placement, handleMenuClose }) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { setAlert } = React.useContext(AlertContext);
 
   const handleOnClick = () => {
     dispatch(authActions.logout());
+    setAlert(messages.successfulLogout, "success");
     router.reload();
   };
 

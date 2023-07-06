@@ -7,3 +7,4 @@ export * from "./stringToColor";
 export * from "./getObjFromAction";
 export * from "./swrNoFocus";
 export * from "./pageTitle";
+export * from "./truncate";
