@@ -6,13 +6,19 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
 import AuthContext from "src/components/auth/authContext";
+import { WhoCanAddPost } from "src/general/enums";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
 
 export function addPostItemConditions(data) {
-  const { currentUser } = React.useContext(AuthContext);
+  const { currentUser, isAuthenticated } = React.useContext(AuthContext);
 
-  return data.type === "list" && currentUser?.username == data.user.username;
+  return (
+    data.type === "list" &&
+    isAuthenticated &&
+    (data.who_can_add_post === WhoCanAddPost.Everyone ||
+      currentUser?.username === data.user.username)
+  );
 }
 
 export default function AddPostItem({ data, placement, handleMenuClose }) {

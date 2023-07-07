@@ -8,6 +8,7 @@ import { HeaderEdit } from "src/components/objectRelated/header";
 import AuthContext from "src/components/auth/authContext";
 import { stringFormat } from "src/_helpers";
 import urls from "src/general/urls";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 function Top({ data, className }) {
   return (
@@ -19,7 +20,13 @@ function Top({ data, className }) {
   );
 }
 
-function InputFields({ data, className, setTitle, setDescription }) {
+function InputFields({
+  data,
+  className,
+  setTitle,
+  setDescription,
+  setWhoCanAddPost,
+}) {
   return (
     <Box className={className}>
       <AutoFocusTextField
@@ -39,16 +46,30 @@ function InputFields({ data, className, setTitle, setDescription }) {
         variant="standard"
         className="w-full"
       />
+      <FormControl variant="standard" className="w-full">
+        <InputLabel>Who can add post</InputLabel>
+        <Select
+          label="Who can add post"
+          value={data.who_can_add_post}
+          onChange={setWhoCanAddPost}
+        >
+          <MenuItem value={1}>Just me</MenuItem>
+          <MenuItem value={2}>Everyone</MenuItem>
+        </Select>
+      </FormControl>
     </Box>
   );
 }
 
 export default function SetListPage({ data, handleOnSave, className }) {
-  const { isAuthenticated } = React.useContext(AuthContext);
   const router = useRouter();
+
+  const { isAuthenticated } = React.useContext(AuthContext);
+
   const initialData = {
     title: data.title,
     description: data.description,
+    who_can_add_post: data.who_can_add_post,
   };
   const [formData, setFormData] = React.useState(initialData);
 
@@ -68,10 +89,17 @@ export default function SetListPage({ data, handleOnSave, className }) {
       description: event.target.value,
     });
   };
+  const setWhoCanAddPost = (event) => {
+    setFormData({
+      ...formData,
+      who_can_add_post: event.target.value,
+    });
+  };
   const handleOnClickSaveButton = async () => {
     const dataToSave = {
       title: formData.title,
       description: formData.description,
+      who_can_add_post: formData.who_can_add_post,
     };
     const response = await handleOnSave(dataToSave);
     const uuid = response.payload.uuid;
@@ -91,6 +119,7 @@ export default function SetListPage({ data, handleOnSave, className }) {
           className="px-4 space-y-10"
           setTitle={setTitle}
           setDescription={setDescription}
+          setWhoCanAddPost={setWhoCanAddPost}
         />
         <SaveButton
           isEnable={isAuthenticated}

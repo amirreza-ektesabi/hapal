@@ -15,6 +15,7 @@ export default function NewListPage({ className }) {
   const data = {
     title: "",
     description: "",
+    who_can_add_post: 1,
     header: null,
   };
   const handleOnSave = async (dataToSave) => {

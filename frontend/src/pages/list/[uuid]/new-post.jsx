@@ -14,6 +14,7 @@ import { AlertContext } from "src/components/alert";
 import AuthContext from "src/components/auth/authContext";
 import { pageTitle, stringFormat, truncate, useSwrNoFocus } from "src/_helpers";
 import messages from "src/general/messages";
+import { addPostItemConditions } from "src/components/objectRelated/moreMenuItems/addPost";
 
 export default withAuth(function NewPostPage({ uuid }) {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ export default withAuth(function NewPostPage({ uuid }) {
 
   if (isError) return <ErrorPage statusCode={response.status} />;
   if (listData === undefined || isLoading) return <Loading fullScreen />;
-  if (currentUser?.username !== listData.user.username)
+  if (!addPostItemConditions(listData))
     return <ErrorPage statusCode={404} />;
 
   const data = { title: "", properties: [] };
