@@ -158,7 +158,7 @@ export default function ProfilePage({ username }) {
 
   return (
     <Box className="flex flex-col place-items-center">
-      <Box className="max-w-lg w-full mb-[3.5rem] sm:mb-[3rem]">
+      <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full my-2.5" />
         <Lists data={data} />

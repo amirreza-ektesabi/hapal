@@ -58,8 +58,7 @@ export default function MainPage() {
               className="font-medium leading-5 text-blackZ tablet:leading-7 laptop:leading-7 text-[1.35rem] laptop:text-2xl desktop:text-3xl"
             >
               Discover what lists your friends make,
-              <br className="hidden tablet:block" />
-              and share yours.
+              <br className="hidden tablet:block" /> and share yours.
             </Typography>
             <Button
               variant="contained"
@@ -76,7 +75,7 @@ export default function MainPage() {
           />
         </Box>
       </Box>
-      <Box className="flex w-full mx-auto my-20">
+      <Box className="flex w-full mx-auto mt-20">
         <Box className="flex flex-col mx-auto space-x-0 space-y-8 laptop:flex-row laptop:space-y-0 laptop:space-x-8 laptop:max-w-[58rem] desktop:max-w-[70rem]">
           <BoxItem>
             You can create lists of any topic and add as many items as you want,

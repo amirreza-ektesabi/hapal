@@ -148,10 +148,7 @@ export default function PostPage({ uuid }) {
       <Box className="max-w-lg w-full">
         <Top data={data} className="flex justify-center place-items-center" />
         <Divider className="w-full mt-3.5 mb-2" />
-        <PropertyList
-          postData={data}
-          className="px-4 mb-[3.5rem] sm:mb-[3rem]"
-        />
+        <PropertyList postData={data} className="px-4" />
       </Box>
       <FloatingBox data={data} toggleDrawer={toggleDrawer} />
       <CommentDrawer

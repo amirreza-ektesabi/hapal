@@ -54,7 +54,7 @@ export default function ExplorePage() {
 
   return (
     <Box className="flex flex-col place-items-center">
-      <Box className="max-w-lg w-full mt-3 mb-[3.5rem] sm:mb-[3rem]">
+      <Box className="max-w-lg w-full mt-3">
         <Lists />
       </Box>
     </Box>
