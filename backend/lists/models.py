@@ -7,6 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 class List(SharedBaseModel):
+    class WhoCanAddPost(models.IntegerChoices):
+        JUST_ME = 1
+        EVERYONE = 2
+
     title = models.CharField(
         max_length=255,
         blank=True
@@ -27,6 +31,11 @@ class List(SharedBaseModel):
         content_type_field='followed_type',
         object_id_field='followed_id',
         related_query_name='followed_list',
+    )
+
+    who_can_add_post = models.PositiveSmallIntegerField(
+        choices=WhoCanAddPost.choices,
+        default=WhoCanAddPost.JUST_ME,
     )
 
     objects = ListManager()

@@ -1,13 +1,14 @@
 from lists.models import List
 from posts.models import Post
 from accounts.models import Account
+from posts.permissions import IsAllowedToAddPostOrReadOnly
 from posts.serializers.post import PostFullviewSerializer
 from posts.serializers.post_set import PostSetSerializer
 from baseapp.views import (
     ListCreateRelatedAPIView, ListRelatedAPIView,
     CheckObjectLikedByCurrentUserMixin, CheckObjectUserFollowedByCurrentUserMixin
 )
-from baseapp.permissions import IsOwnerOrReadOnly, IsRelatedOwnerOrReadOnly
+from baseapp.permissions import IsOwnerOrReadOnly
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -35,7 +36,7 @@ class ListPagePosts(CheckObjectLikedByCurrentUserMixin,
     queryset = Post.objects.select_related('added_to', 'added_to__user') \
         .prefetch_related('comments', 'likes') \
         .order_by('-created')
-    permission_classes = [IsAuthenticatedOrReadOnly, IsRelatedOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAllowedToAddPostOrReadOnly]
     relateds = {
         'list': {
             'lookup_field': 'uuid',
