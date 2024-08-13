@@ -75,7 +75,7 @@ export default function MainPage() {
           />
         </Box>
       </Box>
-      <Box className="flex w-full mx-auto mt-20">
+      <Box className="flex w-full mx-auto mt-20 mb-20">
         <Box className="flex flex-col mx-auto space-x-0 space-y-8 laptop:flex-row laptop:space-y-0 laptop:space-x-8 laptop:max-w-[58rem] desktop:max-w-[70rem]">
           <BoxItem>
             You can create lists of any topic and add as many items as you want,
