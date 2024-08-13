@@ -2,7 +2,6 @@ from accounts.managers import AccountManager
 from accounts.validators.username import username_validators_list
 
 from django.db import models
-from django.contrib.postgres import fields
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 from django.contrib.contenttypes import fields as contenttypes_fields
 from django.utils.translation import gettext_lazy as _
@@ -24,7 +23,7 @@ class Account(SoftDeleteObject, AbstractUser):
             else:
                 self.delete()
 
-    username = fields.CICharField(
+    username = models.CharField(
         unique=True,
         max_length=32,
         validators=[*username_validators_list],
@@ -50,7 +49,7 @@ class Account(SoftDeleteObject, AbstractUser):
 
     bio = models.CharField(blank=True, max_length=140)
 
-    email = fields.CIEmailField(
+    email = models.EmailField(
         unique=True,
         error_messages={
             'unique': _("A user with this email already exists."),
