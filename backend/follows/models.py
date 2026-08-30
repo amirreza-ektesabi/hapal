@@ -1,5 +1,5 @@
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, F
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields as contenttypes_fields
@@ -41,13 +41,16 @@ class Follow(models.Model):
         verbose_name_plural = _('follows')
 
         unique_together = ('user', 'followed_type', 'followed_id')
-        constraints = [
-            models.CheckConstraint(
-                check=~Q(followed_id=F('user_id'),
-                         followed_type_id=ContentType.objects.get(app_label='accounts', model='account').id),
-                name='prevent_self_following'
-            )
-        ]
+
+    def save(self, *args, **kwargs):
+        # The API layer rejects self-follows with a 403; this guards direct
+        # ORM usage. Must not be a CheckConstraint: resolving the Account
+        # ContentType requires a DB query, which is impossible at model
+        # import time on a fresh database.
+        if self.followed_type_id and self.followed_id == self.user_id \
+                and self.followed_type.model == 'account':
+            raise ValidationError('Can not follow yourself.')
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return '{} - {}'.format(self._meta.model_name.title(), self.id)

@@ -54,8 +54,9 @@ INTERNAL_IPS = ['127.0.0.1']
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
-CORS_ALLOWED_ORIGIN_REGEXES = [os.environ.get('CORS_ALLOWED_ORIGIN_REGEXES', None)]
-if DEBUG == True or CORS_ALLOWED_ORIGIN_REGEXES is None:
+_cors_origin_regex = os.environ.get('CORS_ALLOWED_ORIGIN_REGEXES')
+CORS_ALLOWED_ORIGIN_REGEXES = [_cors_origin_regex] if _cors_origin_regex else []
+if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
 DATABASES = {
