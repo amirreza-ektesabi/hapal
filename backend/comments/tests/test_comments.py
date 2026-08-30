@@ -1,0 +1,219 @@
+from baseapp.uuid_generator import uuid_generator
+from comments.models import Comment
+from likes.tests.test_likes import AbstractTestLike, AbstractTestUnlike, AbstractTestRetrieveListOfLikes
+
+from django.urls import reverse
+from django.db.models import Model
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.response import Response
+
+import pytest
+from model_bakery import baker
+
+
+@pytest.mark.django_db
+class TestUpdateComment:
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
+        return user.patch(
+            reverse('comment_page', kwargs={'uuid': uuid}),
+            data
+        )
+
+    def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
+        object = baker.make(Comment)
+        response = self.do(anonymous_user, object.uuid)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_if_user_is_not_owner_of_comment_returns_403(self, authenticated_user: APIClient):
+        object = baker.make(Comment)
+        response = self.do(authenticated_user, object.uuid)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_if_comment_doesnt_exist_returns_404(self, authenticated_user: APIClient):
+        response = self.do(authenticated_user, uuid_generator())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_body_size_exceeded_returns_400(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        object = baker.make(Comment, user=user)
+
+        data = {
+            'body': 'h' * 1100
+        }
+        response = self.do(authenticated_user, object.uuid, data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_if_successes_returns_200(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        replied_to = baker.make(Comment)
+        object = baker.make(Comment, user=user, replied_to=replied_to)
+
+        data = {
+            'body': 'some nice comment about me',
+        }
+        response = self.do(authenticated_user, object.uuid, data)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert Comment.objects.filter(
+            uuid=object.uuid,
+            user=user,
+            **data
+        ).exists()
+        assert all(response.data[key] == data[key] for key in data.keys())
+
+
+@pytest.mark.django_db
+class TestDestroyComment:
+    def do(self, user: APIClient, uuid: str) -> Response:
+        return user.delete(
+            reverse('comment_page', kwargs={'uuid': uuid})
+        )
+
+    def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
+        object = baker.make(Comment)
+        response = self.do(anonymous_user, object.uuid)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_if_user_is_not_owner_of_comment_returns_403(self, authenticated_user: APIClient):
+        object = baker.make(Comment)
+        response = self.do(authenticated_user, object.uuid)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_if_comment_doesnt_exist_returns_404(self, authenticated_user: APIClient):
+        response = self.do(authenticated_user, uuid_generator())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_successes_returns_204(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        replied_to = baker.make(Comment)
+        object = baker.make(Comment, user=user, replied_to=replied_to)
+
+        response = self.do(authenticated_user, object.uuid)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Comment.objects.filter(
+            uuid=object.uuid,
+            user=user,
+        ).exists()
+
+
+@pytest.mark.django_db
+class TestRetrieveComment:
+    def do(self, user: APIClient, uuid: str) -> Response:
+        return user.get(
+            reverse('comment_page', kwargs={'uuid': uuid})
+        )
+
+    def test_if_comment_doesnt_exist_returns_404(self, anonymous_user: APIClient):
+        response = self.do(anonymous_user, uuid_generator())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_successes_returns_200(self, anonymous_user: APIClient):
+        replied_to = baker.make(Comment)
+        object = baker.make(Comment, replied_to=replied_to)
+
+        response = self.do(anonymous_user, object.uuid)
+
+        assert response.status_code == status.HTTP_200_OK
+
+
+class AbstractTestAddComment:
+    replied_to_model: Model
+    replied_to_model_name: str
+
+    def do(self, user: APIClient, uuid: str, data: dict = {}) -> Response:
+        return user.post(
+            reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid}),
+            data
+        )
+
+    def test_if_user_is_not_authenticated_returns_401(self, anonymous_user: APIClient):
+        object = baker.make(self.replied_to_model)
+        response = self.do(anonymous_user, object.uuid)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_if_replied_to_doesnt_exist_returns_404(self, authenticated_user: APIClient):
+        response = self.do(authenticated_user, uuid_generator())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_successes_returns_201(self, authenticated_user: APIClient):
+        user = authenticated_user.handler._force_user
+        object = baker.make(self.replied_to_model)
+
+        data = {
+            'body': 'ommmmm => nice nice nice test',
+        }
+        response = self.do(authenticated_user, object.uuid, data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Comment.objects.filter(
+            uuid=response.data['uuid'],
+            user=user,
+            **{'replied_to_{}'.format(self.replied_to_model_name): object},
+            **data,
+        ).exists()
+        assert all(response.data[key] == data[key] for key in data.keys())
+
+
+class AbstractTestRetrieveListOfComments:
+    replied_to_model: Model
+    replied_to_model_name: str
+
+    def do(self, user: APIClient, uuid: str) -> Response:
+        return user.get(
+            reverse(f'{self.replied_to_model_name}_comments', kwargs={'uuid': uuid})
+        )
+
+    def test_if_replied_to_doesnt_exist_returns_404(self, anonymous_user: APIClient):
+        response = self.do(anonymous_user, uuid_generator())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_if_successes_returns_200(self, anonymous_user: APIClient):
+        object = baker.make(self.replied_to_model)
+        comments = baker.make(Comment, replied_to=object, _quantity=10)
+
+        response = self.do(anonymous_user, object.uuid)
+
+        assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+class TestAddComment(AbstractTestAddComment):
+    replied_to_model = Comment
+    replied_to_model_name = 'comment'
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfComments(AbstractTestRetrieveListOfComments):
+    replied_to_model = Comment
+    replied_to_model_name = 'comment'
+
+
+@pytest.mark.django_db
+class TestLike(AbstractTestLike):
+    liked_model = Comment
+    liked_model_name = 'comment'
+
+
+@pytest.mark.django_db
+class TestUnlike(AbstractTestUnlike):
+    liked_model = Comment
+    liked_model_name = 'comment'
+
+
+@pytest.mark.django_db
+class TestRetrieveListOfLikes(AbstractTestRetrieveListOfLikes):
+    liked_model = Comment
+    liked_model_name = 'comment'

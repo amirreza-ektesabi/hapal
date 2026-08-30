@@ -1,0 +1,63 @@
+from comments.models import Comment
+from baseapp.admin import SharedBaseAdmin, link_to_objectpage
+
+from django.forms import Textarea, ModelForm
+from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
+from django.utils.safestring import SafeString
+
+
+@admin.register(Comment)
+class CommentAdmin(SharedBaseAdmin):
+    fields = [
+        'user',
+        'uuid',
+        'body',
+        'replied_to',
+        'created',
+        'updated',
+    ]
+    readonly_fields = [
+        'user',
+        'uuid',
+        'created',
+        'updated',
+        'replied_to',
+    ]
+    list_display = [
+        'uuid',
+        'owner',
+        'truncated_body',
+        'replied_to_',
+        'comments_',
+        'likes_',
+    ]
+    search_fields = [
+        'body__icontains',
+    ]
+    list_select_related = [
+        'uuid__exact',
+        'user',
+        'replied_to_type',
+    ]
+
+    def get_form(self, request: HttpRequest, obj=None, **kwargs) -> ModelForm:
+        kwargs['widgets'] = {'body': Textarea}
+        return super().get_form(request, obj, **kwargs)
+
+    @admin.display(description='body')
+    def truncated_body(self, comment: Comment) -> str:
+        return '{}...'.format(comment.body[:85]) if len(comment.body) > 90 else \
+               comment.body
+
+    @admin.display(description='reply to')
+    def replied_to_(self, comment: Comment) -> SafeString:
+        return link_to_objectpage(
+            str(comment.replied_to),
+            comment.replied_to.app_model_label,
+            comment.replied_to_id,
+        )
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).prefetch_related('replied_to')

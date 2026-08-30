@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+psycopg2 = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
+pillow = "*"
+django-debug-toolbar = "*"
+django-softdelete = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+python-dotenv = "*"
+gunicorn = "*"
+
+[dev-packages]
+autopep8 = "*"
+pytest = "*"
+pytest-django = "*"
+model-bakery = "*"
+
+[requires]
+python_version = "3.11"

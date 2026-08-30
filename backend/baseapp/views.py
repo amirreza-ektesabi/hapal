@@ -1,0 +1,71 @@
+from accounts.models import Account
+
+from django.db.models import QuerySet, Model, Prefetch
+from rest_framework.generics import ListAPIView, CreateAPIView, GenericAPIView
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.serializers import ModelSerializer
+from rest_framework.exceptions import NotFound
+from rest_framework.request import Request
+from rest_framework.views import APIView
+
+from typing import Dict, Union, NoReturn
+
+
+def PageNumberPaginationWithSize(page_size: int) -> type:
+    return type(
+        'PageNumberPagination{}'.format(page_size),
+        (PageNumberPagination,),
+        {'page_size': page_size}
+    )
+
+
+class RelatedAPIView(GenericAPIView):
+    relateds: Dict[str, Dict[str, Union[str, Model]]]
+
+    def initial(self, request: Request, *args, **kwargs) -> None:
+        self.related = self.relateds[kwargs['type']]
+        return super().initial(request, *args, **kwargs)
+
+    def get_related_object_or_404(self) -> Union[Model, NoReturn]:
+        try:
+            return self.related['model'].objects.get(**{
+                self.related['lookup_field']: self.kwargs[self.related['lookup_field']]
+            })
+        except:
+            raise NotFound()
+
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset().filter(
+            **{self.related['related_query_name']: self.get_related_object_or_404()}
+        )
+
+
+class ListRelatedAPIView(RelatedAPIView, ListAPIView):
+    ...
+
+
+class ListCreateRelatedAPIView(RelatedAPIView, ListAPIView, CreateAPIView):
+    def perform_create(self, serializer: ModelSerializer) -> None:
+        serializer.save(**{
+            'user_id': self.request.user.id,
+            self.related['related_field']: self.get_related_object_or_404(),
+        })
+
+
+class CheckObjectLikedByCurrentUserMixin:
+    def get_queryset(self: APIView):
+        return super().get_queryset() \
+            .annotate_is_liked(self.request.user)
+
+
+class CheckObjectFollowedByCurrentUserMixin:
+    def get_queryset(self: APIView):
+        return super().get_queryset() \
+            .annotate_is_followed(self.request.user)
+    
+
+class CheckObjectUserFollowedByCurrentUserMixin:
+    def get_queryset(self):
+        account_subquery = Account.objects.all().annotate_is_followed(self.request.user)
+        return super().get_queryset() \
+            .prefetch_related(Prefetch('user', account_subquery))
