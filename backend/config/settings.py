@@ -4,9 +4,10 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 
-load_dotenv()
-
+# Shared .env lives at the repository root and is used by the frontend too
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
+
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = os.environ.get('DEBUG') == 'True'

@@ -17,10 +17,12 @@ Prerequisites: Node.js (with npm) and [uv](https://docs.astral.sh/uv/)
 
     make install      # install dependencies for both apps
 
-Local development uses `config.local_settings`: DEBUG on, SQLite by default.
-If you create `backend/.env` (see `backend/.env.sample`) with `DB_*`
-variables, it uses your Postgres database instead. Run the two apps in
-separate terminals:
+Local development requires PostgreSQL (runs on 127.0.0.1:5432). Create a
+`.env` file at the repository root (copy `.env.sample` and fill in values):
+
+    cp .env.sample .env   # edit .env with your settings
+
+Then run the two apps in separate terminals:
 
     make frontend     # Next.js dev server  (http://localhost:3000)
     make backend      # Django dev server   (http://localhost:8000)

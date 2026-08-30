@@ -8,10 +8,10 @@ frontend:
 	cd frontend && npm run dev
 
 backend:
-	cd backend && uv run python manage.py runserver --settings=config.local_settings
+	cd backend && uv run python manage.py runserver
 
 migrate:
-	cd backend && uv run python manage.py migrate --settings=config.local_settings
+	cd backend && uv run python manage.py migrate
 
 test:
 	cd backend && uv run pytest
