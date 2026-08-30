@@ -1,5 +1,9 @@
 # Hapal
 
+Hapal is a social app for film lovers: users create lists of movies, add
+titles with custom properties, and follow, like, and comment on other
+people's lists.
+
 Monorepo for the Hapal app.
 
 - `frontend/` — Next.js client
@@ -31,3 +35,7 @@ Other targets: `make migrate` (Django migrations), `make test` (backend tests).
 
 Production runs the environment-driven `config.settings` module (Postgres via
 `DB_*` env variables) behind gunicorn.
+
+## License
+
+[MIT](LICENSE)

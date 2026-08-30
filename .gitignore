@@ -10,3 +10,16 @@ Thumbs.db
 .env
 .env.*
 !.env.sample
+
+# python
+__pycache__/
+*.pyc
+.venv/
+db.sqlite3
+
+# django build artifacts
+/static/
+/media/
+
+# node
+node_modules/
