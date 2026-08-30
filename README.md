@@ -1,7 +1,7 @@
 # Hapal
 
-Hapal is a social app for film lovers: users create lists of movies, add
-titles with custom properties, and follow, like, and comment on other
+Hapal is a social app for sharing lists of any kind. Users create lists,
+add items with custom properties, and follow, like, and comment on other
 people's lists.
 
 Monorepo for the Hapal app.
